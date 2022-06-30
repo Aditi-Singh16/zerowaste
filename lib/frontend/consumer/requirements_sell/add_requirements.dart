@@ -8,7 +8,7 @@ import 'dart:io';
 import 'package:zerowaste/backend/firestore_info.dart';
 
 class AddRequirement extends StatefulWidget {
-  AddRequirement({Key? key}) : super(key: key);
+  const AddRequirement({Key? key}) : super(key: key);
 
   @override
   State<AddRequirement> createState() => _AddRequirementState();
@@ -29,8 +29,8 @@ class PageForm extends StatefulWidget {
 
 class _PageFormState extends State<PageForm> {
 
-  TextEditingController _nameController = new TextEditingController();
-  TextEditingController _quantityController = new TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _quantityController = TextEditingController();
 
   final FocusNode _nameFocus = FocusNode();
   final FocusNode _quantityFocus = FocusNode();
@@ -181,7 +181,7 @@ class _PageFormState extends State<PageForm> {
                 },
                 validator: (value) {
                   String patttern = r'^[0-9]+$';
-                  RegExp regExp = new RegExp(patttern);
+                  RegExp regExp = RegExp(patttern);
                   if (value!.isEmpty) {
                     return 'Please enter quantity available';
                   }

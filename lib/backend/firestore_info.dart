@@ -7,7 +7,7 @@ class FirebaseData {
         requirements
       );
       return res.id;
-    } catch (e, stackTrace) {
+    } catch (e) {
       return e.toString();
     }
   }

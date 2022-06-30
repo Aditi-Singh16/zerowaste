@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.zerowaste">
+<
    <application
         android:label="zerowaste"
         android:name="${applicationName}"

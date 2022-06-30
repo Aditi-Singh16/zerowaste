@@ -12,7 +12,7 @@ class ViewRequirements extends StatefulWidget {
 }
 
 class _ViewRequirementsState extends State<ViewRequirements> {
-  List<bool> _selections = List.generate(3, (_) => false);
+  final List<bool> _selections = List.generate(3, (_) => false);
 
   String userType = "NGO";
 
@@ -80,7 +80,7 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                         const EdgeInsets.only(right: 20.0, left: 20.0),
                     child: Column(
                       children: [
-                      Container(
+                      SizedBox(
                         width: MediaQuery.of(context).size.width * 0.9,
                         height: MediaQuery.of(context).size.height * 0.2,
                         child: ListView.builder(
@@ -142,7 +142,7 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                         const EdgeInsets.only(right: 20.0, left: 20.0),
                     child: Column(
                       children: [
-                      Container(
+                      SizedBox(
                         width: MediaQuery.of(context).size.width * 0.9,
                         height: MediaQuery.of(context).size.height * 0.2,
                         child: ListView.builder(
