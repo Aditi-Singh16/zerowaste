@@ -47,6 +47,7 @@ class _PageFormState extends State<PageForm> {
         'categories': _category,
         'quantity': _quantity,
         'pricePerProduct': _price,
+        'manufacturerId':manufacturerId,
         'timestamp': DateTime.now()
       });
     }
@@ -67,6 +68,8 @@ class _PageFormState extends State<PageForm> {
   var _quantity = "";
   var _price = "";
   var _category = null;
+
+  var manufacturerId = 'unfoWBpH8AidhiSmwx44';
 
   var image;
   String imgUrl = '';
