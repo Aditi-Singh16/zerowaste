@@ -47,7 +47,7 @@ class _PageFormState extends State<PageForm> {
         'categories': _category,
         'quantity': _quantity,
         'pricePerProduct': _price,
-        'manufacturerId':manufacturerId,
+        'manufacturerId': manufacturerId,
         'timestamp': DateTime.now()
       });
     }
