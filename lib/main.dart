@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
           backgroundColor:Color(0xff001427)
         )
       ),
-      home: ConsumerTabBar(),
+      home: Dashboard(),
     );
   }
 }
