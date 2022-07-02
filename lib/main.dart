@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/consumer/consumer_tabbar.dart';
 import 'package:zerowaste/frontend/consumer/dashboard.dart';
+import 'package:zerowaste/frontend/consumer/details.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
