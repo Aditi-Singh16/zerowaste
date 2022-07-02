@@ -8,7 +8,7 @@ import 'dart:io';
 import 'package:zerowaste/backend/firestore_info.dart';
 
 class AddRequirement extends StatefulWidget {
-  AddRequirement({Key? key}) : super(key: key);
+  const AddRequirement({Key? key}) : super(key: key);
 
   @override
   State<AddRequirement> createState() => _AddRequirementState();
@@ -29,12 +29,11 @@ class PageForm extends StatefulWidget {
 
 class _PageFormState extends State<PageForm> {
 
-  TextEditingController _nameController = new TextEditingController();
-  TextEditingController _quantityController = new TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _quantityController = TextEditingController();
 
   final FocusNode _nameFocus = FocusNode();
   final FocusNode _quantityFocus = FocusNode();
-
 
 
   var _name = "";
@@ -45,7 +44,7 @@ class _PageFormState extends State<PageForm> {
   // List of items in our dropdown menu
   var items = [
     'Books',
-    'Cloths',
+    'Clothes',
     'Stationary',
     'Hygiene',
     'Toys',
@@ -53,7 +52,6 @@ class _PageFormState extends State<PageForm> {
     'Bags',
     'Electronics'
   ];
-
 
 
 
@@ -162,7 +160,7 @@ class _PageFormState extends State<PageForm> {
                         const BorderSide(color: Colors.black, width: 2.0),
                     borderRadius: BorderRadius.circular(20.0),
                   ),
-                  labelText: 'Available Quantity',
+                  labelText: 'Required Quantity',
                   labelStyle: TextStyle(
                     color:
                         _quantityFocus.hasFocus ? _focusColor : _defaultColor,
@@ -181,7 +179,7 @@ class _PageFormState extends State<PageForm> {
                 },
                 validator: (value) {
                   String patttern = r'^[0-9]+$';
-                  RegExp regExp = new RegExp(patttern);
+                  RegExp regExp = RegExp(patttern);
                   if (value!.isEmpty) {
                     return 'Please enter quantity available';
                   }
@@ -211,8 +209,10 @@ class _PageFormState extends State<PageForm> {
                 ),
             SizedBox(
                 width: double.infinity,
-                child: RaisedButton(
-                    color: (color) ? Colors.black : Colors.grey,
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: color ? Color(0xff001427) : Color(0xff808080),
+                    ),
                     child: Text('Add Requirement',
                         style: TextStyle(
                           color: Colors.white,
@@ -236,3 +236,4 @@ class _PageFormState extends State<PageForm> {
     );
   }
 }
+

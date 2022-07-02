@@ -18,7 +18,7 @@ class _DashboardState extends State<Dashboard> {
   // List of items in our dropdown menu
   var items = [
     'Books',
-    'Cloths',
+    'Clothes',
     'Stationary',
     'Hygiene',
     'Toys',
