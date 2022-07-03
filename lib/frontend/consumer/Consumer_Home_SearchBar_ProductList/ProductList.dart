@@ -146,8 +146,11 @@ class ListPlaces extends StatelessWidget {
                                     SizedBox(height: 20),
                                     Row(
                                       children: [
-                                        Icon(Icons.currency_rupee,
-                                            size: 12),
+                                        Text('\u{20B9}',
+                                        style:TextStyle(
+                                          fontSize: 12
+                                        ),
+                                        ),
                                         Text(doc['pricePerProduct'],
                                             style: TextStyle(
                                                 color: Colors.black,

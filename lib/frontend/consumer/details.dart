@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:zerowaste/frontend/consumer/color.dart';
 import 'package:zerowaste/frontend/consumer/style.dart';
 import 'package:intl/intl.dart';
-
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class Details extends StatefulWidget {
@@ -14,9 +13,6 @@ class Details extends StatefulWidget {
 }
 
 class _DetailsState extends State<Details> {
-  String quantity = "";
-  DateTime selectedDate = DateTime.now();
-  final _formkey = GlobalKey<FormState>();
   String image = 'assets/images/Image_1.png';
   String image1 = 'assets/images/Image_1.png';
   String image2 = 'assets/images/Image_2.png';
@@ -24,8 +20,17 @@ class _DetailsState extends State<Details> {
   String image4 = 'assets/images/Image_4.png';
   String name = "Jogger Lilac";
   String productid = '6Ffxps7z7OvLjMtUwcxn';
+  String manufacturerid = 'unfoWBpH8AidhiSmwx44';
   int amount = 15;
+
   Razorpay razorpay = Razorpay();
+  String quantity = "";
+  DateTime selectedDate = DateTime.now();
+  final _formkey = GlobalKey<FormState>();
+  bool img1 = true;
+  bool img2 = false;
+  bool img3 = false;
+  bool img4 = false;
   @override
   void initState() {
     super.initState();
@@ -59,7 +64,7 @@ class _DetailsState extends State<Details> {
   Future<void> openCheckout() async {
     var options = {
       "key": "rzp_test_Ienn2nz5hJfAS1",
-      "amount": amount,
+      "amount": amount * 100,
       "name": "Sample App",
       "description": "Payment for the some random product",
       "prefill": {"contact": "2323232323"},
@@ -105,91 +110,6 @@ class _DetailsState extends State<Details> {
                     borderRadius: BorderRadius.circular(11)),
                 child: Image.asset('assets/images/Bag.png'),
               )),
-          Positioned(
-            top: 145,
-            right: 24,
-            child: Container(
-              height: 276,
-              width: 73,
-              decoration: BoxDecoration(
-                  gradient: AppColor.gradient,
-                  borderRadius: BorderRadius.circular(20)),
-              child: Column(children: [
-                InkWell(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 6),
-                    height: 61,
-                    width: 61,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppColor.primary, width: 2),
-                        image: const DecorationImage(
-                            fit: BoxFit.cover,
-                            image: AssetImage('assets/images/Image_1.png'))),
-                  ),
-                  onTap: () {
-                    setState(() {
-                      image = image1;
-                    });
-                  },
-                ),
-                InkWell(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 6),
-                    height: 61,
-                    width: 61,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppColor.primary, width: 2),
-                        image: const DecorationImage(
-                            fit: BoxFit.cover,
-                            image: AssetImage('assets/images/Image_2.png'))),
-                  ),
-                  onTap: () {
-                    setState(() {
-                      image = image2;
-                    });
-                  },
-                ),
-                InkWell(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 6),
-                    height: 61,
-                    width: 61,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppColor.primary, width: 2),
-                        image: const DecorationImage(
-                            fit: BoxFit.cover,
-                            image: AssetImage('assets/images/Image_3.png'))),
-                  ),
-                  onTap: () {
-                    setState(() {
-                      image = image3;
-                    });
-                  },
-                ),
-                InkWell(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 6),
-                    height: 61,
-                    width: 61,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppColor.primary, width: 2),
-                        image: const DecorationImage(
-                            fit: BoxFit.cover,
-                            image: AssetImage('assets/images/Image_4.png'))),
-                  ),
-                  onTap: () {
-                    setState(() {
-                      image = image4;
-                    });
-                  },
-                ),
-              ]),
-            ),
-          ),
           Positioned(
               bottom: 0,
               child: Container(
@@ -275,7 +195,21 @@ class _DetailsState extends State<Details> {
                                               BorderRadius.circular(16))),
                                   minimumSize: MaterialStateProperty.all(
                                       Size(size.width / 2.6, 37))),
-                              onPressed: () {},
+                              onPressed: () async{
+                                String uid = 'bcbF3NkrUnQqqeqO49pb';
+                                amount *= int.parse(quantity);
+                                if (_formkey.currentState!.validate()) {
+                                  await FirebaseFirestore.instance
+                                      .collection('Users')
+                                      .doc(uid)
+                                      .collection('Cart')
+                                      .add({
+                                    "productId": productid,
+                                    "Quantity": quantity,
+                                    "Amount": amount,
+                                  });
+                                }
+                              },
                               child: Text('Add To Cart',
                                   style: AppStyle.h3
                                       .copyWith(color: Colors.white))),
@@ -291,27 +225,27 @@ class _DetailsState extends State<Details> {
                                       Size(size.width / 2.6, 37))),
                               onPressed: () async {
                                 if (_formkey.currentState!.validate()) {
-                                  print("ccneakc");
                                   await openCheckout();
-                                  // String uid = 'bcbF3NkrUnQqqeqO49pb';
-                                  // amount *= int.parse(quantity);
-                                  // String time = DateFormat("hh:mm:ss a")
-                                  //     .format(DateTime.now());
-                                  // String date =
-                                  //     "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
+                                  String uid = 'bcbF3NkrUnQqqeqO49pb';
+                                  amount *= int.parse(quantity);
+                                  String time = DateFormat("hh:mm:ss a")
+                                      .format(DateTime.now());
+                                  String date =
+                                      "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
 
-                                  // await FirebaseFirestore.instance
-                                  //     .collection('Users')
-                                  //     .doc(uid)
-                                  //     .collection('Orders')
-                                  //     .add({
-                                  //   "ProductName": name,
-                                  //   "ProductId": productid,
-                                  //   "Quantity": quantity,
-                                  //   "Time": time,
-                                  //   "Amount": amount,
-                                  //   "Date": date
-                                  // });
+                                  await FirebaseFirestore.instance
+                                      .collection('Users')
+                                      .doc(uid)
+                                      .collection('Orders')
+                                      .add({
+                                    "ProductName": name,
+                                    "ProductId": productid,
+                                    "Quantity": quantity,
+                                    "Time": time,
+                                    "Amount": amount,
+                                    "Date": date,
+                                    "manufacturerId": manufacturerid
+                                  });
                                 }
                               },
                               child: Text('Buy Now',
