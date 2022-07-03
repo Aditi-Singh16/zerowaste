@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/consumer/consumer_tabbar.dart';
 import 'package:zerowaste/frontend/consumer/dashboard.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
+import 'package:zerowaste/frontend/manufacturer/addProduct.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,13 +20,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        scaffoldBackgroundColor: Color(0xffF2F6FD),
-        appBarTheme: AppBarTheme(
-          backgroundColor:Color(0xff001427)
-        )
-      ),
-      home: ConsumerTabBar(),
+          scaffoldBackgroundColor: Color(0xffF2F6FD),
+          appBarTheme: AppBarTheme(backgroundColor: Color(0xff001427))),
+      home: AddProduct(),
     );
   }
 }
-
