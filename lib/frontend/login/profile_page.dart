@@ -20,7 +20,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     FirebaseFirestore.instance
-        .collection("users")
+        .collection("Users")
         .doc(user!.uid)
         .get()
         .then((value) {

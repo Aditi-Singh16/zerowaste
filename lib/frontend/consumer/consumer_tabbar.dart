@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/consumer/requirements_sell/add_requirements.dart';
 import 'package:zerowaste/frontend/consumer/requirements_sell/view_requirements.dart';
 
-
-class Profile extends StatelessWidget {
-  const Profile({Key? key}) : super(key: key);
+class ConsumerTabBar extends StatelessWidget {
+  const ConsumerTabBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,32 +14,18 @@ class Profile extends StatelessWidget {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
+            backgroundColor: Color(0xff001427),
             title: Text(
-              'Profile',
+              'Consumer',
               style: TextStyle(fontWeight: FontWeight.normal),
             ),
-            centerTitle: true,
-            actions: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.settings),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.logout_outlined),
-              )
-            ],
             bottom: TabBar(  
             tabs: [  
                 Tab(
-                  icon: Icon(
-                    Icons.star
-                  ),
-                  text: "Add Requirements",
+                  text: "Add",
                 ),  
                 Tab(
-                  icon: Icon(Icons.leaderboard),
-                  text:"View Requirements"
+                  text:"View"
                 ),  
               ],
             ),

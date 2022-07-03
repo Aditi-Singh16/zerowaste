@@ -1,19 +1,9 @@
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
 import 'package:zerowaste/frontend/consumer/ProductList.dart';
 
 
-
-
 class GridItems extends StatefulWidget {
-
-
-
-
-
   @override
   State<GridItems> createState() => _GridItemsState();
 }

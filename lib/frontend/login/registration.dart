@@ -292,7 +292,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     userModel.type = typeEditingController;
 
     await firebaseFirestore
-        .collection("users")
+        .collection("Users")
         .doc(user.uid)
         .set(userModel.toMap());
     Fluttertoast.showToast(msg: "Account created successfully :) ");

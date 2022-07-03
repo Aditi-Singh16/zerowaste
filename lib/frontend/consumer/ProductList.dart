@@ -24,7 +24,8 @@ class ListPlaces extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasData) {
             return Scaffold(
-              appBar: AppBar(title: Text("Products "),   backgroundColor: Color(0xFF001427)),
+              appBar: AppBar(
+                  title: Text("Products "), backgroundColor: Color(0xFF001427)),
               body: ListView.builder(
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
@@ -39,18 +40,18 @@ class ListPlaces extends StatelessWidget {
                             MediaQuery.of(context).size.height / 100),
                         elevation: 5,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            ),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                         color: Colors.white,
 
                         //margin: EdgeInsets.only(left: 12.0),
                         child: InkWell(
                           onTap: () {
-                          //  Navigator.of(context).push(
+                            //  Navigator.of(context).push(
                             //  MaterialPageRoute(
-                             //   builder: (context) => DetailsPage(detail: doc),
+                            //   builder: (context) => DetailsPage(detail: doc),
                             //  ),
-                          //  );
+                            //  );
                           },
                           child: Row(
                             children: [
@@ -65,8 +66,8 @@ class ListPlaces extends StatelessWidget {
                                       doc['image'],
                                       fit: BoxFit.fitWidth,
                                       height:
-                                      MediaQuery.of(context).size.height /
-                                          3,
+                                          MediaQuery.of(context).size.height /
+                                              3,
                                       width: MediaQuery.of(context).size.width /
                                           2.6,
                                     ),
@@ -81,8 +82,8 @@ class ListPlaces extends StatelessWidget {
                                     Padding(
                                       padding: EdgeInsets.only(
                                           top: MediaQuery.of(context)
-                                              .size
-                                              .height /
+                                                  .size
+                                                  .height /
                                               30),
 
                                       // child: InkWell(
@@ -93,16 +94,16 @@ class ListPlaces extends StatelessWidget {
                                       child: Padding(
                                         padding: EdgeInsets.only(
                                             right: MediaQuery.of(context)
-                                                .size
-                                                .height /
+                                                    .size
+                                                    .height /
                                                 150),
                                         child: Text(
                                           doc['name'],
                                           maxLines: 2,
                                           style: TextStyle(
                                               fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .height /
+                                                      .size
+                                                      .height /
                                                   35,
                                               color: Colors.black,
                                               fontWeight: FontWeight.bold),
@@ -111,44 +112,42 @@ class ListPlaces extends StatelessWidget {
                                     ),
                                     SizedBox(
                                         height:
-                                        MediaQuery.of(context).size.height /
-                                            50),
+                                            MediaQuery.of(context).size.height /
+                                                50),
                                     Padding(
                                       padding: EdgeInsets.only(
                                           right: MediaQuery.of(context)
-                                              .size
-                                              .height /
+                                                  .size
+                                                  .height /
                                               50),
                                       child: Text(
-                                        "Category: "+doc['categories'],
+                                        "Category: " + doc['categories'],
                                         maxLines: 4,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                .size
-                                                .height /
+                                                    .size
+                                                    .height /
                                                 65,
                                             color: Colors.black),
                                       ),
                                     ),
                                     SizedBox(
                                         height:
-                                        MediaQuery.of(context).size.height /
-                                            50),
+                                            MediaQuery.of(context).size.height /
+                                                50),
                                     Row(
                                       children: [
                                         Icon(Icons.star, size: 12),
                                         Icon(Icons.star, size: 12),
                                         Icon(Icons.star, size: 12),
-
                                       ],
                                     ),
                                     SizedBox(height: 20),
                                     Row(
                                       children: [
-                                        Icon(Icons.currency_rupee,
-                                            size: 12),
-                                        Text(doc['pricePerProduct'],
+                                        Text(
+                                            "\u{20B9}" + doc['pricePerProduct'],
                                             style: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 12,
@@ -168,7 +167,7 @@ class ListPlaces extends StatelessWidget {
           }
           return Scaffold(
               body:
-              Center(child: CircularProgressIndicator(color: Colors.grey)));
+                  Center(child: CircularProgressIndicator(color: Colors.grey)));
         });
   }
 }
