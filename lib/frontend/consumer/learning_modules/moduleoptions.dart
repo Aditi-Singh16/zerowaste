@@ -87,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MyHomePager(title: "", type: 1),
+                        builder: (context) => MyHomePager(title: "", type: 2),
                       ),
                     );
                   },
@@ -118,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MyHomePager(title: "", type: 0),
+                        builder: (context) => MyHomePager(title: "", type: 3),
                       ),
                     );
                   },
@@ -157,7 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => MyHomePager(title: "", type: 2),
+                          builder: (context) => MyHomePager(title: "", type: 1),
                         ),
                       );
                     },
@@ -187,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => MyHomePager(title: "", type: 2),
+                          builder: (context) => MyHomePager(title: "", type: 4),
                         ),
                       );
                     },
@@ -225,7 +225,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MyHomePager(title: "", type: 2),
+                        builder: (context) => MyHomePager(title: "", type: 5),
                       ),
                     );
                   },
@@ -256,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => MyHomePager(title: "", type: 2),
+                          builder: (context) => MyHomePager(title: "", type: 0),
                         ),
                       );
                     },

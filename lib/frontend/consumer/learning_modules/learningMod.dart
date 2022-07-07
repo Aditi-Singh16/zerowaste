@@ -132,10 +132,14 @@ class _MyHomePagerState extends State<MyHomePager> {
                         return ListTile(
                             title: Column(
                           children: <Widget>[
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * .02),
                             YoutubePlayer(
                               controller: _controller,
                               liveUIColor: Colors.amber,
                             ),
+                            Text(_controller.metadata.title),
                           ],
                         ));
                       });
