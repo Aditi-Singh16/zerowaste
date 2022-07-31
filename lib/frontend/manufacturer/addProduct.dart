@@ -36,7 +36,7 @@ class PageForm extends StatefulWidget {
 
 class _PageFormState extends State<PageForm> {
   sendData() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && image != null) {
       var storageImage = FirebaseStorage.instance.ref().child(image.path);
       var task = storageImage.putFile(image);
       imgUrl = await (await task).ref.getDownloadURL();
@@ -75,7 +75,7 @@ class _PageFormState extends State<PageForm> {
   String imgUrl = '';
 
   void ButtonValidate() {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && image != null) {
       // print('${user.name}:${user.phone}:${user.email}');
 
       Scaffold.of(context).showSnackBar(SnackBar(
@@ -151,8 +151,8 @@ class _PageFormState extends State<PageForm> {
                 controller: _nameController,
                 decoration: InputDecoration(
                   prefixIcon: Icon(
-                    CupertinoIcons.person_fill,
-                    size: 30,
+                    CupertinoIcons.bag_fill,
+                    size: 24,
                     color: _nameFocus.hasFocus ? _focusColor : _defaultColor,
                   ),
                   border: OutlineInputBorder(),
@@ -192,8 +192,8 @@ class _PageFormState extends State<PageForm> {
                 focusNode: _descFocus,
                 decoration: InputDecoration(
                   prefixIcon: Icon(
-                    CupertinoIcons.phone_fill,
-                    size: 20,
+                    CupertinoIcons.text_bubble_fill,
+                    size: 24,
                     color: _descFocus.hasFocus ? _focusColor : _defaultColor,
                   ),
                   border: OutlineInputBorder(),
@@ -238,8 +238,10 @@ class _PageFormState extends State<PageForm> {
                   var length = snapshot.data!.docs.length;
                   DocumentSnapshot ds = snapshot.data!.docs[length - 1];
 
-                  return new Container(
-                    padding: EdgeInsets.only(bottom: 16.0),
+                  return Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade400)),
+                    padding: EdgeInsets.only(bottom: 10.0, top: 10),
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: new Row(
                       children: <Widget>[
@@ -248,8 +250,21 @@ class _PageFormState extends State<PageForm> {
                             child: new Container(
                               padding:
                                   EdgeInsets.fromLTRB(12.0, 10.0, 10.0, 10.0),
-                              child: new Text(
-                                "Category",
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 10.0),
+                                    child: Icon(
+                                      CupertinoIcons.square_grid_2x2_fill,
+                                      color: _category != null
+                                          ? _focusColor
+                                          : _defaultColor,
+                                    ),
+                                  ),
+                                  new Text(
+                                    "Category",
+                                  ),
+                                ],
                               ),
                             )),
                         new Expanded(
@@ -285,12 +300,13 @@ class _PageFormState extends State<PageForm> {
                     ),
                   );
                 }),
+            SizedBox(height: 20),
             TextFormField(
                 controller: _quantityController,
                 focusNode: _quantityFocus,
                 decoration: InputDecoration(
                   prefixIcon: Icon(
-                    CupertinoIcons.mail_solid,
+                    CupertinoIcons.add,
                     size: 20,
                     color:
                         _quantityFocus.hasFocus ? _focusColor : _defaultColor,
@@ -324,11 +340,11 @@ class _PageFormState extends State<PageForm> {
                   if (value!.isEmpty) {
                     return 'Please enter quantity available';
                   }
-                  if (int.parse(value) < 50) {
-                    return 'Quantity cannot be less than 50';
-                  }
                   if (!regExp.hasMatch(value)) {
                     return 'Please enter valid quantity';
+                  }
+                  if (int.parse(value) < 50) {
+                    return 'Quantity cannot be less than 50';
                   }
                   return null;
                 }),
@@ -338,7 +354,7 @@ class _PageFormState extends State<PageForm> {
                 focusNode: _priceFocus,
                 decoration: InputDecoration(
                   prefixIcon: Icon(
-                    CupertinoIcons.mail_solid,
+                    CupertinoIcons.creditcard_fill,
                     size: 20,
                     color: _priceFocus.hasFocus ? _focusColor : _defaultColor,
                   ),

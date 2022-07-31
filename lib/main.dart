@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/consumer/consumer_tabbar.dart';
 import 'package:zerowaste/frontend/manufacturer/dashboard.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
+import 'package:zerowaste/frontend/manufacturer/addProduct.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,4 +29,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
