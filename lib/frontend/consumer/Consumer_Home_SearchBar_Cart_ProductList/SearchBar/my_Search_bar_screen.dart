@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_ProductList/ProductList.dart';
-import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_ProductList/search.dart';
+import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ProductList.dart';
+import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/SearchBar/search.dart';
 String query='';
 String cat='';
 class MySearchBarScreen extends StatelessWidget {
@@ -36,7 +36,7 @@ class MySearchBarScreen extends StatelessWidget {
       ),
       body: Center(
 
-        child: ListPlaces(category: category),
+        child: IndividualCategoryProductList(category: category),
       ),
     );
   }
