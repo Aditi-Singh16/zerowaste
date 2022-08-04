@@ -1,6 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-String query='';
+import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/SearchBar/search.dart';
+
+
 class ProductSearch extends SearchDelegate{
   CollectionReference _collectionReference = FirebaseFirestore.instance.collection('products');
 

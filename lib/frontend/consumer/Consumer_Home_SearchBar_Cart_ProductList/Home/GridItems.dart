@@ -3,7 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_ProductList/ProductList.dart';
+import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ProductList.dart';
 
 
 
@@ -57,7 +57,7 @@ class _GridItemsState extends State<GridItems> {
                               children: [
                                 Container(
                                   margin: EdgeInsets.all(8),
-                                  height: height/6,
+                                  height: height/7,
                                   width: width/2.3,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(15),
@@ -72,18 +72,21 @@ class _GridItemsState extends State<GridItems> {
                                 //     right:20,
                                 //     top:15,
                                 //     child: Container(
-                                //
-                                //
-                                //
-                                //         child: Icon(Icons.favorite, color: Colors.red,
-                                //         size:15),
+                                //         child: Icon(Icons.shopping_cart, color: Color(0xFF5CAD81),
+                                //         size:height/40),
                                 //     )),
                               ],
                             ),
                             Text(snapshot.data!.docs[index]['name'],
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
+                                  height: height/1000,
+                                )),
+                            Text("\u{20B9} "+snapshot.data!.docs[index]['pricePerProduct'],
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
                                   height: height/500,
+                                  color: Color(0xFF008080),
                                 )),
                           ],
                         ),
