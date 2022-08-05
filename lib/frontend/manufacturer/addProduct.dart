@@ -40,7 +40,8 @@ class _PageFormState extends State<PageForm> {
       var storageImage = FirebaseStorage.instance.ref().child(image.path);
       var task = storageImage.putFile(image);
       imgUrl = await (await task).ref.getDownloadURL();
-      await FirebaseFirestore.instance.collection("products").add({
+      String docId = FirebaseFirestore.instance.collection('products').doc().id;
+      await FirebaseFirestore.instance.collection("products").doc(docId).set({
         'name': _name,
         'Desc': _desc,
         'image': imgUrl,
@@ -48,7 +49,8 @@ class _PageFormState extends State<PageForm> {
         'quantity': _quantity,
         'pricePerProduct': _price,
         'manufacturerId': manufacturerId,
-        'timestamp': DateTime.now()
+        'timestamp': DateTime.now(),
+        'productId': docId
       });
     }
   }

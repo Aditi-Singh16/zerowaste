@@ -41,9 +41,14 @@ dependencies:
   flutter_spinkit: ^5.1.0
   razorpay_flutter: ^1.2.9
   carousel_slider: ^4.1.1
-  flutter_svg: ^1.0.3
+  flutter_svg:
   firebase_auth: ^1.1.0
-  
+  google_maps_flutter:
+  geolocator:
+  google_maps_webservice:
+  location: ^4.4.0
+  latlong: ^0.6.1
+  marker_icon:
 
 dev_dependencies:
   flutter_test:
