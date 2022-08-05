@@ -1,8 +1,8 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:zerowaste/frontend/consumer/requirements_sell/add_requirements.dart';
-import 'package:zerowaste/frontend/consumer/requirements_sell/view_requirements.dart';
+import 'package:zerowaste/frontend/requirements_sell/add_requirements.dart';
+import 'package:zerowaste/frontend/requirements_sell/view_requirements.dart';
 
 class ConsumerTabBar extends StatelessWidget {
   const ConsumerTabBar({Key? key}) : super(key: key);

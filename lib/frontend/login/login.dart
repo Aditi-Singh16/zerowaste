@@ -1,9 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:zerowaste/backend/userModal/user.dart';
 import 'package:zerowaste/frontend/consumer/consumer_tabbar.dart';
+import 'package:zerowaste/frontend/consumerNavbar.dart';
 import 'package:zerowaste/frontend/login/profile_page.dart';
 import 'package:zerowaste/frontend/login/registration.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:zerowaste/frontend/manufacturer/Orders.dart';
+import 'package:zerowaste/frontend/manufacturerNavbar.dart';
+import 'package:zerowaste/frontend/ngoNavbar.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -168,8 +174,26 @@ class _LoginScreenState extends State<LoginScreen> {
             .signInWithEmailAndPassword(email: email, password: password)
             .then((uid) => {
                   Fluttertoast.showToast(msg: "Login Successful"),
-                  Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => ProfilePage())),
+                  Navigator.of(context)
+                      .pushReplacement(MaterialPageRoute(builder: (context) {
+                    User? user = FirebaseAuth.instance.currentUser;
+                    UserModel loggedInUser = UserModel();
+                    FirebaseFirestore.instance
+                        .collection("Users")
+                        .doc(user!.uid)
+                        .get()
+                        .then((value) {
+                      loggedInUser = UserModel.fromMap(value.data());
+                    });
+                    if (loggedInUser.type == 'Consumer') {
+                      ConsumerNavbar();
+                    } else if (loggedInUser.type == 'Manufacturer') {
+                      ManufacturerNavbar();
+                    } else if (loggedInUser.type == 'NGO') {
+                      NgoNavbar();
+                    }
+                    return CircularProgressIndicator();
+                  })),
                 });
       } on FirebaseAuthException catch (error) {
         switch (error.code) {

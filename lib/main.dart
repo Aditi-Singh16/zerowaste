@@ -1,7 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/consumer/consumer_tabbar.dart';
-import 'package:zerowaste/frontend/consumer/dashboard.dart';
+import 'package:zerowaste/frontend/login/login.dart';
+import 'package:zerowaste/frontend/manufacturer/dashboard.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
 import 'package:zerowaste/frontend/inputDisposalCategory.dart';
 import 'package:zerowaste/frontend/manufacturer/addProduct.dart';
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           scaffoldBackgroundColor: Color(0xffF2F6FD),
           appBarTheme: AppBarTheme(backgroundColor: Color(0xff001427))),
-      home: inputCategory(),
+      home: LoginScreen(),
     );
   }
 }
