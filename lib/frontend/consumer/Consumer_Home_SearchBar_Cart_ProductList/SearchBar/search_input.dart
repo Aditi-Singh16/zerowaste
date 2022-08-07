@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_ProductList/search.dart';
+import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/SearchBar/search.dart';
 
 
 String query='';
@@ -11,9 +11,9 @@ class SearchInput extends StatelessWidget {
   CollectionReference collectionReference = FirebaseFirestore.instance
       .collection('products');
   final tagsList = [
-    'Bags',
-    'Clothing',
-    'Electronics',
+    'Silk',
+    'Plastic',
+    'Leather',
     'Other',
   ];
   @override

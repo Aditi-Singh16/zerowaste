@@ -3,7 +3,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_ProductList/ProductList.dart';
+import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ProductList.dart';
+import 'package:zerowaste/frontend/consumer/details.dart';
 
 
 
@@ -56,8 +57,23 @@ class _GridItemsState extends State<GridItems> {
                             Stack(
                               children: [
                                 Container(
+                                  child:InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) => Details(
+                                                    name: snapshot.data!.docs[index]['name'],
+                                                    description:snapshot.data!.docs[index]['description'] ,
+                                                    price: double.parse(snapshot.data!.docs[index]['price']),
+                                                    category: snapshot.data!.docs[index]['category'],
+                                                    productid:snapshot.data!.docs[index]['productId'] ,
+                                                    uid: userauthid,
+                                                    manufacturerid:
+                                                        snapshot.data!.docs[index]['manufacturerId'],
+                                                    image: snapshot.data!.docs[index]['image'])));
+                                      },),
                                   margin: EdgeInsets.all(8),
-                                  height: height/6,
+                                  height: height/7,
                                   width: width/2.3,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(15),
@@ -72,18 +88,21 @@ class _GridItemsState extends State<GridItems> {
                                 //     right:20,
                                 //     top:15,
                                 //     child: Container(
-                                //
-                                //
-                                //
-                                //         child: Icon(Icons.favorite, color: Colors.red,
-                                //         size:15),
+                                //         child: Icon(Icons.shopping_cart, color: Color(0xFF5CAD81),
+                                //         size:height/40),
                                 //     )),
                               ],
                             ),
                             Text(snapshot.data!.docs[index]['name'],
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
+                                  height: height/1000,
+                                )),
+                            Text("\u{20B9} "+snapshot.data!.docs[index]['pricePerProduct'],
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
                                   height: height/500,
+                                  color: Color(0xFF008080),
                                 )),
                           ],
                         ),
