@@ -3,14 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/wasteDisposal.dart';
 
-class inputCategory extends StatefulWidget {
-  inputCategory({Key? key}) : super(key: key);
+class InputCategory extends StatefulWidget {
+  InputCategory({Key? key}) : super(key: key);
 
   @override
-  State<inputCategory> createState() => _inputCategoryState();
+  State<InputCategory> createState() => _InputCategoryState();
 }
 
-class _inputCategoryState extends State<inputCategory> {
+class _InputCategoryState extends State<InputCategory> {
   var _category = null;
   Widget input() {
     return StreamBuilder<QuerySnapshot>(

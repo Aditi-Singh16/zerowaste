@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,7 +7,7 @@ import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_Product
 
 import '../../details.dart';
 
-String userauthid = 'bcbF3NkrUnQqqeqO49pb';
+String userauthid = FirebaseAuth.instance.currentUser!.uid;
 num quant = 0;
 
 class IndividualCategoryProductList extends StatelessWidget {
@@ -52,7 +53,7 @@ class IndividualCategoryProductList extends StatelessWidget {
                     String prod_id = doc['productId'];
                     String manufacturerid = doc['manufacturerId'];
                     String price = doc['pricePerProduct'];
-                    String description = doc['description'];
+                    String description = doc['Desc'];
                     String image = doc['image'];
                     String category = doc['categories'];
                     if (name.length > 10) {

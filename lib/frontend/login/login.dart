@@ -184,14 +184,21 @@ class _LoginScreenState extends State<LoginScreen> {
                         .get()
                         .then((value) {
                       loggedInUser = UserModel.fromMap(value.data());
+                      print(loggedInUser.toMap()['type']);
+
+                      if (loggedInUser.toMap()['type'] == 'Consumer') {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ConsumerNavbar()));
+                      } else if (loggedInUser.toMap()['type'] ==
+                          'Manufacturer') {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ManufacturerNavbar()));
+                      } else if (loggedInUser.toMap()['type'] == 'NGO') {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => NgoNavbar()));
+                      }
                     });
-                    if (loggedInUser.type == 'Consumer') {
-                      ConsumerNavbar();
-                    } else if (loggedInUser.type == 'Manufacturer') {
-                      ManufacturerNavbar();
-                    } else if (loggedInUser.type == 'NGO') {
-                      NgoNavbar();
-                    }
+
                     return CircularProgressIndicator();
                   })),
                 });

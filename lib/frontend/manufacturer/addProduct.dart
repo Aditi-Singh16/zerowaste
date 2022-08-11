@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:image_picker/image_picker.dart';
+import 'package:zerowaste/backend/userModal/user.dart';
 
 class AddProduct extends StatefulWidget {
   AddProduct({Key? key}) : super(key: key);
@@ -41,16 +44,25 @@ class _PageFormState extends State<PageForm> {
       var task = storageImage.putFile(image);
       imgUrl = await (await task).ref.getDownloadURL();
       String docId = FirebaseFirestore.instance.collection('products').doc().id;
-      await FirebaseFirestore.instance.collection("products").doc(docId).set({
-        'name': _name,
-        'Desc': _desc,
-        'image': imgUrl,
-        'categories': _category,
-        'quantity': _quantity,
-        'pricePerProduct': _price,
-        'manufacturerId': manufacturerId,
-        'timestamp': DateTime.now(),
-        'productId': docId
+      User? user = FirebaseAuth.instance.currentUser;
+      UserModel loggedInUser = UserModel();
+      FirebaseFirestore.instance
+          .collection("Users")
+          .doc(user!.uid)
+          .get()
+          .then((value) {
+        loggedInUser = UserModel.fromMap(value.data());
+        FirebaseFirestore.instance.collection("products").doc(docId).set({
+          'name': _name,
+          'Desc': _desc,
+          'image': imgUrl,
+          'categories': _category,
+          'quantity': int.parse(_quantity),
+          'pricePerProduct': _price,
+          'manufacturerId': loggedInUser.uid,
+          'timestamp': DateTime.now(),
+          'productId': docId
+        });
       });
     }
   }
@@ -71,7 +83,7 @@ class _PageFormState extends State<PageForm> {
   var _price = "";
   var _category = null;
 
-  var manufacturerId = 'unfoWBpH8AidhiSmwx44';
+  var manufacturerId = '';
 
   var image;
   String imgUrl = '';
@@ -79,10 +91,18 @@ class _PageFormState extends State<PageForm> {
   void ButtonValidate() {
     if (_formKey.currentState!.validate() && image != null) {
       // print('${user.name}:${user.phone}:${user.email}');
-
+      sendData();
       Scaffold.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.green,
           content: Text('Product Added successfully!')));
+      setState(() {
+        _nameController.clear();
+        _descController.clear();
+        _quantityController.clear();
+        _priceController.clear();
+        image = null;
+        imgUrl = '';
+      });
     } else {
       Scaffold.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.redAccent,
@@ -405,7 +425,6 @@ class _PageFormState extends State<PageForm> {
                         )),
                     onPressed: () => {
                           color ? ButtonValidate() : null,
-                          sendData(),
                         }))
           ])),
     );

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,20 +25,17 @@ var dateParse = DateTime.parse(date);
 
 var formattedDate = "${dateParse.day}-${dateParse.month}-${dateParse.year}";
 int delivery_charges = 20;
-String userauthid = 'bcbF3NkrUnQqqeqO49pb';
+String userauthid = FirebaseAuth.instance.currentUser!.uid;
 DateTime selectedDate = DateTime.now();
-CollectionReference products = FirebaseFirestore.instance
-    .collection('Products')
-    .doc('unfoWBpH8AidhiSmwx44')
-    .collection('Products');
+CollectionReference products =
+    FirebaseFirestore.instance.collection('Products');
+
 class ShoppingCart extends StatefulWidget {
   @override
   State<ShoppingCart> createState() => _ShoppingCartState();
 }
 
 class _ShoppingCartState extends State<ShoppingCart> {
-  String productid = '6Ffxps7z7OvLjMtUwcxn';
-  String manufacturerid = 'unfoWBpH8AidhiSmwx44';
   int amount = megatotal.toInt();
 
   Razorpay razorpay = Razorpay();
@@ -55,10 +53,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
       .collection('Users')
       .doc(userauthid.toString())
       .collection('Cart');
-
-
-
-  get async => null;
 
   @override
   void initState() {
@@ -99,7 +93,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
             .add({
           "ProductName": doc['name'],
           "Quantity": doc['quantity'],
-          "price": doc['price'],
+          "price": doc['pricePerProduct'],
           "address": address,
           "phone_number": phone_number,
           "Time": time,
@@ -125,16 +119,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
             .doc(productid)
             .update({
           "quantity": FieldValue.increment(-int.parse(qua)),
-        }
-
-        );
-
         });
-
-
-
-
-
+      });
     });
     showDialog(
       context: context,
@@ -231,24 +217,22 @@ class _ShoppingCartState extends State<ShoppingCart> {
     height = size.height;
     width = size.width;
     num checkquantity = 0;
-    CollectionReference product = FirebaseFirestore.instance
-        .collection('products');
+    CollectionReference product =
+        FirebaseFirestore.instance.collection('products');
     // get quantity field from products collection
 
     return StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('Users')
             //uid of user
-            .doc('bcbF3NkrUnQqqeqO49pb')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
             .collection('Cart')
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-
-          CollectionReference n= FirebaseFirestore.instance
+          CollectionReference n = FirebaseFirestore.instance
               .collection('Users')
-              .doc('bcbF3NkrUnQqqeqO49pb')
+              .doc(FirebaseAuth.instance.currentUser!.uid)
               .collection('Cart');
-
 
           if (!snapshot.hasData) {
             return Center(
@@ -263,20 +247,20 @@ class _ShoppingCartState extends State<ShoppingCart> {
                     ),
                     body: Center(
                         child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.black)))));
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.black)))));
           }
           if (snapshot.hasData) {
             // get length of douments firebas
-            num? total = 0;
-            num? quant = 0;
+            num total = 0;
+            num quant = 0;
             for (int i = 0; i < snapshot.data.docs.length; i++) {
-              quant = quant! + snapshot.data.docs[i].data()['quantity'];
-              total = total! +
+              quant = quant + snapshot.data.docs[i].data()['quantity'];
+              total = total +
                   snapshot.data.docs[i].data()['price'] *
                       snapshot.data.docs[i].data()['quantity'];
             }
-            megatotal = delivery_charges + total!;
+            megatotal = delivery_charges + total;
             return Scaffold(
               appBar: PreferredSize(
                 preferredSize: Size.fromHeight(height * 0.06),
@@ -551,7 +535,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                                         true));
                                                           } else if (doc1[
                                                                   'quantity'] <=
-                                                              0 ) {
+                                                              0) {
                                                             FirebaseFirestore
                                                                 .instance
                                                                 .collection(
@@ -585,18 +569,14 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                         onTap: () {
                                                           // update data from flutter firebase
 
-                                                              newu.doc(doc1.id).set(
-                                                                  {
-                                                                    "quantity":
+                                                          newu.doc(doc1.id).set(
+                                                              {
+                                                                "quantity":
                                                                     doc1['quantity'] +
                                                                         1,
-                                                                  },
-                                                                  SetOptions(
-                                                                      merge: true));
-
-
-
-
+                                                              },
+                                                              SetOptions(
+                                                                  merge: true));
                                                         },
                                                         child: Icon(CupertinoIcons
                                                             .plus_circle_fill),
@@ -895,7 +875,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                                   regExp.hasMatch(
                                                                       phone_number
                                                                           .toString()) &&
-                                                                  address.length>5) {
+                                                                  address.length >
+                                                                      5) {
                                                                 await openCheckout();
                                                               } else {
                                                                 if (checkifpayed ==

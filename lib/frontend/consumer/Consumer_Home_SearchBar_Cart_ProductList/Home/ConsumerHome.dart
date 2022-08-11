@@ -9,8 +9,8 @@ import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_Product
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/SearchBar/my_Search_bar_screen.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/SearchBar/search_input.dart';
 
-
 CollectionReference u = FirebaseFirestore.instance.collection('categories');
+
 class UserHome extends StatefulWidget {
   UserHome({Key? key}) : super(key: key);
 
@@ -38,8 +38,7 @@ class _UserHomeState extends State<UserHome> {
           if (snapshot.hasError) {
             return Center(
                 child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                        Colors.black)));
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.black)));
           }
           if (snapshot.hasData) {
             final List<DocumentSnapshot> documents = snapshot.data!.docs;
@@ -81,7 +80,7 @@ class _UserHomeState extends State<UserHome> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  MySearchBarScreen(
+                                                  IndividualCategoryProductList(
                                                       category: doc['name']),
                                             ),
                                           );

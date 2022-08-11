@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:zerowaste/frontend/consumer/color.dart';
@@ -353,7 +354,8 @@ class _DetailsState extends State<Details> {
                                     minimumSize: MaterialStateProperty.all(
                                         Size(size.width / 2.6, 37))),
                                 onPressed: () async {
-                                  String uid = 'bcbF3NkrUnQqqeqO49pb';
+                                  String uid =
+                                      FirebaseAuth.instance.currentUser!.uid;
                                   amount = widget.price * int.parse(quantity);
                                   if (_formkey.currentState!.validate()) {
                                     await FirebaseFirestore.instance
@@ -361,9 +363,14 @@ class _DetailsState extends State<Details> {
                                         .doc(uid)
                                         .collection('Cart')
                                         .add({
+                                      "categories": widget.category,
+                                      "image": widget.image,
+                                      "manufacturerId": widget.manufacturerid,
+                                      "name": widget.name,
+                                      "price": widget.price,
                                       "productId": widget.productid,
-                                      "Quantity": quantity,
-                                      "Amount": amount,
+                                      "quantity": int.parse(quantity),
+                                      "userId": uid,
                                     });
                                   }
                                 },

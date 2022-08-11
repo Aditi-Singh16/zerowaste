@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
@@ -11,7 +12,7 @@ class YourOrders extends StatefulWidget {
 }
 
 class _YourOrdersState extends State<YourOrders> {
-  String uid = "bcbF3NkrUnQqqeqO49pb";
+  String uid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   Widget build(BuildContext context) {

@@ -48,7 +48,7 @@ dependencies:
   firebase_auth: ^1.1.0
   scratcher:
   google_maps_flutter:
-  geolocator:
+  # geolocator:
   google_maps_webservice:
   location:
   latlong: ^0.6.1

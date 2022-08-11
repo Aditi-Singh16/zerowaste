@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +6,7 @@ import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_Product
 import 'package:zerowaste/frontend/consumer/details.dart';
 
 class ProductSearch extends SearchDelegate {
-  String userauthid = 'bcbF3NkrUnQqqeqO49pb';
+  String userauthid = FirebaseAuth.instance.currentUser!.uid;
   CollectionReference _collectionReference =
       FirebaseFirestore.instance.collection('products');
 
@@ -50,11 +51,11 @@ class ProductSearch extends SearchDelegate {
                     .map((document) {
                   final String name = document.get('name');
                   final String image = document.get('image');
-                  final String description = document.get('description');
+                  final String description = document.get('Desc');
                   final String prod_id = document.get('productId');
                   final String manufacturerid = document.get('manufacturerId');
-                  final String price = document.get('price');
-                  final String category = document.get('category');
+                  final String price = document.get('pricePerProduct');
+                  final String category = document.get('categories');
                   return ListTile(
                       title: Text(name),
                       subtitle: Text(document['Desc']),
