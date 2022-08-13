@@ -57,6 +57,7 @@ class IndividualCategoryProductList extends StatelessWidget {
                     String image = doc['image'];
                     String category = doc['categories'];
                     String is_plant = doc['is_plant'];
+                    int quantity = doc['quantity'];
                     if (name.length > 10) {
                       name = name.substring(0, 10) + "...";
                     }
@@ -77,16 +78,16 @@ class IndividualCategoryProductList extends StatelessWidget {
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => Details(
-                                      name: name,
-                                      description: description,
-                                      price: double.parse(price),
-                                      category: category,
-                                      productid: prod_id,
-                                      uid: userauthid,
-                                      manufacturerid: manufacturerid,
-                                      image: image,
-                                      is_plant: is_plant,
-                                    )));
+                                    name: name,
+                                    description: description,
+                                    price: double.parse(price),
+                                    category: category,
+                                    productid: prod_id,
+                                    uid: userauthid,
+                                    manufacturerid: manufacturerid,
+                                    image: image,
+                                    is_plant: is_plant,
+                                    q: quantity)));
                           },
                           child: Row(
                             children: [
@@ -116,21 +117,20 @@ class IndividualCategoryProductList extends StatelessWidget {
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                        Navigator.of(context)
-                                            .push(MaterialPageRoute(
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
                                                 builder: (context) => Details(
-                                                      name: name,
-                                                      description: description,
-                                                      price:
-                                                          double.parse(price),
-                                                      category: category,
-                                                      productid: prod_id,
-                                                      uid: userauthid,
-                                                      manufacturerid:
-                                                          manufacturerid,
-                                                      image: image,
-                                                      is_plant: is_plant,
-                                                    )));
+                                                    name: name,
+                                                    description: description,
+                                                    price: double.parse(price),
+                                                    category: category,
+                                                    productid: prod_id,
+                                                    uid: userauthid,
+                                                    manufacturerid:
+                                                        manufacturerid,
+                                                    image: image,
+                                                    is_plant: is_plant,
+                                                    q: quantity)));
                                       },
                                       child: Padding(
                                         padding: EdgeInsets.only(

@@ -1,12 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Cart/ShoppingCart.dart';
 import 'package:zerowaste/frontend/consumer/color.dart';
 import 'package:zerowaste/frontend/consumer/style.dart';
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:zerowaste/frontend/manufacturer/Orders.dart';
+import 'package:flutter/cupertino.dart';
 
 class Details extends StatefulWidget {
+  int q;
   String name;
   String description;
   double price;
@@ -25,7 +29,8 @@ class Details extends StatefulWidget {
       required this.uid,
       required this.manufacturerid,
       required this.image,
-      required this.is_plant});
+      required this.is_plant,
+      required this.q});
 
   @override
   State<Details> createState() => _DetailsState();
@@ -49,6 +54,10 @@ class _DetailsState extends State<Details> {
   double beforediscount = 0;
   double afterdiscount = 0;
   String error = '';
+  String phone_number = '';
+  TextEditingController _controller1 = TextEditingController();
+  TextEditingController _controller2 = TextEditingController();
+  String address = '';
 
   @override
   void initState() {
@@ -142,12 +151,76 @@ class _DetailsState extends State<Details> {
       "Date": date,
       "manufacturerId": widget.manufacturerid
     });
+
+    await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(widget.uid)
+        .update({'Phonenumber': phone_number, 'Address': address});
+    await FirebaseFirestore.instance
+        .collection('products')
+        .doc(widget.productid)
+        .update({'quantity': (widget.q - int.parse(quantity))});
     // Toast.show("Pament success", context);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: const Text("Order Completed"),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => Orders()));
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.black,
+              ),
+              padding: const EdgeInsets.all(14),
+              child: const Text(
+                "Continue",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void handlerErrorFailure(PaymentFailureResponse response) {
     print("Payment error $response");
     // Toast.show("Pament error", context);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: const Text("Transaction failed"),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.black,
+              ),
+              padding: const EdgeInsets.all(14),
+              child: const Text(
+                "Continue",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void handlerExternalWallet(ExternalWalletResponse response) {
@@ -190,6 +263,8 @@ class _DetailsState extends State<Details> {
         validity[2] = data['Coupon2'];
         validity[3] = data['Coupon3'];
         validity[4] = data['Coupon4'];
+        _controller1.text = data['PhoneNumber'];
+        _controller2.text = data['Address'];
       });
       print(validity);
     }
@@ -248,8 +323,29 @@ class _DetailsState extends State<Details> {
                         const SizedBox(
                           height: 7,
                         ),
-                        Text('Quantity',
-                            style: AppStyle.text.copyWith(color: Colors.white)),
+                        Row(
+                          children: [
+                            Text('Category: ',
+                                style: AppStyle.text
+                                    .copyWith(color: Colors.white)),
+                            const Spacing(),
+                            Text(widget.category,
+                                style: AppStyle.text
+                                    .copyWith(color: Colors.white)),
+                          ],
+                        ),
+                        const Spacing(),
+                        Row(
+                          children: [
+                            Text('Quantity',
+                                style: AppStyle.text
+                                    .copyWith(color: Colors.white)),
+                            const Spacing(),
+                            Text(widget.q.toString(),
+                                style: AppStyle.text
+                                    .copyWith(color: Colors.white)),
+                          ],
+                        ),
                         const Spacing(),
                         Form(
                           key: _formkey,
@@ -265,8 +361,9 @@ class _DetailsState extends State<Details> {
                                       : (amount = amount);
                                 });
                               },
-                              validator: (val) =>
-                                  val!.isEmpty ? "Enter quantity" : null,
+                              validator: (val) => (int.parse(val!) > widget.q)
+                                  ? "Enter correct quantity"
+                                  : null,
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
                                   borderSide:
@@ -493,6 +590,10 @@ class _DetailsState extends State<Details> {
                                       "quantity": int.parse(quantity),
                                       "userId": uid,
                                     });
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ShoppingCart()));
                                   }
                                 },
                                 child: Text('Add To Cart',
@@ -509,27 +610,232 @@ class _DetailsState extends State<Details> {
                                     minimumSize: MaterialStateProperty.all(
                                         Size(size.width / 2.6, 37))),
                                 onPressed: () async {
-                                  if (_formkey.currentState!.validate()) {
-                                    setState(() {
-                                      if (beforediscount == afterdiscount) {
-                                        amount =
-                                            widget.price * int.parse(quantity);
-                                        plant
-                                            ? (amount = amount + 5)
-                                            : (amount = amount);
-                                      }
-                                    });
-                                    await openCheckout();
+                                  showModalBottomSheet(
+                                    isScrollControlled: true,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(16),
+                                          topRight: Radius.circular(16)),
+                                    ),
+                                    context: context, // set this to true
+                                    builder: (_) {
+                                      return DraggableScrollableSheet(
+                                        initialChildSize: 0.37,
+                                        maxChildSize: 0.6,
+                                        minChildSize: 0.3,
+                                        expand: false,
+                                        builder: (_, controller) {
+                                          String pattern = r'(^[7-9][0-9]{9}$)';
+                                          RegExp regExp = new RegExp(pattern);
 
-                                    if (beforediscount != afterdiscount) {
-                                      String couponname =
-                                          'Coupon' + indx.toString();
-                                      await FirebaseFirestore.instance
-                                          .collection('Users')
-                                          .doc(widget.uid)
-                                          .update({couponname: false});
-                                    }
-                                  }
+                                          return Container(
+                                              // rounded border container top
+                                              // take input and button click to update data from flutter firebase
+                                              child: Padding(
+                                                  padding: EdgeInsets.all(15),
+                                                  child: Column(
+                                                    children: <Widget>[
+                                                      Text(
+                                                        "Personal Details",
+                                                        style: TextStyle(
+                                                          fontSize: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width /
+                                                              20,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      Divider(),
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.all(15),
+                                                        child: TextField(
+                                                          controller:
+                                                              _controller2,
+                                                          decoration:
+                                                              InputDecoration(
+                                                            prefixIcon: Icon(
+                                                              CupertinoIcons
+                                                                  .phone_circle_fill,
+                                                              size: 24,
+                                                            ),
+                                                            border:
+                                                                OutlineInputBorder(),
+                                                            focusedBorder:
+                                                                OutlineInputBorder(
+                                                              borderSide:
+                                                                  const BorderSide(
+                                                                      color: Colors
+                                                                          .black,
+                                                                      width:
+                                                                          2.0),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20.0),
+                                                            ),
+                                                            labelText:
+                                                                'Contact Number',
+                                                            hintText:
+                                                                'Enter Your Phone Number',
+                                                          ),
+                                                          onChanged: (text) {
+                                                            phone_number =
+                                                                text.toString();
+                                                            text =
+                                                                text.toString();
+                                                          },
+                                                        ),
+                                                      ),
+                                                      Divider(),
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.all(15),
+                                                        child: TextField(
+                                                          controller:
+                                                              _controller1,
+                                                          onChanged: (text) {
+                                                            address = text;
+                                                          },
+                                                          decoration:
+                                                              InputDecoration(
+                                                            prefixIcon: Icon(
+                                                              CupertinoIcons
+                                                                  .home,
+                                                              size: 24,
+                                                            ),
+                                                            border:
+                                                                OutlineInputBorder(),
+                                                            focusedBorder:
+                                                                OutlineInputBorder(
+                                                              borderSide:
+                                                                  const BorderSide(
+                                                                      color: Colors
+                                                                          .black,
+                                                                      width:
+                                                                          2.0),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20.0),
+                                                            ),
+                                                            labelText:
+                                                                'Your Address',
+                                                            hintText:
+                                                                'Enter Your Address',
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                      CupertinoButton(
+                                                          color: Colors.black,
+                                                          child: Text(
+                                                              'Continue to Payment...'),
+                                                          onPressed: () async {
+                                                            if (phone_number !=
+                                                                    null &&
+                                                                regExp.hasMatch(
+                                                                    phone_number
+                                                                        .toString()) &&
+                                                                address.length >
+                                                                    5) {
+                                                              if (_formkey
+                                                                  .currentState!
+                                                                  .validate()) {
+                                                                setState(() {
+                                                                  if (beforediscount ==
+                                                                      afterdiscount) {
+                                                                    amount = widget
+                                                                            .price *
+                                                                        int.parse(
+                                                                            quantity);
+                                                                    plant
+                                                                        ? (amount =
+                                                                            amount +
+                                                                                5)
+                                                                        : (amount =
+                                                                            amount);
+                                                                  }
+                                                                });
+                                                                await openCheckout();
+
+                                                                if (beforediscount !=
+                                                                    afterdiscount) {
+                                                                  String
+                                                                      couponname =
+                                                                      'Coupon' +
+                                                                          indx.toString();
+                                                                  await FirebaseFirestore
+                                                                      .instance
+                                                                      .collection(
+                                                                          'Users')
+                                                                      .doc(widget
+                                                                          .uid)
+                                                                      .update({
+                                                                    couponname:
+                                                                        false
+                                                                  });
+                                                                }
+                                                              }
+                                                            } else {
+                                                              showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder: (ctx) =>
+                                                                    AlertDialog(
+                                                                  shape:
+                                                                      RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            20),
+                                                                  ),
+                                                                  title: const Text(
+                                                                      "Incorrect Details"),
+                                                                  content:
+                                                                      const Text(
+                                                                          "Please check your address and contact number!"),
+                                                                  actions: <
+                                                                      Widget>[
+                                                                    TextButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        Navigator.of(ctx)
+                                                                            .pop();
+                                                                      },
+                                                                      child:
+                                                                          Container(
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(10),
+                                                                          color:
+                                                                              Colors.black,
+                                                                        ),
+                                                                        padding:
+                                                                            const EdgeInsets.all(14),
+                                                                        child:
+                                                                            const Text(
+                                                                          "Continue",
+                                                                          style:
+                                                                              TextStyle(color: Colors.white),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              );
+                                                            }
+                                                          })
+                                                    ],
+                                                  )));
+                                        },
+                                      );
+                                    },
+                                  );
                                 },
                                 child: Text('Buy Now',
                                     style: AppStyle.h3
@@ -665,11 +971,6 @@ class ProductNameAndPrice extends StatelessWidget {
           ' $amount',
           style: AppStyle.h1Light
               .copyWith(color: AppColor.primary, fontWeight: FontWeight.w400),
-        ),
-        Text(
-          ' $category',
-          style: AppStyle.h1Light
-              .copyWith(color: AppColor.primary, fontWeight: FontWeight.w200),
         ),
       ],
     );
