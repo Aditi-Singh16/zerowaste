@@ -307,7 +307,7 @@ class _DetailsState extends State<Details> {
                       children: [
                         Center(
                           child: Container(
-                            margin: const EdgeInsets.only(bottom: 16),
+                            margin: const EdgeInsets.only(bottom: 20),
                             height: 5,
                             width: 32 * 1.5,
                             decoration: BoxDecoration(
@@ -325,7 +325,7 @@ class _DetailsState extends State<Details> {
                         ),
                         Row(
                           children: [
-                            Text('Category: ',
+                            Text('Category:  ',
                                 style: AppStyle.text
                                     .copyWith(color: Colors.white)),
                             const Spacing(),
@@ -337,7 +337,7 @@ class _DetailsState extends State<Details> {
                         const Spacing(),
                         Row(
                           children: [
-                            Text('Quantity',
+                            Text('Quantity:  ',
                                 style: AppStyle.text
                                     .copyWith(color: Colors.white)),
                             const Spacing(),
@@ -352,6 +352,8 @@ class _DetailsState extends State<Details> {
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.8,
                             child: TextFormField(
+                              style:
+                                  AppStyle.text.copyWith(color: Colors.white),
                               onChanged: (val) {
                                 setState(() {
                                   quantity = val;
@@ -361,9 +363,13 @@ class _DetailsState extends State<Details> {
                                       : (amount = amount);
                                 });
                               },
-                              validator: (val) => (int.parse(val!) > widget.q)
-                                  ? "Enter correct quantity"
-                                  : null,
+                              validator: (val) {
+                                if (val!.isEmpty || int.parse(val) > widget.q) {
+                                  return 'Enter correct quantity';
+                                } else {
+                                  return null;
+                                }
+                              },
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
                                   borderSide:
@@ -448,6 +454,8 @@ class _DetailsState extends State<Details> {
                             ? Container(
                                 width: MediaQuery.of(context).size.width * 0.8,
                                 child: TextFormField(
+                                  style: AppStyle.text
+                                      .copyWith(color: Colors.white),
                                   onChanged: (val) {
                                     setState(() => eneteredcoupon = val);
                                   },
@@ -576,6 +584,7 @@ class _DetailsState extends State<Details> {
                                       FirebaseAuth.instance.currentUser!.uid;
                                   amount = widget.price * int.parse(quantity);
                                   if (_formkey.currentState!.validate()) {
+                                    print('heyy');
                                     await FirebaseFirestore.instance
                                         .collection('Users')
                                         .doc(uid)
@@ -610,142 +619,140 @@ class _DetailsState extends State<Details> {
                                     minimumSize: MaterialStateProperty.all(
                                         Size(size.width / 2.6, 37))),
                                 onPressed: () async {
-                                  showModalBottomSheet(
-                                    isScrollControlled: true,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(16),
-                                          topRight: Radius.circular(16)),
-                                    ),
-                                    context: context, // set this to true
-                                    builder: (_) {
-                                      return DraggableScrollableSheet(
-                                        initialChildSize: 0.37,
-                                        maxChildSize: 0.6,
-                                        minChildSize: 0.3,
-                                        expand: false,
-                                        builder: (_, controller) {
-                                          String pattern = r'(^[7-9][0-9]{9}$)';
-                                          RegExp regExp = new RegExp(pattern);
+                                  if (_formkey.currentState!.validate()) {
+                                    showModalBottomSheet(
+                                      isScrollControlled: true,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(16),
+                                            topRight: Radius.circular(16)),
+                                      ),
+                                      context: context, // set this to true
+                                      builder: (_) {
+                                        return DraggableScrollableSheet(
+                                          initialChildSize: 0.47,
+                                          maxChildSize: 0.6,
+                                          minChildSize: 0.3,
+                                          expand: false,
+                                          builder: (_, controller) {
+                                            String pattern =
+                                                r'(^[7-9][0-9]{9}$)';
+                                            RegExp regExp = new RegExp(pattern);
 
-                                          return Container(
-                                              // rounded border container top
-                                              // take input and button click to update data from flutter firebase
-                                              child: Padding(
-                                                  padding: EdgeInsets.all(15),
-                                                  child: Column(
-                                                    children: <Widget>[
-                                                      Text(
-                                                        "Personal Details",
-                                                        style: TextStyle(
-                                                          fontSize: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width /
-                                                              20,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      Divider(),
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsets.all(15),
-                                                        child: TextField(
-                                                          controller:
-                                                              _controller2,
-                                                          decoration:
-                                                              InputDecoration(
-                                                            prefixIcon: Icon(
-                                                              CupertinoIcons
-                                                                  .phone_circle_fill,
-                                                              size: 24,
-                                                            ),
-                                                            border:
-                                                                OutlineInputBorder(),
-                                                            focusedBorder:
-                                                                OutlineInputBorder(
-                                                              borderSide:
-                                                                  const BorderSide(
-                                                                      color: Colors
-                                                                          .black,
-                                                                      width:
-                                                                          2.0),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          20.0),
-                                                            ),
-                                                            labelText:
-                                                                'Contact Number',
-                                                            hintText:
-                                                                'Enter Your Phone Number',
-                                                          ),
-                                                          onChanged: (text) {
-                                                            phone_number =
-                                                                text.toString();
-                                                            text =
-                                                                text.toString();
-                                                          },
-                                                        ),
-                                                      ),
-                                                      Divider(),
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsets.all(15),
-                                                        child: TextField(
-                                                          controller:
-                                                              _controller1,
-                                                          onChanged: (text) {
-                                                            address = text;
-                                                          },
-                                                          decoration:
-                                                              InputDecoration(
-                                                            prefixIcon: Icon(
-                                                              CupertinoIcons
-                                                                  .home,
-                                                              size: 24,
-                                                            ),
-                                                            border:
-                                                                OutlineInputBorder(),
-                                                            focusedBorder:
-                                                                OutlineInputBorder(
-                                                              borderSide:
-                                                                  const BorderSide(
-                                                                      color: Colors
-                                                                          .black,
-                                                                      width:
-                                                                          2.0),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          20.0),
-                                                            ),
-                                                            labelText:
-                                                                'Your Address',
-                                                            hintText:
-                                                                'Enter Your Address',
+                                            return Container(
+                                                // rounded border container top
+                                                // take input and button click to update data from flutter firebase
+                                                child: Padding(
+                                                    padding: EdgeInsets.all(10),
+                                                    child: Column(
+                                                      children: <Widget>[
+                                                        Text(
+                                                          "Personal Details",
+                                                          style: TextStyle(
+                                                            fontSize: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width /
+                                                                20,
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                           ),
                                                         ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      CupertinoButton(
-                                                          color: Colors.black,
-                                                          child: Text(
-                                                              'Continue to Payment...'),
-                                                          onPressed: () async {
-                                                            if (phone_number !=
-                                                                    null &&
-                                                                regExp.hasMatch(
-                                                                    phone_number
-                                                                        .toString()) &&
-                                                                address.length >
-                                                                    5) {
-                                                              if (_formkey
-                                                                  .currentState!
-                                                                  .validate()) {
+                                                        Divider(),
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  10),
+                                                          child: TextField(
+                                                            controller:
+                                                                _controller2,
+                                                            decoration:
+                                                                InputDecoration(
+                                                              prefixIcon: Icon(
+                                                                CupertinoIcons
+                                                                    .phone_circle_fill,
+                                                                size: 24,
+                                                              ),
+                                                              border:
+                                                                  OutlineInputBorder(),
+                                                              focusedBorder:
+                                                                  OutlineInputBorder(
+                                                                borderSide: const BorderSide(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    width: 2.0),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            20.0),
+                                                              ),
+                                                              labelText:
+                                                                  'Contact Number',
+                                                              hintText:
+                                                                  'Enter Your Phone Number',
+                                                            ),
+                                                            onChanged: (text) {
+                                                              phone_number = text
+                                                                  .toString();
+                                                              text = text
+                                                                  .toString();
+                                                            },
+                                                          ),
+                                                        ),
+                                                        Divider(),
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  15),
+                                                          child: TextField(
+                                                            controller:
+                                                                _controller1,
+                                                            onChanged: (text) {
+                                                              address = text;
+                                                            },
+                                                            decoration:
+                                                                InputDecoration(
+                                                              prefixIcon: Icon(
+                                                                CupertinoIcons
+                                                                    .home,
+                                                                size: 24,
+                                                              ),
+                                                              border:
+                                                                  OutlineInputBorder(),
+                                                              focusedBorder:
+                                                                  OutlineInputBorder(
+                                                                borderSide: const BorderSide(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    width: 2.0),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            20.0),
+                                                              ),
+                                                              labelText:
+                                                                  'Your Address',
+                                                              hintText:
+                                                                  'Enter Your Address',
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 2,
+                                                        ),
+                                                        CupertinoButton(
+                                                            color: Colors.black,
+                                                            child: Text(
+                                                                'Continue to Payment...'),
+                                                            onPressed:
+                                                                () async {
+                                                              if (phone_number !=
+                                                                      null &&
+                                                                  regExp.hasMatch(
+                                                                      phone_number
+                                                                          .toString()) &&
+                                                                  address.length >
+                                                                      5) {
                                                                 setState(() {
                                                                   if (beforediscount ==
                                                                       afterdiscount) {
@@ -780,62 +787,62 @@ class _DetailsState extends State<Details> {
                                                                         false
                                                                   });
                                                                 }
-                                                              }
-                                                            } else {
-                                                              showDialog(
-                                                                context:
-                                                                    context,
-                                                                builder: (ctx) =>
-                                                                    AlertDialog(
-                                                                  shape:
-                                                                      RoundedRectangleBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            20),
-                                                                  ),
-                                                                  title: const Text(
-                                                                      "Incorrect Details"),
-                                                                  content:
-                                                                      const Text(
-                                                                          "Please check your address and contact number!"),
-                                                                  actions: <
-                                                                      Widget>[
-                                                                    TextButton(
-                                                                      onPressed:
-                                                                          () {
-                                                                        Navigator.of(ctx)
-                                                                            .pop();
-                                                                      },
-                                                                      child:
-                                                                          Container(
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(10),
-                                                                          color:
-                                                                              Colors.black,
-                                                                        ),
-                                                                        padding:
-                                                                            const EdgeInsets.all(14),
+                                                              } else {
+                                                                showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder: (ctx) =>
+                                                                      AlertDialog(
+                                                                    shape:
+                                                                        RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              20),
+                                                                    ),
+                                                                    title: const Text(
+                                                                        "Incorrect Details"),
+                                                                    content:
+                                                                        const Text(
+                                                                            "Please check your address and contact number!"),
+                                                                    actions: <
+                                                                        Widget>[
+                                                                      TextButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          Navigator.of(ctx)
+                                                                              .pop();
+                                                                        },
                                                                         child:
-                                                                            const Text(
-                                                                          "Continue",
-                                                                          style:
-                                                                              TextStyle(color: Colors.white),
+                                                                            Container(
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(10),
+                                                                            color:
+                                                                                Colors.black,
+                                                                          ),
+                                                                          padding:
+                                                                              const EdgeInsets.all(14),
+                                                                          child:
+                                                                              const Text(
+                                                                            "Continue",
+                                                                            style:
+                                                                                TextStyle(color: Colors.white),
+                                                                          ),
                                                                         ),
                                                                       ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              );
-                                                            }
-                                                          })
-                                                    ],
-                                                  )));
-                                        },
-                                      );
-                                    },
-                                  );
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                              }
+                                                            })
+                                                      ],
+                                                    )));
+                                          },
+                                        );
+                                      },
+                                    );
+                                  }
                                 },
                                 child: Text('Buy Now',
                                     style: AppStyle.h3
