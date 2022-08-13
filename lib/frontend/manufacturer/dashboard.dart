@@ -1,12 +1,16 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 import 'package:intl/intl.dart';
+import 'package:zerowaste/backend/firestore_info.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -16,16 +20,16 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  String itemvalue = 'Clothes';
+  String itemvalue = 'Cotton Clothes';
   String monthvalue = 'January';
   String cityvalue = 'Silchar';
 
   // List of items in our dropdown menu
   var items = [
-    'Clothes',
-    'Stationary',
+    'Cotton Clothes',
+    'Silk Clothes',
     'Hygiene',
-    'Toys',
+    'Books',
     'Bags',
     'Electronics'
   ];
@@ -45,44 +49,80 @@ class _DashboardState extends State<Dashboard> {
     'December'
   ];
 
+  var monthsPred = [];
+  var monthsAct = [];
+
   var city = ['Mumbai', 'Guwahati', 'Silchar'];
 
-  TextEditingController unitPriceController = TextEditingController();
-  TextEditingController taxPercentController = TextEditingController();
-  TooltipBehavior _tooltip = TooltipBehavior(enable: true);
+  Random rnd = new Random();
+  var unitPrice = 10;
+  var taxPrice = 5;
 
-
-  var quantityPred = 0.0;
+  TooltipBehavior _tooltipAct = TooltipBehavior(enable: true);
+  TooltipBehavior _tooltipPred = TooltipBehavior(enable: true);
+  List<ChartData> predictionChartData = [];
+  List<ChartData> actualChartData = [];
+  var quantAvail = 0;
 
   Future<void> predData() async {
     final interpreter =
         await Interpreter.fromAsset('model/quantity_prediction.tflite');
-
-    var input = [
-      [
-        (int.parse(unitPriceController.text)).toDouble(),
-        (int.parse(taxPercentController.text)).toDouble(),
-        (months.indexOf(monthvalue)).toDouble(),
-        (city.indexOf(cityvalue)).toDouble(),
-        (items.indexOf(itemvalue)).toDouble()
-      ]
-    ];
-    var output = List.filled(1, 0).reshape([1, 1]);
-    interpreter.run(input, output);
-
-    print(output[0][0]);
-
-    setState(() {
-      quantityPred = output[0][0];
+    var monthSlice = [];
+    unitPrice = 15 + rnd.nextInt(10000 - 15);
+    taxPrice = 1 + rnd.nextInt(20 - 1);
+    List res = await FirebaseData().getProducts(itemvalue);
+    res.forEach((element) {
+      var convertedDateTime = element.data()['timestamp'].toDate();
+      String monthName = DateFormat.LLLL().format(convertedDateTime).toString();
+      for (int i = 0; i < monthsAct.length; i++) {
+        if (monthsAct[i] == monthName) {
+          actualChartData.add(ChartData(monthName, element.data()['quantity']));
+        } else {
+          actualChartData.add(ChartData(monthsAct[i], 0));
+        }
+      }
+      //setState(() {});
     });
+
+    var monthval = monthsPred.indexOf(monthvalue);
+    var currMonth = int.parse(DateFormat.M().format(DateTime.now()));
+    monthSlice = monthsPred.sublist(currMonth - 1, monthval + 1);
+    for (int i = 0; i < monthSlice.length; i++) {
+      var input = [
+        [
+          (unitPrice).toDouble(),
+          (taxPrice).toDouble(),
+          (months.indexOf(monthSlice[i])).toDouble(),
+          (city.indexOf(cityvalue)).toDouble(),
+          (items.indexOf(itemvalue)).toDouble()
+        ]
+      ];
+      var output = List.filled(1, 0).reshape([1, 1]);
+      interpreter.run(input, output);
+      predictionChartData.add(ChartData(monthSlice[i], output[0][0].toInt()));
+      setState(() {});
+    }
+  }
+
+  @override
+  void initState() {
+    var start = int.parse(DateFormat.M().format(DateTime.now()));
+    monthvalue = months[start - 1];
+    monthsAct = months.sublist(0, start - 1);
+    monthsPred = months;
+    months = months.sublist(start - 1);
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<ChartData> chartData = [];
     return Scaffold(
-        appBar: AppBar(title: Text('Dashboard')),
-        body: Column(
+      appBar: AppBar(title: Text('Dashboard')),
+      body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -116,6 +156,8 @@ class _DashboardState extends State<Dashboard> {
                   onChanged: (String? newValue) {
                     setState(() {
                       monthvalue = newValue!;
+                      monthsAct =
+                          monthsPred.sublist(0, monthsPred.indexOf(monthvalue));
                     });
                   },
                 ),
@@ -137,51 +179,57 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Spacer(),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.3,
-                  child: TextField(
-                    controller: unitPriceController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Unit Price',
-                    ),
-                    onChanged: (text) {
-                      setState(() {
-                        unitPriceController.text = text;
-                      });
-                    },
-                  ),
-                ),
-                Spacer(),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.3,
-                  child: TextField(
-                    controller: taxPercentController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Tax Percent',
-                    ),
-                    onChanged: (text) {
-                      setState(() {
-                        taxPercentController.text = text;
-                      });
-                    },
-                  ),
-                ),
-                Spacer(),
-              ],
+            Padding(
+              padding: const EdgeInsets.only(left: 20.0),
+              child: ElevatedButton(
+                  onPressed: () {
+                    predData();
+                  },
+                  child: Text('Go')),
             ),
-            ElevatedButton(
-                onPressed: () {
-                  predData();
-                },
-                child: Text('Go')),
-
-            Text('Prediction is ${quantityPred.toInt()}'),
+            Padding(
+              padding: const EdgeInsets.only(left: 22.0),
+              child:
+                  Text('Quantity Prediction', style: TextStyle(fontSize: 25)),
+            ),
+            Center(
+                child: Container(
+                    height: MediaQuery.of(context).size.height * 0.4,
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    child: SfCartesianChart(
+                        primaryXAxis: CategoryAxis(),
+                        tooltipBehavior: _tooltipPred,
+                        series: <ChartSeries<ChartData, String>>[
+                          // Renders line chart
+                          ColumnSeries<ChartData, String>(
+                            dataSource: predictionChartData,
+                            xValueMapper: (ChartData data, _) => data.x,
+                            yValueMapper: (ChartData data, _) => data.y,
+                          )
+                        ]))),
+            Padding(
+              padding: const EdgeInsets.only(left: 22.0),
+              child: Text('My Inventory', style: TextStyle(fontSize: 25)),
+            ),
+            Center(
+                child: Container(
+                    height: MediaQuery.of(context).size.height * 0.4,
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    child: SfCartesianChart(
+                        primaryXAxis: CategoryAxis(),
+                        tooltipBehavior: _tooltipAct,
+                        series: <ChartSeries<ChartData, String>>[
+                          // Renders line chart
+                          LineSeries<ChartData, String>(
+                            dataSource: actualChartData,
+                            xValueMapper: (ChartData data, _) => data.x,
+                            yValueMapper: (ChartData data, _) => data.y,
+                          )
+                        ]))),
+            Padding(
+              padding: const EdgeInsets.only(left: 22.0),
+              child: Text('My Products', style: TextStyle(fontSize: 25)),
+            ),
             StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection('products')
@@ -213,37 +261,35 @@ class _DashboardState extends State<Dashboard> {
                         );
 
                       case ConnectionState.active:
-                        for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                          var convertedDateTime = snapshot.data!.docs[i]
-                              .data()['timestamp']
-                              .toDate();
-                          String monthName = DateFormat.MMM()
-                              .format(convertedDateTime)
-                              .toString();
-                          int quantity =
-                              snapshot.data!.docs[i].data()['quantity'];
-                          chartData.add(ChartData(monthName, quantity));
-                        }
                         return Center(
                             child: Container(
                                 height:
                                     MediaQuery.of(context).size.height * 0.4,
                                 width: MediaQuery.of(context).size.width * 0.9,
-                                child: SfCartesianChart(
-                                  primaryXAxis: CategoryAxis(),
-                                  tooltipBehavior: _tooltip,
-                                  series: <ChartSeries<ChartData, String>>[
-                                  // Renders line chart
-                                  ColumnSeries<ChartData, String>(
-                                      dataSource: chartData,
-                                      xValueMapper: (ChartData data, _) =>
-                                          data.x,
-                                      yValueMapper: (ChartData data, _) =>
-                                          data.y,
-
-                                    )
-                                          
-                                ])));
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: snapshot.data!.docs.length,
+                                    itemBuilder: (context, i) {
+                                      return Card(
+                                        child: ListTile(
+                                          leading: SvgPicture.asset(
+                                              'assets/icons/${snapshot.data!.docs[i]['categories']}.svg',
+                                              width: 70.0,
+                                              height: 70.0),
+                                          title: Text(
+                                              '${snapshot.data!.docs[i]['name']}'),
+                                          subtitle: Text(
+                                              'Quantity: ${snapshot.data!.docs[i]['quantity']}'),
+                                        ),
+                                        elevation: 8,
+                                        margin: EdgeInsets.all(10),
+                                        shape: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: BorderSide(
+                                                color: Colors.white)),
+                                      );
+                                    })));
 
                       case ConnectionState.done:
                         return Container();
@@ -251,12 +297,14 @@ class _DashboardState extends State<Dashboard> {
                   }
                 }),
           ],
-        ));
+        ),
+      ),
+    );
   }
 }
 
 class ChartData {
   ChartData(this.x, this.y);
-  final String x;
-  final int y;
+  String x;
+  int y;
 }

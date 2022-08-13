@@ -138,43 +138,31 @@ class _DetailsState extends State<Details> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: Stack(
-        children: [
-          Positioned(
-            top: 0,
-            child: Container(
-              alignment: Alignment.topCenter,
-              height: size.height - 300,
-              width: size.width,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      alignment: Alignment.bottomRight,
-                      fit: BoxFit.cover,
-                      image: AssetImage(widget.image))),
-            ),
-          ),
-          Positioned(
-              top: 60,
-              right: 20,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Positioned(
+              top: 0,
               child: Container(
-                height: 32,
-                width: 32,
-                decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 0, 128, 128),
-                    borderRadius: BorderRadius.circular(11)),
-                child: Image.network(widget.image),
-              )),
-          Positioned(
-              bottom: 0,
-              child: Container(
-                height: size.height / 2.2,
+                alignment: Alignment.topCenter,
+                height: size.height - 300,
                 width: size.width,
                 decoration: BoxDecoration(
-                    color: AppColor.secondary,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(34),
-                        topRight: Radius.circular(34))),
-                child: SingleChildScrollView(
+                    image: DecorationImage(
+                        alignment: Alignment.bottomRight,
+                        fit: BoxFit.cover,
+                        image: NetworkImage(widget.image))),
+              ),
+            ),
+            Positioned(
+                bottom: 0,
+                child: Container(
+                  width: size.width,
+                  decoration: BoxDecoration(
+                      color: AppColor.secondary,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(34),
+                          topRight: Radius.circular(34))),
                   child: Padding(
                     padding: const EdgeInsets.all(24.0),
                     child: Column(
@@ -415,9 +403,9 @@ class _DetailsState extends State<Details> {
                       ],
                     ),
                   ),
-                ),
-              ))
-        ],
+                ))
+          ],
+        ),
       ),
     );
   }
@@ -530,7 +518,6 @@ class ProductNameAndPrice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
@@ -538,14 +525,14 @@ class ProductNameAndPrice extends StatelessWidget {
           style: AppStyle.h1Light,
         ),
         Text(
-          '$amount',
+          ' $amount',
           style: AppStyle.h1Light
-              .copyWith(color: AppColor.primary, fontWeight: FontWeight.w600),
+              .copyWith(color: AppColor.primary, fontWeight: FontWeight.w400),
         ),
         Text(
-          '$category',
+          ' $category',
           style: AppStyle.h1Light
-              .copyWith(color: AppColor.primary, fontWeight: FontWeight.w600),
+              .copyWith(color: AppColor.primary, fontWeight: FontWeight.w200),
         ),
       ],
     );
