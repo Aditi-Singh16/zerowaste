@@ -109,12 +109,12 @@ class _ManufacturerNavbarState extends State<ManufacturerNavbar> {
             },
             icon: pageIndex == 3
                 ? Icon(
-                    CupertinoIcons.arrow_3_trianglepath,
+                    CupertinoIcons.leaf_arrow_circlepath,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   )
                 : Icon(
-                    CupertinoIcons.arrow_3_trianglepath,
+                    CupertinoIcons.leaf_arrow_circlepath,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   ),

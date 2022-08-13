@@ -47,12 +47,12 @@ class _NgoNavbarState extends State<NgoNavbar> {
             icon: pageIndex == 0
                 ? Icon(
                     Icons.home,
-                    color: Colors.white,
+                    color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   )
                 : Icon(
                     Icons.home_outlined,
-                    color: Colors.white,
+                    color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   ),
           ),
@@ -65,13 +65,13 @@ class _NgoNavbarState extends State<NgoNavbar> {
             },
             icon: pageIndex == 1
                 ? Icon(
-                    CupertinoIcons.tickets_fill,
-                    color: Colors.white,
+                    CupertinoIcons.person_solid,
+                    color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   )
                 : Icon(
-                    CupertinoIcons.tickets,
-                    color: Colors.white,
+                    CupertinoIcons.person,
+                    color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   ),
           ),

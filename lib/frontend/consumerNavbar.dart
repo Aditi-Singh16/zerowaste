@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:zerowaste/frontend/Orders.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
 import 'package:zerowaste/frontend/consumer/consumer_tabbar.dart';
 import 'package:zerowaste/frontend/consumer/learning_modules/moduleoptions.dart';
@@ -19,6 +20,7 @@ class _ConsumerNavbarState extends State<ConsumerNavbar> {
     UserHome(),
     const MyApp(),
     ConsumerTabBar(),
+    YourOrders(),
     const ProfilePage(),
   ];
 
@@ -67,12 +69,12 @@ class _ConsumerNavbarState extends State<ConsumerNavbar> {
             },
             icon: pageIndex == 1
                 ? Icon(
-                    CupertinoIcons.tickets_fill,
+                    CupertinoIcons.leaf_arrow_circlepath,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   )
                 : Icon(
-                    CupertinoIcons.tickets,
+                    CupertinoIcons.leaf_arrow_circlepath,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   ),
@@ -86,12 +88,12 @@ class _ConsumerNavbarState extends State<ConsumerNavbar> {
             },
             icon: pageIndex == 2
                 ? Icon(
-                    Icons.person,
+                    Icons.live_help_rounded,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   )
                 : Icon(
-                    Icons.person_outline,
+                    Icons.live_help_outlined,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   ),
@@ -104,6 +106,25 @@ class _ConsumerNavbarState extends State<ConsumerNavbar> {
               });
             },
             icon: pageIndex == 3
+                ? Icon(
+                    Icons.history,
+                    color: Colors.black,
+                    size: MediaQuery.of(context).size.height / 24,
+                  )
+                : Icon(
+                    Icons.history,
+                    color: Colors.black,
+                    size: MediaQuery.of(context).size.height / 24,
+                  ),
+          ),
+          IconButton(
+            enableFeedback: false,
+            onPressed: () {
+              setState(() {
+                pageIndex = 4;
+              });
+            },
+            icon: pageIndex == 4
                 ? Icon(
                     Icons.person,
                     color: Colors.black,
