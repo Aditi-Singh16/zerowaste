@@ -56,6 +56,7 @@ class ProductSearch extends SearchDelegate {
                   final String manufacturerid = document.get('manufacturerId');
                   final String price = document.get('pricePerProduct');
                   final String category = document.get('categories');
+                  final String is_plant = document.get('is_plant');
                   return ListTile(
                       title: Text(name),
                       subtitle: Text(document['Desc']),
@@ -72,7 +73,8 @@ class ProductSearch extends SearchDelegate {
                                 productid: prod_id,
                                 uid: userauthid,
                                 manufacturerid: manufacturerid,
-                                image: image)));
+                                image: image,
+                                is_plant: is_plant)));
                       });
                 }).toList(),
               ],
