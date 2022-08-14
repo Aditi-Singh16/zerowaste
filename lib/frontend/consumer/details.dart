@@ -6,7 +6,7 @@ import 'package:zerowaste/frontend/consumer/color.dart';
 import 'package:zerowaste/frontend/consumer/style.dart';
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-import 'package:zerowaste/frontend/manufacturer/Orders.dart';
+import 'package:zerowaste/frontend/consumer/Orders.dart';
 import 'package:flutter/cupertino.dart';
 
 class Details extends StatefulWidget {
@@ -172,7 +172,7 @@ class _DetailsState extends State<Details> {
           TextButton(
             onPressed: () {
               Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => Orders()));
+                  .push(MaterialPageRoute(builder: (context) => YourOrders()));
             },
             child: Container(
               decoration: BoxDecoration(

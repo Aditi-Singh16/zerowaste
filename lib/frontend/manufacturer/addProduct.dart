@@ -8,6 +8,7 @@ import 'dart:convert';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
+import 'package:zerowaste/frontend/requirements_sell/view_requirements.dart';
 
 class AddProduct extends StatefulWidget {
   AddProduct({Key? key}) : super(key: key);
@@ -21,12 +22,19 @@ class _AddProductState extends State<AddProduct> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => {},
-          ),
+          automaticallyImplyLeading: false,
           title: Text("Add Product"),
           backgroundColor: Color(0xff001427),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ViewRequirements()),
+                  );
+                },
+                icon: Icon(Icons.remove_red_eye_outlined))
+          ],
         ),
         body: Padding(padding: const EdgeInsets.all(20), child: PageForm()));
   }
