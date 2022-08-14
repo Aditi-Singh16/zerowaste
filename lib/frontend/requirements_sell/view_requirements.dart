@@ -48,7 +48,7 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                     onPressed: () async {
                       await FirebaseFirestore.instance
                           .collection("pending_requirements")
-                          .doc()
+                          .doc(user[uid])
                           .set({
                         "uid": user[uid],
                         "requirement_satisfy": FieldValue.arrayUnion([
@@ -101,15 +101,9 @@ class _ViewRequirementsState extends State<ViewRequirements> {
               child: const Text('Connect!'),
               onPressed: () async {
                 if (_quantityController.text != '') {
-                  var cityRef = await FirebaseFirestore.instance
-                      .collection("requirements")
-                      .doc(user[uid]);
-                  cityRef.snapshots().forEach((element) {
-                    print(element.data());
-                  });
                   await FirebaseFirestore.instance
                       .collection("pending_requirements")
-                      .doc()
+                      .doc(user[uid])
                       .set({
                     "uid": user[uid],
                     "requirement_satisfy": FieldValue.arrayUnion([
