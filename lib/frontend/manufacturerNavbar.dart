@@ -1,12 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:zerowaste/frontend/Orders.dart';
-import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
 import 'package:zerowaste/frontend/inputDisposalCategory.dart';
 import 'package:zerowaste/frontend/login/profile_page.dart';
+import 'package:zerowaste/frontend/manufacturer/Orders.dart';
 import 'package:zerowaste/frontend/manufacturer/addProduct.dart';
 import 'package:zerowaste/frontend/manufacturer/dashboard.dart';
-import 'package:zerowaste/frontend/wasteDisposal.dart';
 
 class ManufacturerNavbar extends StatefulWidget {
   const ManufacturerNavbar({Key? key}) : super(key: key);
@@ -20,7 +18,7 @@ class _ManufacturerNavbarState extends State<ManufacturerNavbar> {
 
   final pages = [
     Dashboard(),
-    YourOrders(),
+    ManuFactureOrders(),
     AddProduct(),
     InputCategory(),
     ProfilePage(),

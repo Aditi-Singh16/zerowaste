@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 //
-class Orders extends StatelessWidget {
+class ManuFactureOrders extends StatelessWidget {
   String manufacturerId = 'unfoWBpH8AidhiSmwx44';
   final db = FirebaseFirestore.instance;
   @override
@@ -10,7 +11,7 @@ class Orders extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: Text("Orders"),
-          leading: Icon(Icons.arrow_back),
+          automaticallyImplyLeading: false,
           backgroundColor: Color(0xff265D80),
           centerTitle: true,
         ),
@@ -21,9 +22,8 @@ class Orders extends StatelessWidget {
                 .snapshots(),
             builder: (context, snapshot) {
               return snapshot.hasData
-                  ? Container(
+                  ? SizedBox(
                       height: MediaQuery.of(context).size.height,
-                      color: Colors.white,
                       child: ListView(
                         scrollDirection: Axis.vertical,
                         children: snapshot.data!.docs.map((doc) {
@@ -68,7 +68,10 @@ class Orders extends StatelessWidget {
                         }).toList(),
                       ),
                     )
-                  : CircularProgressIndicator();
+                  : const SpinKitChasingDots(
+                      color: Colors.pink,
+                      size: 50.0,
+                    );
             }));
   }
 }
