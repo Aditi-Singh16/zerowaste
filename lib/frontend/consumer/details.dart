@@ -155,7 +155,7 @@ class _DetailsState extends State<Details> {
     await FirebaseFirestore.instance
         .collection('Users')
         .doc(widget.uid)
-        .update({'Phonenumber': phone_number, 'Address': address});
+        .update({'phone': phone_number, 'addr': address});
     await FirebaseFirestore.instance
         .collection('products')
         .doc(widget.productid)
@@ -263,8 +263,8 @@ class _DetailsState extends State<Details> {
         validity[2] = data['Coupon2'];
         validity[3] = data['Coupon3'];
         validity[4] = data['Coupon4'];
-        _controller1.text = data['PhoneNumber'];
-        _controller2.text = data['Address'];
+        _controller1.text = data['phone'];
+        _controller2.text = data['addr'];
       });
       print(validity);
     }
@@ -668,6 +668,7 @@ class _DetailsState extends State<Details> {
                                                                 _controller2,
                                                             decoration:
                                                                 InputDecoration(
+                                                              enabled: true,
                                                               prefixIcon: Icon(
                                                                 CupertinoIcons
                                                                     .phone_circle_fill,
@@ -712,6 +713,7 @@ class _DetailsState extends State<Details> {
                                                             },
                                                             decoration:
                                                                 InputDecoration(
+                                                              enabled: true,
                                                               prefixIcon: Icon(
                                                                 CupertinoIcons
                                                                     .home,
