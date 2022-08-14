@@ -47,9 +47,10 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                 ElevatedButton(
                     onPressed: () async {
                       await FirebaseFirestore.instance
-                          .collection("requirements")
-                          .doc("2gJ5SNj9jyVtf6Pc9S2cE0dkRxp1")
+                          .collection("pending_requirements")
+                          .doc()
                           .set({
+                        "uid": user[uid],
                         "requirement_satisfy": FieldValue.arrayUnion([
                           {
                             'email': user['email'],
@@ -107,9 +108,10 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                     print(element.data());
                   });
                   await FirebaseFirestore.instance
-                      .collection("requirements")
-                      .doc("2gJ5SNj9jyVtf6Pc9S2cE0dkRxp1")
+                      .collection("pending_requirements")
+                      .doc()
                       .set({
+                    "uid": user[uid],
                     "requirement_satisfy": FieldValue.arrayUnion([
                       {
                         'email': user[
