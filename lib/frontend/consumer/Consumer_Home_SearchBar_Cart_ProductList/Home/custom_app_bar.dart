@@ -1,21 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/Carousel.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/GridItems.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ProductList.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Cart/ShoppingCart.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/SearchBar/my_Search_bar_screen.dart';
-
+String uid =
+    FirebaseAuth.instance.currentUser!.uid;
 CollectionReference newu = FirebaseFirestore.instance
     .collection('Users')
-    .doc('bcbF3NkrUnQqqeqO49pb')
+    .doc(uid)
     .collection('Cart');
 
-String userauthid = 'bcbF3NkrUnQqqeqO49pb';
 
 class CustomAppBar extends StatefulWidget {
-  String productid = '6Ffxps7z7OvLjMtUwcxn';
-  String manufacturerid = 'unfoWBpH8AidhiSmwx44';
+
   int amount = megatotal.toInt();
 
   final _formkey = GlobalKey<FormState>();

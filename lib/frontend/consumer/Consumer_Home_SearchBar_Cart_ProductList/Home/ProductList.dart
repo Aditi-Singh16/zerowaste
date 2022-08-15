@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
+import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/SearchBar/search.dart';
 
 import '../../details.dart';
 
@@ -43,6 +44,21 @@ class IndividualCategoryProductList extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasData) {
             return Scaffold(
+              appBar:  AppBar(
+                title: Text('Products'),
+                backgroundColor: Color(0xFF001427),
+                actions: [
+                  IconButton(
+                    onPressed: () {
+                      showSearch(
+                          context: context, delegate: ProductSearch());
+                    },
+                    icon: Icon(Icons.search),
+                  )
+                ],
+                centerTitle: true,
+
+              ),
               body: ListView.builder(
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
