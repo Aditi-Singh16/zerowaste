@@ -566,12 +566,30 @@ class _DetailsState extends State<Details> {
                             : Visibility(visible: false, child: Text('')),
                         const Spacing(),
                         (amount == 1)
-                            ? Text('Total: 0',
-                                style:
-                                    AppStyle.h3.copyWith(color: Colors.white))
-                            : Text('Total: $amount',
-                                style:
-                                    AppStyle.h3.copyWith(color: Colors.white)),
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Total',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                  Text('0',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                ],
+                              )
+                            : Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Total:',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                  Text('$amount',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                ],
+                              ),
 
                         const Spacing(),
                         plant
@@ -596,8 +614,9 @@ class _DetailsState extends State<Details> {
                               ),
 
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Delivery Charges: ',
+                            Text('Delivery Charges:',
                                 style:
                                     AppStyle.h3.copyWith(color: Colors.white)),
                             const Spacing(),
@@ -608,12 +627,30 @@ class _DetailsState extends State<Details> {
                         ),
                         const Spacing(),
                         (amount == 1)
-                            ? Text('Grand Total: 0',
-                                style:
-                                    AppStyle.h3.copyWith(color: Colors.white))
-                            : Text('Grand Total: $amountd',
-                                style:
-                                    AppStyle.h3.copyWith(color: Colors.white)),
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Grand Total:',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                  Text('0',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                ],
+                              )
+                            : Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Grand Total:',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                  Text('$amountd',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                ],
+                              ),
 
                         const Spacing(),
 
