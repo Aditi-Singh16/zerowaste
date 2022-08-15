@@ -507,7 +507,8 @@ class _DetailsState extends State<Details> {
                                   ),
                                 ),
                               )
-                            : SizedBox(height: 0),
+                            : Visibility(
+                                visible: false, child: SizedBox(height: 0)),
                         Text(error, style: TextStyle(color: Colors.red)),
                         coupon
                             ? Center(
@@ -589,7 +590,10 @@ class _DetailsState extends State<Details> {
                                         style: AppStyle.h3
                                             .copyWith(color: Colors.white)))
                               ])
-                            : const Spacing(),
+                            : Visibility(
+                                visible: false,
+                                child: const Spacing(),
+                              ),
 
                         Row(
                           children: [
@@ -712,7 +716,7 @@ class _DetailsState extends State<Details> {
                                                                   10),
                                                           child: TextField(
                                                             controller:
-                                                                _controller2,
+                                                                _controller1,
                                                             decoration:
                                                                 InputDecoration(
                                                               enabled: true,
@@ -754,7 +758,7 @@ class _DetailsState extends State<Details> {
                                                                   15),
                                                           child: TextField(
                                                             controller:
-                                                                _controller1,
+                                                                _controller2,
                                                             onChanged: (text) {
                                                               address = text;
                                                             },
