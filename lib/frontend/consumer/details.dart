@@ -43,6 +43,7 @@ class _DetailsState extends State<Details> {
   List Value = [5, 10, 15, 20, 2];
 
   double amount = 1;
+  double amountd = 0;
   bool coupon = false;
   bool plant = false;
   bool couponused = false;
@@ -115,6 +116,7 @@ class _DetailsState extends State<Details> {
               Navigator.of(context).pop();
               setState(() {
                 plant = true;
+                amountd = amount + 20 + 5;
               });
               showDialog(
                 context: context,
@@ -147,15 +149,18 @@ class _DetailsState extends State<Details> {
       "ProductId": widget.productid,
       "Quantity": quantity,
       "Time": time,
-      "Amount": amount,
+      "Amount": amountd,
       "Date": date,
-      "manufacturerId": widget.manufacturerid
+      "manufacturerId": widget.manufacturerid,
+      "phone_number": phone_number,
+      "address": address,
+      "image": widget.image
     });
 
     await FirebaseFirestore.instance
         .collection('Users')
         .doc(widget.uid)
-        .update({'Phonenumber': phone_number, 'Address': address});
+        .update({'phone': phone_number, 'addr': address});
     await FirebaseFirestore.instance
         .collection('products')
         .doc(widget.productid)
@@ -231,7 +236,7 @@ class _DetailsState extends State<Details> {
   Future<void> openCheckout() async {
     var options = {
       "key": "rzp_test_Ienn2nz5hJfAS1",
-      "amount": (amount * 100).toString(),
+      "amount": (amountd * 100).toString(),
       "name": "Sample App",
       "description": "Payment for the some random product",
       'timeout': 300,
@@ -263,8 +268,8 @@ class _DetailsState extends State<Details> {
         validity[2] = data['Coupon2'];
         validity[3] = data['Coupon3'];
         validity[4] = data['Coupon4'];
-        _controller1.text = data['PhoneNumber'];
-        _controller2.text = data['Address'];
+        _controller1.text = data['phone'];
+        _controller2.text = data['addr'];
       });
       print(validity);
     }
@@ -357,10 +362,10 @@ class _DetailsState extends State<Details> {
                               onChanged: (val) {
                                 setState(() {
                                   quantity = val;
-                                  amount = widget.price * int.parse(val);
-                                  plant
-                                      ? (amount = amount + 5)
-                                      : (amount = amount);
+                                  amount = widget.price *
+                                      int.parse(
+                                          val); //displaying the total amount
+                                  amountd = amount + 20;
                                 });
                               },
                               validator: (val) {
@@ -438,17 +443,45 @@ class _DetailsState extends State<Details> {
                                 })
                             : const Spacing(),
 
-                        InkWell(
-                            child: Container(
-                              child: Text('Apply Coupon',
-                                  style: AppStyle.text
-                                      .copyWith(color: Colors.blue)),
-                            ),
-                            onTap: () {
-                              setState(() {
-                                coupon = true;
-                              });
-                            }),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                                child: Container(
+                                  child: Text('Apply Coupon',
+                                      style: AppStyle.text
+                                          .copyWith(color: Colors.blue)),
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    coupon = true;
+                                  });
+                                }),
+                            coupon
+                                ? InkWell(
+                                    child: Container(
+                                      child: Text('Remove',
+                                          style: AppStyle.text
+                                              .copyWith(color: Colors.red)),
+                                    ),
+                                    onTap: () {
+                                      setState(() {
+                                        coupon = false;
+                                        if (amount !=
+                                            (widget.price *
+                                                int.parse(quantity))) {
+                                          amount = widget.price *
+                                              int.parse(quantity);
+
+                                          amountd = (plant)
+                                              ? amount + 20 + 5
+                                              : amount + 20;
+                                        }
+                                      });
+                                    })
+                                : Visibility(visible: false, child: Text('')),
+                          ],
+                        ),
                         const Spacing(),
                         coupon
                             ? Container(
@@ -474,7 +507,8 @@ class _DetailsState extends State<Details> {
                                   ),
                                 ),
                               )
-                            : SizedBox(height: 0),
+                            : Visibility(
+                                visible: false, child: SizedBox(height: 0)),
                         Text(error, style: TextStyle(color: Colors.red)),
                         coupon
                             ? Center(
@@ -499,6 +533,7 @@ class _DetailsState extends State<Details> {
                                             print(
                                                 ' entered coupon is valid coupon');
                                             setState(() {
+                                              //applied coupon amount
                                               amount = widget.price *
                                                   int.parse(quantity);
                                               beforediscount = amount;
@@ -509,8 +544,8 @@ class _DetailsState extends State<Details> {
                                                       100);
                                               afterdiscount = amount;
                                               plant
-                                                  ? (amount = amount + 5)
-                                                  : (amount = amount);
+                                                  ? (amountd = amount + 5 + 20)
+                                                  : (amountd = amount + 20);
                                             });
                                           } else {
                                             setState(() {
@@ -530,6 +565,33 @@ class _DetailsState extends State<Details> {
                               )
                             : Visibility(visible: false, child: Text('')),
                         const Spacing(),
+                        (amount == 1)
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Total',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                  Text('0',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                ],
+                              )
+                            : Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Total:',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                  Text('$amount',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                ],
+                              ),
+
+                        const Spacing(),
                         plant
                             ? Row(children: [
                                 Text('Plant Contribution: ' + '\u{20B9}' + "5",
@@ -539,33 +601,59 @@ class _DetailsState extends State<Details> {
                                     onPressed: () {
                                       setState(() {
                                         plant = false;
+                                        amountd = amountd - 5;
                                       });
                                     },
                                     child: Text("Remove",
                                         style: AppStyle.h3
                                             .copyWith(color: Colors.white)))
                               ])
-                            : const Spacing(),
+                            : Visibility(
+                                visible: false,
+                                child: const Spacing(),
+                              ),
 
-                        (amount == 1)
-                            ? Text('Total: 0',
-                                style:
-                                    AppStyle.h3.copyWith(color: Colors.white))
-                            : Text('Total: $amount',
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Delivery Charges:',
                                 style:
                                     AppStyle.h3.copyWith(color: Colors.white)),
+                            const Spacing(),
+                            Text('20',
+                                style:
+                                    AppStyle.h3.copyWith(color: Colors.white)),
+                          ],
+                        ),
+                        const Spacing(),
+                        (amount == 1)
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Grand Total:',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                  Text('0',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                ],
+                              )
+                            : Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Grand Total:',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                  Text('$amountd',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                ],
+                              ),
 
                         const Spacing(),
 
-                        (amount == 1)
-                            ? Text('Grand Total: 0',
-                                style:
-                                    AppStyle.h3.copyWith(color: Colors.white))
-                            : Text('Grand Total: $amount',
-                                style:
-                                    AppStyle.h3.copyWith(color: Colors.white)),
-
-                        const Spacing(),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -582,7 +670,7 @@ class _DetailsState extends State<Details> {
                                 onPressed: () async {
                                   String uid =
                                       FirebaseAuth.instance.currentUser!.uid;
-                                  amount = widget.price * int.parse(quantity);
+
                                   if (_formkey.currentState!.validate()) {
                                     print('heyy');
                                     await FirebaseFirestore.instance
@@ -665,9 +753,10 @@ class _DetailsState extends State<Details> {
                                                                   10),
                                                           child: TextField(
                                                             controller:
-                                                                _controller2,
+                                                                _controller1,
                                                             decoration:
                                                                 InputDecoration(
+                                                              enabled: true,
                                                               prefixIcon: Icon(
                                                                 CupertinoIcons
                                                                     .phone_circle_fill,
@@ -706,12 +795,13 @@ class _DetailsState extends State<Details> {
                                                                   15),
                                                           child: TextField(
                                                             controller:
-                                                                _controller1,
+                                                                _controller2,
                                                             onChanged: (text) {
                                                               address = text;
                                                             },
                                                             decoration:
                                                                 InputDecoration(
+                                                              enabled: true,
                                                               prefixIcon: Icon(
                                                                 CupertinoIcons
                                                                     .home,
@@ -761,11 +851,12 @@ class _DetailsState extends State<Details> {
                                                                         int.parse(
                                                                             quantity);
                                                                     plant
-                                                                        ? (amount =
+                                                                        ? (amountd = amount +
+                                                                            5 +
+                                                                            20)
+                                                                        : (amountd =
                                                                             amount +
-                                                                                5)
-                                                                        : (amount =
-                                                                            amount);
+                                                                                20);
                                                                   }
                                                                 });
                                                                 await openCheckout();
