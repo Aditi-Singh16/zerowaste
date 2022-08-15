@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:zerowaste/frontend/consumer/Orders.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Details extends StatefulWidget {
   int q;
@@ -50,6 +51,7 @@ class _DetailsState extends State<Details> {
   int indx = 0;
   late Razorpay razorpay;
   String quantity = "";
+  int? previousquantity = -1;
   DateTime selectedDate = DateTime.now();
   final _formkey = GlobalKey<FormState>();
   double beforediscount = 0;
@@ -258,6 +260,7 @@ class _DetailsState extends State<Details> {
         .collection('Users')
         .doc(widget.uid)
         .get();
+
     if (docSnapshot.exists) {
       Map<String, dynamic> data = docSnapshot.data()!;
 
@@ -271,7 +274,20 @@ class _DetailsState extends State<Details> {
         _controller1.text = data['phone'];
         _controller2.text = data['addr'];
       });
+
       print(validity);
+    }
+    var docSnapshot1 = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(widget.uid)
+        .collection('Cart')
+        .doc(widget.productid)
+        .get();
+    if (docSnapshot1.exists) {
+      Map<String, dynamic> data1 = docSnapshot1.data()!;
+      setState(() {
+        previousquantity = data1['quantity'];
+      });
     }
   }
 
@@ -570,7 +586,7 @@ class _DetailsState extends State<Details> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('Total',
+                                  Text('Total:',
                                       style: AppStyle.h3
                                           .copyWith(color: Colors.white)),
                                   Text('0',
@@ -668,23 +684,35 @@ class _DetailsState extends State<Details> {
                                     minimumSize: MaterialStateProperty.all(
                                         Size(size.width / 2.6, 37))),
                                 onPressed: () async {
+                                  int finalquantity = 0;
                                   String uid =
                                       FirebaseAuth.instance.currentUser!.uid;
 
                                   if (_formkey.currentState!.validate()) {
-                                    print('heyy');
+                                    if (previousquantity != -1) {
+                                      finalquantity = previousquantity! +
+                                          int.parse(quantity);
+                                      print('yesssssss');
+                                      if (finalquantity > widget.q) {
+                                        finalquantity = widget.q;
+                                      }
+                                    } else {
+                                      finalquantity = int.parse(quantity);
+                                    }
+
                                     await FirebaseFirestore.instance
                                         .collection('Users')
                                         .doc(uid)
                                         .collection('Cart')
-                                        .add({
+                                        .doc(widget.productid)
+                                        .set({
                                       "categories": widget.category,
                                       "image": widget.image,
                                       "manufacturerId": widget.manufacturerid,
                                       "name": widget.name,
                                       "price": widget.price,
                                       "productId": widget.productid,
-                                      "quantity": int.parse(quantity),
+                                      "quantity": finalquantity,
                                       "userId": uid,
                                     });
                                     Navigator.of(context).push(
