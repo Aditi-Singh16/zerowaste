@@ -43,6 +43,7 @@ class _DetailsState extends State<Details> {
   List Value = [5, 10, 15, 20, 2];
 
   double amount = 1;
+  double amountd = 0;
   bool coupon = false;
   bool plant = false;
   bool couponused = false;
@@ -115,6 +116,7 @@ class _DetailsState extends State<Details> {
               Navigator.of(context).pop();
               setState(() {
                 plant = true;
+                amountd = amount + 20 + 5;
               });
               showDialog(
                 context: context,
@@ -147,9 +149,12 @@ class _DetailsState extends State<Details> {
       "ProductId": widget.productid,
       "Quantity": quantity,
       "Time": time,
-      "Amount": amount,
+      "Amount": amountd,
       "Date": date,
-      "manufacturerId": widget.manufacturerid
+      "manufacturerId": widget.manufacturerid,
+      "phone_number": phone_number,
+      "address": address,
+      "image": widget.image
     });
 
     await FirebaseFirestore.instance
@@ -231,7 +236,7 @@ class _DetailsState extends State<Details> {
   Future<void> openCheckout() async {
     var options = {
       "key": "rzp_test_Ienn2nz5hJfAS1",
-      "amount": (amount * 100).toString(),
+      "amount": (amountd * 100).toString(),
       "name": "Sample App",
       "description": "Payment for the some random product",
       'timeout': 300,
@@ -357,10 +362,10 @@ class _DetailsState extends State<Details> {
                               onChanged: (val) {
                                 setState(() {
                                   quantity = val;
-                                  amount = widget.price * int.parse(val);
-                                  plant
-                                      ? (amount = amount + 5)
-                                      : (amount = amount);
+                                  amount = widget.price *
+                                      int.parse(
+                                          val); //displaying the total amount
+                                  amountd = amount + 20;
                                 });
                               },
                               validator: (val) {
@@ -438,17 +443,45 @@ class _DetailsState extends State<Details> {
                                 })
                             : const Spacing(),
 
-                        InkWell(
-                            child: Container(
-                              child: Text('Apply Coupon',
-                                  style: AppStyle.text
-                                      .copyWith(color: Colors.blue)),
-                            ),
-                            onTap: () {
-                              setState(() {
-                                coupon = true;
-                              });
-                            }),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                                child: Container(
+                                  child: Text('Apply Coupon',
+                                      style: AppStyle.text
+                                          .copyWith(color: Colors.blue)),
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    coupon = true;
+                                  });
+                                }),
+                            coupon
+                                ? InkWell(
+                                    child: Container(
+                                      child: Text('Remove',
+                                          style: AppStyle.text
+                                              .copyWith(color: Colors.red)),
+                                    ),
+                                    onTap: () {
+                                      setState(() {
+                                        coupon = false;
+                                        if (amount !=
+                                            (widget.price *
+                                                int.parse(quantity))) {
+                                          amount = widget.price *
+                                              int.parse(quantity);
+
+                                          amountd = (plant)
+                                              ? amount + 20 + 5
+                                              : amount + 20;
+                                        }
+                                      });
+                                    })
+                                : Visibility(visible: false, child: Text('')),
+                          ],
+                        ),
                         const Spacing(),
                         coupon
                             ? Container(
@@ -499,6 +532,7 @@ class _DetailsState extends State<Details> {
                                             print(
                                                 ' entered coupon is valid coupon');
                                             setState(() {
+                                              //applied coupon amount
                                               amount = widget.price *
                                                   int.parse(quantity);
                                               beforediscount = amount;
@@ -509,8 +543,8 @@ class _DetailsState extends State<Details> {
                                                       100);
                                               afterdiscount = amount;
                                               plant
-                                                  ? (amount = amount + 5)
-                                                  : (amount = amount);
+                                                  ? (amountd = amount + 5 + 20)
+                                                  : (amountd = amount + 20);
                                             });
                                           } else {
                                             setState(() {
@@ -530,23 +564,6 @@ class _DetailsState extends State<Details> {
                               )
                             : Visibility(visible: false, child: Text('')),
                         const Spacing(),
-                        plant
-                            ? Row(children: [
-                                Text('Plant Contribution: ' + '\u{20B9}' + "5",
-                                    style: AppStyle.h3
-                                        .copyWith(color: Colors.white)),
-                                FlatButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        plant = false;
-                                      });
-                                    },
-                                    child: Text("Remove",
-                                        style: AppStyle.h3
-                                            .copyWith(color: Colors.white)))
-                              ])
-                            : const Spacing(),
-
                         (amount == 1)
                             ? Text('Total: 0',
                                 style:
@@ -556,16 +573,46 @@ class _DetailsState extends State<Details> {
                                     AppStyle.h3.copyWith(color: Colors.white)),
 
                         const Spacing(),
+                        plant
+                            ? Row(children: [
+                                Text('Plant Contribution: ' + '\u{20B9}' + "5",
+                                    style: AppStyle.h3
+                                        .copyWith(color: Colors.white)),
+                                FlatButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        plant = false;
+                                        amountd = amountd - 5;
+                                      });
+                                    },
+                                    child: Text("Remove",
+                                        style: AppStyle.h3
+                                            .copyWith(color: Colors.white)))
+                              ])
+                            : const Spacing(),
 
+                        Row(
+                          children: [
+                            Text('Delivery Charges: ',
+                                style:
+                                    AppStyle.h3.copyWith(color: Colors.white)),
+                            const Spacing(),
+                            Text('20',
+                                style:
+                                    AppStyle.h3.copyWith(color: Colors.white)),
+                          ],
+                        ),
+                        const Spacing(),
                         (amount == 1)
                             ? Text('Grand Total: 0',
                                 style:
                                     AppStyle.h3.copyWith(color: Colors.white))
-                            : Text('Grand Total: $amount',
+                            : Text('Grand Total: $amountd',
                                 style:
                                     AppStyle.h3.copyWith(color: Colors.white)),
 
                         const Spacing(),
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -582,7 +629,7 @@ class _DetailsState extends State<Details> {
                                 onPressed: () async {
                                   String uid =
                                       FirebaseAuth.instance.currentUser!.uid;
-                                  amount = widget.price * int.parse(quantity);
+
                                   if (_formkey.currentState!.validate()) {
                                     print('heyy');
                                     await FirebaseFirestore.instance
@@ -763,11 +810,12 @@ class _DetailsState extends State<Details> {
                                                                         int.parse(
                                                                             quantity);
                                                                     plant
-                                                                        ? (amount =
+                                                                        ? (amountd = amount +
+                                                                            5 +
+                                                                            20)
+                                                                        : (amountd =
                                                                             amount +
-                                                                                5)
-                                                                        : (amount =
-                                                                            amount);
+                                                                                20);
                                                                   }
                                                                 });
                                                                 await openCheckout();
