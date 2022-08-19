@@ -9,8 +9,12 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:zerowaste/frontend/consumer/Orders.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+var size,height,width;
+List<int> ?esv;
 class Details extends StatefulWidget {
+
+
+
   int q;
   String name;
   String description;
@@ -21,6 +25,10 @@ class Details extends StatefulWidget {
   String manufacturerid;
   String image;
   String is_plant;
+
+
+
+
   Details(
       {required this.name,
       required this.description,
@@ -38,6 +46,7 @@ class Details extends StatefulWidget {
 }
 
 class _DetailsState extends State<Details> {
+
   String eneteredcoupon = '';
   List validity = [false, false, false, false, false];
   List couponn = ['OFF05', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
@@ -62,10 +71,89 @@ class _DetailsState extends State<Details> {
   TextEditingController _controller2 = TextEditingController();
   String address = '';
 
+  List<int> ?esv_ls;
+  int ?weight;
+  double ?w;
+  //get weight from product collection using product id
+  void getweight() async{
+    await FirebaseFirestore.instance.collection('products').doc(widget.productid).get().then((value){
+      setState(() {
+        w=value['weight'];
+      });
+    });
+  }
+
+  List<int> cat1 =
+  [
+    2,1,3
+  ];
+  List<int> cat2 =
+  [
+    2,1,4
+  ];
+  List<int> cat3 =
+  [
+    1,2,3
+  ];
+  List<int> cat4 =
+  [
+    2,1,2
+  ];
+  List<int> cat5 =
+  [
+    1,1,1
+  ];
+  List<int> cat6 =
+  [
+    1,1,1
+  ];
+  List<int> cat7 =
+  [
+    1,1,1
+  ];
+
+  void setEsv(){
+    if(widget.category=="Books"){
+      esv_ls=cat1;
+    }
+    else if(widget.category=="Cotton Clothes"){
+      esv_ls=cat2;
+    }
+    else if(widget.category=="Recycled Products"){
+      esv_ls=cat3;
+    }
+    else if(widget.category=="Electronics"){
+      esv_ls=cat4;
+    }
+    else if(widget.category=="Nylon Clothes"){
+      esv_ls=cat5;
+    }
+    else if(widget.category=="Silk Clothes"){
+      esv_ls=cat6;
+    }
+    else{
+      esv_ls=cat7;
+    }
+    //fetch weight from firebase product collection of current product id
+
+
+
+   getweight();
+
+    print("weighttt");
+    print(w);
+    //multiple weight with esv list with index 0
+
+
+
+  }
+
+
   @override
   void initState() {
     super.initState();
     fetch_validity();
+    setEsv();
     razorpay = new Razorpay();
     razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlerPaymentSuccess);
     razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlerErrorFailure);
@@ -79,6 +167,7 @@ class _DetailsState extends State<Details> {
   }
 
   Widget _plantgif(BuildContext context) {
+
     return new AlertDialog(
       title: const Text('Congratulations!!!'),
       content: new Column(
@@ -101,6 +190,7 @@ class _DetailsState extends State<Details> {
   }
 
   Widget _buildPopupDialog(BuildContext context) {
+
     return new AlertDialog(
       title: const Text('Meet Your Plant'),
       content: new Column(
@@ -293,7 +383,10 @@ class _DetailsState extends State<Details> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    // getting the size of the window
+    size = MediaQuery.of(context).size;
+    height = size.height;
+    width = size.width;
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -497,6 +590,135 @@ class _DetailsState extends State<Details> {
                                     })
                                 : Visibility(visible: false, child: Text('')),
                           ],
+                        ),
+                        const Spacing(),
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'ESV (Environment Saving Values)  ',
+                                    style: AppStyle.text
+                                        .copyWith(color: Colors.white),
+                                  ),
+                                ),
+                                SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.27),
+                                // i icon button with alert dialogue
+                                IconButton(
+                                  icon: Icon(Icons.info_outline),
+                                  color: Colors.white,
+                                  alignment: Alignment.bottomRight,
+                                  onPressed: () {
+                                    //alert dialogue box pop up
+                                    showDialog(
+                                      context: context,
+                                      builder: (ctx) => AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        title:  Center(
+                                            child: RichText(
+                                              text: TextSpan(
+                                                  style: TextStyle(color: Colors.black),
+                                                  children: [TextSpan(text: "Approximate values per product\n\n", style: TextStyle(fontWeight: FontWeight.bold,fontSize: height*0.02)),
+                                              TextSpan(text: "Air Pollution - numbers here shows the amount of air saved from making the product\n"
+                                              "Trees Saved - numbers here shows the amount of trees saved from cutting in making this product\n"
+                                                  "CO2 - numbers here show the amount of CO2 saved while making this product",style: TextStyle(fontSize: height*0.015)),
+
+                                                  ]
+                                              ),
+                                            )),
+                                        actions: <Widget>[
+                                          Center(
+                                            child: TextButton(
+                                              onPressed: () {
+                                                Navigator.of(ctx).pop();
+                                              },
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  color: Colors.black,
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.all(14),
+                                                child: const Text(
+                                                  "Continue",
+                                                  style: TextStyle(
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                            const Spacing(),
+                            Row(
+                              children: [
+
+                                const Spacing(),
+                                const Spacing(),
+
+                                Column(
+                                  children: [
+                                    ClipOval(
+                                      child: SizedBox.fromSize(
+                                        size: Size.fromRadius(48), // Image radius
+                                        child: Image.network('https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/esv%20img%2F11zon_cropped.png?alt=media&token=72d9009f-c528-4fd5-a638-e933dffee8f9', fit: BoxFit.cover),
+                                      ),
+
+                                    ),
+                                    Text("Air Pollution"),
+                                    Text((esv_ls![0]*w!).toString()+" aqi of Air", style: AppStyle.text
+                                        .copyWith(color: Colors.white))
+                                  ],
+                                ),
+                                SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+                                Column(
+                                  children: [
+                                    ClipOval(
+                                      child: SizedBox.fromSize(
+                                        size: Size.fromRadius(48), // Image radius
+                                        child: Image.network('https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/esv%20img%2FPicsart_22-08-19_12-36-20-414.png?alt=media&token=cc0c00fb-a68a-4b69-84cd-2e60fd910215', fit: BoxFit.cover),
+                                      ),
+
+                                    ),
+                                    Text("Tree"),
+                                    Text((((esv_ls![1]+w!)).toString()).substring(2,3)+" Tree saved", style: AppStyle.text
+                                        .copyWith(color: Colors.white))
+                                  ],
+                                ),
+
+                                SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+                                Column(
+                                  children: [
+                                    ClipOval(
+                                      child: SizedBox.fromSize(
+                                        size: Size.fromRadius(48), // Image radius
+                                        child: Image.network('https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/esv%20img%2FPicsart_22-08-19_12-43-19-549.png?alt=media&token=b05f3d35-67ee-451e-8737-08e14c13c5d5', fit: BoxFit.cover),
+                                      ),
+
+                                    ),
+                                    Text("Co2"),
+                                    Text(((esv_ls![2]*w!).toString()).substring(0,3)+" ppm of Co2", style: AppStyle.text
+                                        .copyWith(color: Colors.white))
+                                  ],
+                                ),
+
+                              ],
+                            )
+                          ],
+
                         ),
                         const Spacing(),
                         coupon
@@ -977,6 +1199,11 @@ class _DetailsState extends State<Details> {
       ),
     );
   }
+
+
+
+
+
 }
 
 class TabTitle extends StatelessWidget {
