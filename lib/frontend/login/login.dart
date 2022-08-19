@@ -6,6 +6,7 @@ import 'package:zerowaste/frontend/login/profile_page.dart';
 import 'package:zerowaste/frontend/login/registration.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:zerowaste/prefs/sharedPrefs.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:zerowaste/frontend/manufacturer/Orders.dart';
 import 'package:zerowaste/frontend/manufacturerNavbar.dart';
@@ -19,6 +20,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  HelperFunctions _helperFunctions = HelperFunctions();
   // form key
   final _formKey = GlobalKey<FormState>();
 
@@ -125,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                         height: 200,
                         child: Image.asset(
-                          "assets/logo.png",
+                          "assets/images/logo.png",
                           fit: BoxFit.contain,
                         )),
                     SizedBox(height: 45),
@@ -184,16 +186,36 @@ class _LoginScreenState extends State<LoginScreen> {
                         .get()
                         .then((value) {
                       loggedInUser = UserModel.fromMap(value.data());
-                      print(loggedInUser.toMap()['type']);
 
+                      print(loggedInUser.toMap()['type']);
+                      _helperFunctions
+                          .setNamePref(loggedInUser.toMap()['name']);
+                      _helperFunctions
+                          .setEmailPref(loggedInUser.toMap()['email']);
+                      _helperFunctions
+                          .setUserIdPref(loggedInUser.toMap()['uid']);
+                      _helperFunctions.setCoupons(
+                          loggedInUser.toMap()['Coupon0'],
+                          loggedInUser.toMap()['Coupon1'],
+                          loggedInUser.toMap()['Coupon2'],
+                          loggedInUser.toMap()['Coupon3'],
+                          loggedInUser.toMap()['Coupon4']);
+                      _helperFunctions
+                          .setAddrPref(loggedInUser.toMap()['addr']);
+                      _helperFunctions
+                          .setPhonePref(loggedInUser.toMap()['phone']);
+                      print(_helperFunctions.readNamePref());
                       if (loggedInUser.toMap()['type'] == 'Consumer') {
+                        _helperFunctions.setType("Consumer");
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => ConsumerNavbar()));
                       } else if (loggedInUser.toMap()['type'] ==
                           'Manufacturer') {
+                        _helperFunctions.setType("Manufacturer");
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => ManufacturerNavbar()));
                       } else if (loggedInUser.toMap()['type'] == 'NGO') {
+                        _helperFunctions.setType("NGO");
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => NgoNavbar()));
                       }

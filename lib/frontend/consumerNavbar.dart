@@ -5,6 +5,7 @@ import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_Product
 import 'package:zerowaste/frontend/consumer/consumer_tabbar.dart';
 import 'package:zerowaste/frontend/consumer/learning_modules/moduleoptions.dart';
 import 'package:zerowaste/frontend/login/profile_page.dart';
+import 'package:zerowaste/frontend/requirements_sell/add_requirements.dart';
 
 class ConsumerNavbar extends StatefulWidget {
   const ConsumerNavbar({Key? key}) : super(key: key);
@@ -19,7 +20,7 @@ class _ConsumerNavbarState extends State<ConsumerNavbar> {
   final pages = [
     UserHome(),
     const MyApp(),
-    ConsumerTabBar(),
+    AddRequirement(),
     YourOrders(),
     const ProfilePage(),
   ];
