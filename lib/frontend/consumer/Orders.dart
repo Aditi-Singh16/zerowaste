@@ -53,7 +53,11 @@ class _YourOrdersState extends State<YourOrders> {
                   resizeToAvoidBottomInset: false,
                   appBar: AppBar(
                     title: Text("Your Orders"),
+
                     leading: Icon(Icons.arrow_back),
+
+                    automaticallyImplyLeading: false,
+
                     backgroundColor: Color(0xff265D80),
                     centerTitle: true,
                   ),

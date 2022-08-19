@@ -178,8 +178,11 @@ class _DetailsState extends State<Details> {
         actions: <Widget>[
           TextButton(
             onPressed: () {
+
               Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (context) => YourOrders()));
+
+             
             },
             child: Container(
               decoration: BoxDecoration(
@@ -607,6 +610,7 @@ class _DetailsState extends State<Details> {
                                 ],
                               ),
 
+
                         //const Spacing(),
                         plant
                             ? Row(
@@ -638,6 +642,7 @@ class _DetailsState extends State<Details> {
                             : const Spacing(),
 
                         // const Spacing(),
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -724,7 +729,10 @@ class _DetailsState extends State<Details> {
                                       "quantity": finalquantity,
                                       "userId": uid,
                                     });
+
                                     Navigator.of(context).pushReplacement(
+
+
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 ShoppingCart()));

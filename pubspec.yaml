@@ -43,13 +43,13 @@ dependencies:
   carousel_slider: ^4.1.1
   flutter_svg:
   tflite_flutter: ^0.9.0
-  tflite_flutter_helper: ^0.3.1
   youtube_player_flutter: ^8.0.0
   firebase_auth: ^1.1.0
   scratcher:
   google_maps_flutter:
   # geolocator:
   google_maps_webservice:
+  flutter_email_sender: ^5.1.0
   location:
   latlong: ^0.6.1
   marker_icon:

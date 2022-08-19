@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 class YourOrders extends StatefulWidget {
@@ -71,6 +72,7 @@ class _YourOrdersState extends State<YourOrders> {
                                       width: MediaQuery.of(context).size.width /
                                           3.6,
                                       //color: Colors.red,
+
                                     ),
                                   ),
                                 ),
@@ -277,6 +279,7 @@ class _YourOrdersState extends State<YourOrders> {
                           ),
                         ),
                       ),
+
                     );
                   }),
             );
@@ -285,5 +288,6 @@ class _YourOrdersState extends State<YourOrders> {
               body:
                   Center(child: CircularProgressIndicator(color: Colors.grey)));
         });
+
   }
 }

@@ -3,14 +3,15 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
-import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:zerowaste/backend/firestore_info.dart';
+import 'package:zerowaste/backend/userModal/user.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -20,6 +21,8 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  User? user = FirebaseAuth.instance.currentUser;
+  UserModel loggedInUser = UserModel();
   String itemvalue = 'Cotton Clothes';
   String monthvalue = 'January';
   String cityvalue = 'Silchar';
@@ -28,7 +31,7 @@ class _DashboardState extends State<Dashboard> {
   var items = [
     'Cotton Clothes',
     'Silk Clothes',
-    'Hygiene',
+    'Nylon Clothes',
     'Books',
     'Bags',
     'Electronics'
@@ -111,13 +114,24 @@ class _DashboardState extends State<Dashboard> {
     monthsAct = months.sublist(0, start - 1);
     monthsPred = months;
     months = months.sublist(start - 1);
+
+    FirebaseFirestore.instance
+        .collection("Users")
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      this.loggedInUser = UserModel.fromMap(value.data());
+      setState(() {});
+    });
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Dashboard')),
+      appBar:
+          AppBar(title: Text('Dashboard'), automaticallyImplyLeading: false),
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
         child: Column(
@@ -233,7 +247,7 @@ class _DashboardState extends State<Dashboard> {
             StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection('products')
-                    .where("manufacturerId", isEqualTo: "unfoWBpH8AidhiSmwx44")
+                    .where("manufacturerId", isEqualTo: loggedInUser.uid)
                     .snapshots(),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.hasError) {
