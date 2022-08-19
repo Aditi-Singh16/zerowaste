@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 //
 class ManuFactureOrders extends StatelessWidget {
-  String manufacturerId = 'unfoWBpH8AidhiSmwx44';
+  String manufacturerId = FirebaseAuth.instance.currentUser!.uid;
   final db = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,7 @@ class ManuFactureOrders extends StatelessWidget {
                             child: Card(
                                 color: Color(0xffD5EAEF),
                                 child: ListTile(
-                                  leading: Icon(Icons.shop,
+                                  leading: Icon(Icons.shopping_bag_rounded,
                                       size: 30, color: Color(0xff265D80)),
                                   title: Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -47,19 +48,35 @@ class ManuFactureOrders extends StatelessWidget {
                                   ),
                                   subtitle: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          "Quantity: " +
-                                              doc.data()!['Quantity'],
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Quantity: " +
+                                                  doc
+                                                      .data()!['Quantity']
+                                                      .toString(),
+                                            ),
+                                            Text(
+                                              "Amount: \u{20B9}" +
+                                                  doc
+                                                      .data()!['price']
+                                                      .toString() +
+                                                  "/product",
+                                            )
+                                          ],
                                         ),
-                                        Text(
-                                          "Amount: \u{20B9}" +
-                                              doc.data()!['Amount'].toString() +
-                                              "/product",
-                                        )
+                                        SizedBox(height: 10),
+                                        Text("Delivery Address: " +
+                                            doc.data()!['address']),
+                                        SizedBox(height: 10),
+                                        Text("Phone Number: " +
+                                            doc.data()!['phone_number']),
                                       ],
                                     ),
                                   ),

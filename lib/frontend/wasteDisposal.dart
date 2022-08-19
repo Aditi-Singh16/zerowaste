@@ -55,7 +55,7 @@ class _WasteDisposalState extends State<WasteDisposal> {
   void _onMapCreated(GoogleMapController _cntlr) async {
     final int targetWidth = 150;
     final markerImageFile = (await DefaultCacheManager().getSingleFile(
-        "https://www.pinclipart.com/picdir/middle/562-5623439_kawaii-house-clipart-png-download.png"));
+        "https://freepngimg.com/save/66970-map-google-icons-house-maps-computer-marker/512x512"));
     final Uint8List markerImageBytes = await markerImageFile.readAsBytes();
     final Codec markerImageCodec = await instantiateImageCodec(
       markerImageBytes,
@@ -174,11 +174,16 @@ class _WasteDisposalState extends State<WasteDisposal> {
                 Padding(
                   padding: const EdgeInsets.all(50.0),
                   child: Container(
-                      color: Colors.white,
-                      height: 50,
-                      width: 500,
-                      child: Text(
-                          "Shortest Disposal unit: \n$shortest km,$nearest")),
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 1),
+                        color: Colors.white,
+                      ),
+                      height: MediaQuery.of(context).size.height / 16,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text(
+                            "Nearest Recycling unit: \n$shortest km,$nearest"),
+                      )),
                 )
               ],
             ),

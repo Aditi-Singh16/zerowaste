@@ -43,21 +43,64 @@ class IndividualCategoryProductList extends StatelessWidget {
           }
           if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasData) {
+            if (snapshot.data!.docs.isEmpty) {
+              return Scaffold(
+                body: Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(top: 100, bottom: 20),
+                      child: CircleAvatar(
+                        radius: height / 7, // Image radius
+                        backgroundImage: NetworkImage(
+                            'https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/categories%2Fcart.gif?alt=media&token=6ef4fdc0-b651-49a6-8f23-e09a67b86d54'),
+                      ),
+                    ),
+                    Center(
+                      child: Text(
+                        "No Products in these category!",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(top: 20),
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        child: InkWell(
+                            onTap: () {
+                              // go back page
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('Continue Shopping...')),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.black, // background
+                          onPrimary: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(12), // <-- Radius
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              );
+            }
             return Scaffold(
-              appBar:  AppBar(
+              appBar: AppBar(
                 title: Text('Products'),
                 backgroundColor: Color(0xFF001427),
                 actions: [
                   IconButton(
                     onPressed: () {
-                      showSearch(
-                          context: context, delegate: ProductSearch());
+                      showSearch(context: context, delegate: ProductSearch());
                     },
                     icon: Icon(Icons.search),
                   )
                 ],
                 centerTitle: true,
-
               ),
               body: ListView.builder(
                   scrollDirection: Axis.vertical,

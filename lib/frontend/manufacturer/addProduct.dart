@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -21,21 +23,22 @@ class _AddProductState extends State<AddProduct> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Text("Add Product"),
-          backgroundColor: Color(0xff001427),
-          actions: [
-            IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ViewRequirements()),
-                  );
-                },
-                icon: Icon(Icons.remove_red_eye_outlined))
-          ],
-        ),
+        resizeToAvoidBottomInset: false,
+        // appBar: AppBar(
+        //   automaticallyImplyLeading: false,
+        //   title: Text("Add Product"),
+        //   backgroundColor: Color(0xff001427),
+        //   actions: [
+        //     IconButton(
+        //         onPressed: () {
+        //           Navigator.push(
+        //             context,
+        //             MaterialPageRoute(builder: (context) => ViewRequirements()),
+        //           );
+        //         },
+        //         icon: Icon(Icons.remove_red_eye_outlined))
+        //   ],
+        // ),
         body: Padding(padding: const EdgeInsets.all(20), child: PageForm()));
   }
 }
@@ -69,7 +72,9 @@ class _PageFormState extends State<PageForm> {
           'pricePerProduct': _price,
           'manufacturerId': loggedInUser.uid,
           'timestamp': DateTime.now(),
-          'productId': docId
+          'productId': docId,
+          'is_plant': 'true',
+          'weight': double.parse(_weight),
         });
       });
     }
@@ -79,16 +84,19 @@ class _PageFormState extends State<PageForm> {
   TextEditingController _descController = new TextEditingController();
   TextEditingController _quantityController = new TextEditingController();
   TextEditingController _priceController = new TextEditingController();
+  TextEditingController _weightController = new TextEditingController();
 
   final FocusNode _nameFocus = FocusNode();
   final FocusNode _descFocus = FocusNode();
   final FocusNode _quantityFocus = FocusNode();
   final FocusNode _priceFocus = FocusNode();
+  final FocusNode _weightFocus = FocusNode();
 
   var _desc = "";
   var _name = "";
   var _quantity = "";
   var _price = "";
+  var _weight = "";
   var _category = null;
 
   var manufacturerId = '';
@@ -108,6 +116,7 @@ class _PageFormState extends State<PageForm> {
         _descController.clear();
         _quantityController.clear();
         _priceController.clear();
+        _weightController.clear();
         image = null;
         imgUrl = '';
       });
@@ -128,6 +137,7 @@ class _PageFormState extends State<PageForm> {
     _nameController.text = "";
     _quantityController.text = "";
     _priceController.text = "";
+    _weightController.text = "";
   }
 
   @override
@@ -139,6 +149,8 @@ class _PageFormState extends State<PageForm> {
     _quantityFocus.dispose();
     super.dispose();
     _priceFocus.dispose();
+    super.dispose();
+    _weightFocus.dispose();
     super.dispose();
   }
 
@@ -168,13 +180,14 @@ class _PageFormState extends State<PageForm> {
             InkWell(
                 onTap: () => getImage(),
                 child: CircleAvatar(
-                  radius: 100,
+                  radius: 70,
                   backgroundImage: image != null
                       ? FileImage(image)
                       : NetworkImage(
                               'https://cdni.iconscout.com/illustration/premium/thumb/add-photo-2670583-2215267.png')
                           as ImageProvider,
                 )),
+            Center(child: Text("Add product photo")),
             SizedBox(height: 20),
             TextFormField(
                 focusNode: _nameFocus,
@@ -329,6 +342,50 @@ class _PageFormState extends State<PageForm> {
                       ],
                     ),
                   );
+                }),
+            SizedBox(height: 20),
+            TextFormField(
+                controller: _weightController,
+                focusNode: _weightFocus,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(
+                    CupertinoIcons.line_horizontal_3_decrease_circle_fill,
+                    size: 20,
+                    color: _weightFocus.hasFocus ? _focusColor : _defaultColor,
+                  ),
+                  border: OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        const BorderSide(color: Colors.black, width: 2.0),
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  labelText: 'Weight per unit in Kg',
+                  labelStyle: TextStyle(
+                    color: _weightFocus.hasFocus ? _focusColor : _defaultColor,
+                  ),
+                ),
+                onChanged: (value) {
+                  _weight = value;
+                  setState(() {
+                    color = true;
+                  });
+                },
+                onTap: () {
+                  setState(() {
+                    FocusScope.of(context).requestFocus(_weightFocus);
+                  });
+                },
+                validator: (value) {
+                  String patttern = r'^[+-]?((\d+(\.\d*)?)|(\.\d+))$';
+                  RegExp regExp = new RegExp(patttern);
+                  if (value!.isEmpty) {
+                    return 'Please enter weight of the product';
+                  }
+                  if (!regExp.hasMatch(value)) {
+                    return 'Please enter valid weight';
+                  }
+
+                  return null;
                 }),
             SizedBox(height: 20),
             TextFormField(

@@ -5,6 +5,7 @@ import 'package:zerowaste/frontend/login/profile_page.dart';
 import 'package:zerowaste/frontend/manufacturer/Orders.dart';
 import 'package:zerowaste/frontend/manufacturer/addProduct.dart';
 import 'package:zerowaste/frontend/manufacturer/dashboard.dart';
+import 'package:zerowaste/frontend/manufacturer/productsTabBar.dart';
 
 class ManufacturerNavbar extends StatefulWidget {
   const ManufacturerNavbar({Key? key}) : super(key: key);
@@ -19,7 +20,7 @@ class _ManufacturerNavbarState extends State<ManufacturerNavbar> {
   final pages = [
     Dashboard(),
     ManuFactureOrders(),
-    AddProduct(),
+    ProductsTabBar(),
     InputCategory(),
     ProfilePage(),
   ];
