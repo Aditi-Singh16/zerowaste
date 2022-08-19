@@ -1,12 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Cart/ShoppingCart.dart';
 import 'package:zerowaste/frontend/consumer/color.dart';
 import 'package:zerowaste/frontend/consumer/style.dart';
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:zerowaste/frontend/consumer/Orders.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Details extends StatefulWidget {
+  int q;
   String name;
   String description;
   double price;
@@ -25,7 +30,8 @@ class Details extends StatefulWidget {
       required this.uid,
       required this.manufacturerid,
       required this.image,
-      required this.is_plant});
+      required this.is_plant,
+      required this.q});
 
   @override
   State<Details> createState() => _DetailsState();
@@ -38,17 +44,23 @@ class _DetailsState extends State<Details> {
   List Value = [5, 10, 15, 20, 2];
 
   double amount = 1;
+  double amountd = 0;
   bool coupon = false;
   bool plant = false;
   bool couponused = false;
   int indx = 0;
   late Razorpay razorpay;
   String quantity = "";
+  int? previousquantity = -1;
   DateTime selectedDate = DateTime.now();
   final _formkey = GlobalKey<FormState>();
   double beforediscount = 0;
   double afterdiscount = 0;
   String error = '';
+  String phone_number = '';
+  TextEditingController _controller1 = TextEditingController();
+  TextEditingController _controller2 = TextEditingController();
+  String address = '';
 
   @override
   void initState() {
@@ -106,6 +118,7 @@ class _DetailsState extends State<Details> {
               Navigator.of(context).pop();
               setState(() {
                 plant = true;
+                amountd = amount + 20 + 5;
               });
               showDialog(
                 context: context,
@@ -138,16 +151,83 @@ class _DetailsState extends State<Details> {
       "ProductId": widget.productid,
       "Quantity": quantity,
       "Time": time,
-      "Amount": amount,
+      "Amount": amountd,
       "Date": date,
-      "manufacturerId": widget.manufacturerid
+      "manufacturerId": widget.manufacturerid,
+      "phone_number": phone_number,
+      "address": address,
+      "image": widget.image
     });
+
+    await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(widget.uid)
+        .update({'phone': phone_number, 'addr': address});
+    await FirebaseFirestore.instance
+        .collection('products')
+        .doc(widget.productid)
+        .update({'quantity': (widget.q - int.parse(quantity))});
     // Toast.show("Pament success", context);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: const Text("Order Completed"),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => YourOrders()));
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.black,
+              ),
+              padding: const EdgeInsets.all(14),
+              child: const Text(
+                "Continue",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void handlerErrorFailure(PaymentFailureResponse response) {
     print("Payment error $response");
     // Toast.show("Pament error", context);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: const Text("Transaction failed"),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.black,
+              ),
+              padding: const EdgeInsets.all(14),
+              child: const Text(
+                "Continue",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void handlerExternalWallet(ExternalWalletResponse response) {
@@ -158,7 +238,7 @@ class _DetailsState extends State<Details> {
   Future<void> openCheckout() async {
     var options = {
       "key": "rzp_test_Ienn2nz5hJfAS1",
-      "amount": (amount * 100).toString(),
+      "amount": (amountd * 100).toString(),
       "name": "Sample App",
       "description": "Payment for the some random product",
       'timeout': 300,
@@ -180,6 +260,7 @@ class _DetailsState extends State<Details> {
         .collection('Users')
         .doc(widget.uid)
         .get();
+
     if (docSnapshot.exists) {
       Map<String, dynamic> data = docSnapshot.data()!;
 
@@ -190,8 +271,23 @@ class _DetailsState extends State<Details> {
         validity[2] = data['Coupon2'];
         validity[3] = data['Coupon3'];
         validity[4] = data['Coupon4'];
+        _controller1.text = data['phone'];
+        _controller2.text = data['addr'];
       });
+
       print(validity);
+    }
+    var docSnapshot1 = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(widget.uid)
+        .collection('Cart')
+        .doc(widget.productid)
+        .get();
+    if (docSnapshot1.exists) {
+      Map<String, dynamic> data1 = docSnapshot1.data()!;
+      setState(() {
+        previousquantity = data1['quantity'];
+      });
     }
   }
 
@@ -232,7 +328,7 @@ class _DetailsState extends State<Details> {
                       children: [
                         Center(
                           child: Container(
-                            margin: const EdgeInsets.only(bottom: 16),
+                            margin: const EdgeInsets.only(bottom: 20),
                             height: 5,
                             width: 32 * 1.5,
                             decoration: BoxDecoration(
@@ -248,25 +344,53 @@ class _DetailsState extends State<Details> {
                         const SizedBox(
                           height: 7,
                         ),
-                        Text('Quantity',
-                            style: AppStyle.text.copyWith(color: Colors.white)),
+                        Row(
+                          children: [
+                            Text('Category:  ',
+                                style: AppStyle.text
+                                    .copyWith(color: Colors.white)),
+                            const Spacing(),
+                            Text(widget.category,
+                                style: AppStyle.text
+                                    .copyWith(color: Colors.white)),
+                          ],
+                        ),
+                        const Spacing(),
+                        Row(
+                          children: [
+                            Text('Quantity:  ',
+                                style: AppStyle.text
+                                    .copyWith(color: Colors.white)),
+                            const Spacing(),
+                            Text(widget.q.toString(),
+                                style: AppStyle.text
+                                    .copyWith(color: Colors.white)),
+                          ],
+                        ),
                         const Spacing(),
                         Form(
                           key: _formkey,
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.8,
                             child: TextFormField(
+                              style:
+                                  AppStyle.text.copyWith(color: Colors.white),
                               onChanged: (val) {
                                 setState(() {
                                   quantity = val;
-                                  amount = widget.price * int.parse(val);
-                                  plant
-                                      ? (amount = amount + 5)
-                                      : (amount = amount);
+                                  amount = widget.price *
+                                      int.parse(
+                                          val); //displaying the total amount
+                                  amountd = amount + 20;
                                 });
                               },
-                              validator: (val) =>
-                                  val!.isEmpty ? "Enter quantity" : null,
+                              validator: (val) {
+                                if (val!.isEmpty || int.parse(val) > widget.q) {
+                                  return 'Enter correct quantity';
+                                } else {
+                                  return null;
+                                }
+                              },
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
                                   borderSide:
@@ -335,22 +459,52 @@ class _DetailsState extends State<Details> {
                                 })
                             : const Spacing(),
 
-                        InkWell(
-                            child: Container(
-                              child: Text('Apply Coupon',
-                                  style: AppStyle.text
-                                      .copyWith(color: Colors.blue)),
-                            ),
-                            onTap: () {
-                              setState(() {
-                                coupon = true;
-                              });
-                            }),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                                child: Container(
+                                  child: Text('Apply Coupon',
+                                      style: AppStyle.text
+                                          .copyWith(color: Colors.blue)),
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    coupon = true;
+                                  });
+                                }),
+                            coupon
+                                ? InkWell(
+                                    child: Container(
+                                      child: Text('Remove',
+                                          style: AppStyle.text
+                                              .copyWith(color: Colors.red)),
+                                    ),
+                                    onTap: () {
+                                      setState(() {
+                                        coupon = false;
+                                        if (amount !=
+                                            (widget.price *
+                                                int.parse(quantity))) {
+                                          amount = widget.price *
+                                              int.parse(quantity);
+
+                                          amountd = (plant)
+                                              ? amount + 20 + 5
+                                              : amount + 20;
+                                        }
+                                      });
+                                    })
+                                : Visibility(visible: false, child: Text('')),
+                          ],
+                        ),
                         const Spacing(),
                         coupon
                             ? Container(
                                 width: MediaQuery.of(context).size.width * 0.8,
                                 child: TextFormField(
+                                  style: AppStyle.text
+                                      .copyWith(color: Colors.white),
                                   onChanged: (val) {
                                     setState(() => eneteredcoupon = val);
                                   },
@@ -369,7 +523,8 @@ class _DetailsState extends State<Details> {
                                   ),
                                 ),
                               )
-                            : SizedBox(height: 0),
+                            : Visibility(
+                                visible: false, child: SizedBox(height: 0)),
                         Text(error, style: TextStyle(color: Colors.red)),
                         coupon
                             ? Center(
@@ -394,6 +549,7 @@ class _DetailsState extends State<Details> {
                                             print(
                                                 ' entered coupon is valid coupon');
                                             setState(() {
+                                              //applied coupon amount
                                               amount = widget.price *
                                                   int.parse(quantity);
                                               beforediscount = amount;
@@ -404,8 +560,8 @@ class _DetailsState extends State<Details> {
                                                       100);
                                               afterdiscount = amount;
                                               plant
-                                                  ? (amount = amount + 5)
-                                                  : (amount = amount);
+                                                  ? (amountd = amount + 5 + 20)
+                                                  : (amountd = amount + 20);
                                             });
                                           } else {
                                             setState(() {
@@ -425,42 +581,104 @@ class _DetailsState extends State<Details> {
                               )
                             : Visibility(visible: false, child: Text('')),
                         const Spacing(),
+                        (amount == 1)
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Total:',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                  Text('0',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                ],
+                              )
+                            : Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Total:',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                  Text('$amount',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                ],
+                              ),
+
+                        //const Spacing(),
                         plant
-                            ? Row(children: [
-                                Text('Plant Contribution: ' + '\u{20B9}' + "5",
-                                    style: AppStyle.h3
-                                        .copyWith(color: Colors.white)),
-                                FlatButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        plant = false;
-                                      });
-                                    },
-                                    child: Text("Remove",
-                                        style: AppStyle.h3
-                                            .copyWith(color: Colors.white)))
-                              ])
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                    Text(
+                                      'Plant Contribution: ',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white),
+                                    ),
+                                    FlatButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            plant = false;
+                                            amountd = amountd - 5;
+                                          });
+                                        },
+                                        child: Text("Remove",
+                                            style: AppStyle.h3
+                                                .copyWith(color: Colors.red))),
+                                    const Spacing(),
+                                    Text(
+                                      "5",
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white),
+                                    ),
+                                  ])
                             : const Spacing(),
 
-                        (amount == 1)
-                            ? Text('Total: 0',
-                                style:
-                                    AppStyle.h3.copyWith(color: Colors.white))
-                            : Text('Total: $amount',
+                        // const Spacing(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Delivery Charges:',
                                 style:
                                     AppStyle.h3.copyWith(color: Colors.white)),
+                            const Spacing(),
+                            Text('20',
+                                style:
+                                    AppStyle.h3.copyWith(color: Colors.white)),
+                          ],
+                        ),
+                        const Spacing(),
+                        (amount == 1)
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Grand Total:',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                  Text('0',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                ],
+                              )
+                            : Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Grand Total:',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                  Text('$amountd',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                ],
+                              ),
 
                         const Spacing(),
 
-                        (amount == 1)
-                            ? Text('Grand Total: 0',
-                                style:
-                                    AppStyle.h3.copyWith(color: Colors.white))
-                            : Text('Grand Total: $amount',
-                                style:
-                                    AppStyle.h3.copyWith(color: Colors.white)),
-
-                        const Spacing(),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -475,24 +693,41 @@ class _DetailsState extends State<Details> {
                                     minimumSize: MaterialStateProperty.all(
                                         Size(size.width / 2.6, 37))),
                                 onPressed: () async {
+                                  int finalquantity = 0;
                                   String uid =
                                       FirebaseAuth.instance.currentUser!.uid;
-                                  amount = widget.price * int.parse(quantity);
+
                                   if (_formkey.currentState!.validate()) {
+                                    if (previousquantity != -1) {
+                                      finalquantity = previousquantity! +
+                                          int.parse(quantity);
+                                      print('yesssssss');
+                                      if (finalquantity > widget.q) {
+                                        finalquantity = widget.q;
+                                      }
+                                    } else {
+                                      finalquantity = int.parse(quantity);
+                                    }
+
                                     await FirebaseFirestore.instance
                                         .collection('Users')
                                         .doc(uid)
                                         .collection('Cart')
-                                        .add({
+                                        .doc(widget.productid)
+                                        .set({
                                       "categories": widget.category,
                                       "image": widget.image,
                                       "manufacturerId": widget.manufacturerid,
                                       "name": widget.name,
                                       "price": widget.price,
                                       "productId": widget.productid,
-                                      "quantity": int.parse(quantity),
+                                      "quantity": finalquantity,
                                       "userId": uid,
                                     });
+                                    Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ShoppingCart()));
                                   }
                                 },
                                 child: Text('Add To Cart',
@@ -510,25 +745,231 @@ class _DetailsState extends State<Details> {
                                         Size(size.width / 2.6, 37))),
                                 onPressed: () async {
                                   if (_formkey.currentState!.validate()) {
-                                    setState(() {
-                                      if (beforediscount == afterdiscount) {
-                                        amount =
-                                            widget.price * int.parse(quantity);
-                                        plant
-                                            ? (amount = amount + 5)
-                                            : (amount = amount);
-                                      }
-                                    });
-                                    await openCheckout();
+                                    showModalBottomSheet(
+                                      isScrollControlled: true,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(16),
+                                            topRight: Radius.circular(16)),
+                                      ),
+                                      context: context, // set this to true
+                                      builder: (_) {
+                                        return DraggableScrollableSheet(
+                                          initialChildSize: 0.47,
+                                          maxChildSize: 0.6,
+                                          minChildSize: 0.3,
+                                          expand: false,
+                                          builder: (_, controller) {
+                                            String pattern =
+                                                r'(^[7-9][0-9]{9}$)';
+                                            RegExp regExp = new RegExp(pattern);
 
-                                    if (beforediscount != afterdiscount) {
-                                      String couponname =
-                                          'Coupon' + indx.toString();
-                                      await FirebaseFirestore.instance
-                                          .collection('Users')
-                                          .doc(widget.uid)
-                                          .update({couponname: false});
-                                    }
+                                            return Container(
+                                                // rounded border container top
+                                                // take input and button click to update data from flutter firebase
+                                                child: Padding(
+                                                    padding: EdgeInsets.all(10),
+                                                    child: Column(
+                                                      children: <Widget>[
+                                                        Text(
+                                                          "Personal Details",
+                                                          style: TextStyle(
+                                                            fontSize: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width /
+                                                                20,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        Divider(),
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  10),
+                                                          child: TextField(
+                                                            controller:
+                                                                _controller1,
+                                                            decoration:
+                                                                InputDecoration(
+                                                              enabled: true,
+                                                              prefixIcon: Icon(
+                                                                CupertinoIcons
+                                                                    .phone_circle_fill,
+                                                                size: 24,
+                                                              ),
+                                                              border:
+                                                                  OutlineInputBorder(),
+                                                              focusedBorder:
+                                                                  OutlineInputBorder(
+                                                                borderSide: const BorderSide(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    width: 2.0),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            20.0),
+                                                              ),
+                                                              labelText:
+                                                                  'Contact Number',
+                                                              hintText:
+                                                                  'Enter Your Phone Number',
+                                                            ),
+                                                            onChanged: (text) {
+                                                              phone_number = text
+                                                                  .toString();
+                                                              text = text
+                                                                  .toString();
+                                                            },
+                                                          ),
+                                                        ),
+                                                        Divider(),
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  15),
+                                                          child: TextField(
+                                                            controller:
+                                                                _controller2,
+                                                            onChanged: (text) {
+                                                              address = text;
+                                                            },
+                                                            decoration:
+                                                                InputDecoration(
+                                                              enabled: true,
+                                                              prefixIcon: Icon(
+                                                                CupertinoIcons
+                                                                    .home,
+                                                                size: 24,
+                                                              ),
+                                                              border:
+                                                                  OutlineInputBorder(),
+                                                              focusedBorder:
+                                                                  OutlineInputBorder(
+                                                                borderSide: const BorderSide(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    width: 2.0),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            20.0),
+                                                              ),
+                                                              labelText:
+                                                                  'Your Address',
+                                                              hintText:
+                                                                  'Enter Your Address',
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 2,
+                                                        ),
+                                                        CupertinoButton(
+                                                            color: Colors.black,
+                                                            child: Text(
+                                                                'Continue to Payment...'),
+                                                            onPressed:
+                                                                () async {
+                                                              if (phone_number !=
+                                                                      null &&
+                                                                  regExp.hasMatch(
+                                                                      phone_number
+                                                                          .toString()) &&
+                                                                  address.length >
+                                                                      5) {
+                                                                setState(() {
+                                                                  if (beforediscount ==
+                                                                      afterdiscount) {
+                                                                    amount = widget
+                                                                            .price *
+                                                                        int.parse(
+                                                                            quantity);
+                                                                    plant
+                                                                        ? (amountd = amount +
+                                                                            5 +
+                                                                            20)
+                                                                        : (amountd =
+                                                                            amount +
+                                                                                20);
+                                                                  }
+                                                                });
+                                                                await openCheckout();
+
+                                                                if (beforediscount !=
+                                                                    afterdiscount) {
+                                                                  String
+                                                                      couponname =
+                                                                      'Coupon' +
+                                                                          indx.toString();
+                                                                  await FirebaseFirestore
+                                                                      .instance
+                                                                      .collection(
+                                                                          'Users')
+                                                                      .doc(widget
+                                                                          .uid)
+                                                                      .update({
+                                                                    couponname:
+                                                                        false
+                                                                  });
+                                                                }
+                                                              } else {
+                                                                showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder: (ctx) =>
+                                                                      AlertDialog(
+                                                                    shape:
+                                                                        RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              20),
+                                                                    ),
+                                                                    title: const Text(
+                                                                        "Incorrect Details"),
+                                                                    content:
+                                                                        const Text(
+                                                                            "Please check your address and contact number!"),
+                                                                    actions: <
+                                                                        Widget>[
+                                                                      TextButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          Navigator.of(ctx)
+                                                                              .pop();
+                                                                        },
+                                                                        child:
+                                                                            Container(
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(10),
+                                                                            color:
+                                                                                Colors.black,
+                                                                          ),
+                                                                          padding:
+                                                                              const EdgeInsets.all(14),
+                                                                          child:
+                                                                              const Text(
+                                                                            "Continue",
+                                                                            style:
+                                                                                TextStyle(color: Colors.white),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                              }
+                                                            })
+                                                      ],
+                                                    )));
+                                          },
+                                        );
+                                      },
+                                    );
                                   }
                                 },
                                 child: Text('Buy Now',
@@ -665,11 +1106,6 @@ class ProductNameAndPrice extends StatelessWidget {
           ' $amount',
           style: AppStyle.h1Light
               .copyWith(color: AppColor.primary, fontWeight: FontWeight.w400),
-        ),
-        Text(
-          ' $category',
-          style: AppStyle.h1Light
-              .copyWith(color: AppColor.primary, fontWeight: FontWeight.w200),
         ),
       ],
     );

@@ -57,6 +57,7 @@ class ProductSearch extends SearchDelegate {
                   final String price = document.get('pricePerProduct');
                   final String category = document.get('categories');
                   final String is_plant = document.get('is_plant');
+                  final int quantity = document.get('quantity');
                   return ListTile(
                       title: Text(name),
                       subtitle: Text(document['Desc']),
@@ -74,7 +75,8 @@ class ProductSearch extends SearchDelegate {
                                 uid: userauthid,
                                 manufacturerid: manufacturerid,
                                 image: image,
-                                is_plant: is_plant)));
+                                is_plant: is_plant,
+                                q: quantity)));
                       });
                 }).toList(),
               ],
