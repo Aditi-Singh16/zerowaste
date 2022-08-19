@@ -44,14 +44,17 @@ class IndividualCategoryProductList extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasData) {
             return Scaffold(
-              appBar:  AppBar(
+
+              appBar: AppBar(
+
                 title: Text('Products'),
                 backgroundColor: Color(0xFF001427),
                 actions: [
                   IconButton(
                     onPressed: () {
-                      showSearch(
-                          context: context, delegate: ProductSearch());
+
+                      showSearch(context: context, delegate: ProductSearch());
+
                     },
                     icon: Icon(Icons.search),
                   )

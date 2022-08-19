@@ -178,8 +178,11 @@ class _DetailsState extends State<Details> {
         actions: <Widget>[
           TextButton(
             onPressed: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => YourOrders()));
+
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => YourOrders()));
+
+             
             },
             child: Container(
               decoration: BoxDecoration(
@@ -607,27 +610,38 @@ class _DetailsState extends State<Details> {
                                 ],
                               ),
 
-                        const Spacing(),
+
+                        //const Spacing(),
                         plant
-                            ? Row(children: [
-                                Text('Plant Contribution: ' + '\u{20B9}' + "5",
-                                    style: AppStyle.h3
-                                        .copyWith(color: Colors.white)),
-                                FlatButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        plant = false;
-                                        amountd = amountd - 5;
-                                      });
-                                    },
-                                    child: Text("Remove",
-                                        style: AppStyle.h3
-                                            .copyWith(color: Colors.white)))
-                              ])
-                            : Visibility(
-                                visible: false,
-                                child: const Spacing(),
-                              ),
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                    Text(
+                                      'Plant Contribution: ',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white),
+                                    ),
+                                    FlatButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            plant = false;
+                                            amountd = amountd - 5;
+                                          });
+                                        },
+                                        child: Text("Remove",
+                                            style: AppStyle.h3
+                                                .copyWith(color: Colors.red))),
+                                    const Spacing(),
+                                    Text(
+                                      "5",
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white),
+                                    ),
+                                  ])
+                            : const Spacing(),
+
+                        // const Spacing(),
 
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -715,7 +729,10 @@ class _DetailsState extends State<Details> {
                                       "quantity": finalquantity,
                                       "userId": uid,
                                     });
-                                    Navigator.of(context).push(
+
+                                    Navigator.of(context).pushReplacement(
+
+
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 ShoppingCart()));

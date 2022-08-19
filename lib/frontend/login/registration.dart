@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:zerowaste/frontend/manufacturerNavbar.dart';
 import 'package:zerowaste/frontend/ngoNavbar.dart';
+import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
@@ -18,6 +19,7 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
+  HelperFunctions _helperFunctions = HelperFunctions();
   final _auth = FirebaseAuth.instance;
 
   // string for displaying the error Message
@@ -55,7 +57,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.account_circle),
-          contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+          contentPadding: EdgeInsets.fromLTRB(20, 1, 20, 15),
           hintText: "Name",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
@@ -204,20 +206,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           child: Container(
             color: Colors.white,
             child: Padding(
-              padding: const EdgeInsets.all(36.0),
+              padding: const EdgeInsets.only(left: 35, right: 35, top: 0),
               child: Form(
                 key: _formKey,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(
-                        height: 150,
-                        child: Image.asset(
-                          "assets/logo.png",
-                          fit: BoxFit.contain,
-                        )),
-                    SizedBox(height: 45),
+                    Image.asset("assets/images/logo.png"),
                     firstNameField,
                     SizedBox(height: 20),
                     emailField,
@@ -293,6 +289,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     userModel.uid = user.uid;
     userModel.name = nameEditingController.text;
     userModel.type = typeEditingController;
+    userModel.Coupon0 = "false";
+    userModel.Coupon1 = "false";
+    userModel.Coupon2 = "false";
+    userModel.Coupon3 = "false";
+    userModel.Coupon4 = "false";
+    userModel.addr = '';
+    userModel.phone = '';
 
     await firebaseFirestore
         .collection("Users")
@@ -311,13 +314,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         loggedInUser = UserModel.fromMap(value.data());
         print(loggedInUser.toMap()['type']);
 
+        _helperFunctions.setNamePref(userModel.name);
+        _helperFunctions.setEmailPref(userModel.email);
+        _helperFunctions.setUserIdPref(userModel.uid);
+        _helperFunctions.setCoupons(
+            "false", "false", "false", "false", "false");
+        _helperFunctions.setAddrPref(userModel.addr);
+        _helperFunctions.setPhonePref(userModel.phone);
         if (loggedInUser.toMap()['type'] == 'Consumer') {
+          _helperFunctions.setType('Consumer');
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (context) => ConsumerNavbar()));
         } else if (loggedInUser.toMap()['type'] == 'Manufacturer') {
+          _helperFunctions.setType('Manufacturer');
           Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => ManufacturerNavbar()));
         } else if (loggedInUser.toMap()['type'] == 'NGO') {
+          _helperFunctions.setType('NGO');
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (context) => NgoNavbar()));
         }

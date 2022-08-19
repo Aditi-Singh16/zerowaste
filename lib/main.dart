@@ -6,7 +6,7 @@ import 'package:zerowaste/frontend/login/login.dart';
 import 'package:zerowaste/frontend/manufacturer/dashboard.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
 import 'package:zerowaste/frontend/inputDisposalCategory.dart';
-import 'package:zerowaste/frontend/manufacturer/addProduct.dart';
+import 'package:zerowaste/frontend/consumer/Orders.dart';
 import 'package:zerowaste/frontend/wasteDisposal.dart';
 
 void main() async {
