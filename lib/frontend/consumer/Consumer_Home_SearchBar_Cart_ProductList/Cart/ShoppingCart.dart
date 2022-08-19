@@ -9,6 +9,7 @@ import 'package:zerowaste/backend/userModal/user.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
 
+
 String? name;
 String phone_number = '';
 TextEditingController _controller1 = TextEditingController();
@@ -23,12 +24,17 @@ num price2 = 0;
 var date = new DateTime.now().toString();
 var dateParse = DateTime.parse(date);
 
+
+
 var formattedDate = "${dateParse.day}-${dateParse.month}-${dateParse.year}";
 int delivery_charges = 20;
 String uid =
     FirebaseAuth.instance.currentUser!.uid;
 
 DateTime selectedDate = DateTime.now();
+
+
+
 CollectionReference products = FirebaseFirestore.instance
     .collection('Products')
     .doc('unfoWBpH8AidhiSmwx44')
@@ -58,8 +64,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
       .collection('Users')
       .doc(uid)
       .collection('Cart');
-
-
 
   get async => null;
 
@@ -589,17 +593,60 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                         .height /
                                                         100),
                                                 InkWell(
+
                                                   onTap: () {
                                                     // update data from flutter firebase
+                                                    CollectionReference pro1 = FirebaseFirestore.instance
+                                                        .collection('products');
+                                                    // get single field from product collection
+                                                    pro1.doc(doc1['productId']).get().then((value) {
 
-                                                    newu.doc(doc1.id).set(
-                                                        {
-                                                          "quantity":
-                                                          doc1['quantity'] +
-                                                              1,
-                                                        },
-                                                        SetOptions(
-                                                            merge: true));
+                                                      if (value['quantity'] > doc1['quantity']) {
+                                                        newu.doc(doc1.id).set(
+                                                            {
+                                                              "quantity":
+                                                              doc1['quantity'] +
+                                                                  1,
+                                                            },
+                                                            SetOptions(
+                                                                merge:
+                                                                true));
+                                                      }else {
+                                                        //cart quantity is equal to product quantity
+                                                        newu.doc(doc1.id).set(
+                                                            {
+                                                              "quantity":
+                                                              doc1['quantity']-1,
+                                                            },
+                                                            SetOptions(
+                                                                merge:
+                                                                true));
+                                                        showDialog(
+                                                            context: context,
+                                                            builder: (BuildContext context) {
+                                                              return AlertDialog(
+                                                                title: Text(
+                                                                    'Select a lower quantity', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),),
+                                                                content: Text(
+                                                                    'Quantity exceeds the available stock', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w400),),
+                                                                actions: <Widget>[
+                                                                  FlatButton(
+                                                                    child: Text(
+                                                                        'OK'),
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.of(
+                                                                          context)
+                                                                          .pop();
+                                                                    },
+                                                                  )
+                                                                ],
+                                                              );
+                                                            });
+
+
+                                                      }
+                                                    });
 
 
 
