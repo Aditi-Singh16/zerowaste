@@ -144,7 +144,10 @@ class _WasteDisposalState extends State<WasteDisposal> {
                     BitmapDescriptor.hueGreen),
                 infoWindow: InfoWindow(
                     title: snapshot.data!.docs[i]['name'],
-                    snippet: "Distance = " + dist.toStringAsFixed(2) + "km"),
+                    snippet: "Distance = " +
+                        dist.toStringAsFixed(2) +
+                        "km Transportation Cost= \u{20B9}" +
+                        (dist * 50).toStringAsFixed(2)),
               ));
             }
           }

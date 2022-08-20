@@ -440,8 +440,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 ])));
           }
           return Scaffold(
-              body:
-                  Center(child: CircularProgressIndicator(color: Colors.grey)));
+              body: Center(
+                  child: SpinKitChasingDots(
+            color: Colors.pink,
+            size: 50.0,
+          )));
         });
   }
 

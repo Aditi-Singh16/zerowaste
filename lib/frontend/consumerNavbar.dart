@@ -4,6 +4,7 @@ import 'package:zerowaste/frontend/consumer/Orders.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
 import 'package:zerowaste/frontend/consumer/consumer_tabbar.dart';
 import 'package:zerowaste/frontend/consumer/learning_modules/moduleoptions.dart';
+import 'package:zerowaste/frontend/inputDisposalCategory.dart';
 import 'package:zerowaste/frontend/login/profile_page.dart';
 import 'package:zerowaste/frontend/requirements_sell/add_requirements.dart';
 
@@ -21,6 +22,7 @@ class _ConsumerNavbarState extends State<ConsumerNavbar> {
     UserHome(),
     const MyApp(),
     AddRequirement(),
+    InputCategory(),
     YourOrders(),
     const ProfilePage(),
   ];
@@ -108,6 +110,25 @@ class _ConsumerNavbarState extends State<ConsumerNavbar> {
             },
             icon: pageIndex == 3
                 ? Icon(
+                    CupertinoIcons.arrow_3_trianglepath,
+                    color: Colors.black,
+                    size: MediaQuery.of(context).size.height / 24,
+                  )
+                : Icon(
+                    CupertinoIcons.arrow_3_trianglepath,
+                    color: Colors.black,
+                    size: MediaQuery.of(context).size.height / 24,
+                  ),
+          ),
+          IconButton(
+            enableFeedback: false,
+            onPressed: () {
+              setState(() {
+                pageIndex = 4;
+              });
+            },
+            icon: pageIndex == 4
+                ? Icon(
                     Icons.history,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
@@ -122,10 +143,10 @@ class _ConsumerNavbarState extends State<ConsumerNavbar> {
             enableFeedback: false,
             onPressed: () {
               setState(() {
-                pageIndex = 4;
+                pageIndex = 5;
               });
             },
-            icon: pageIndex == 4
+            icon: pageIndex == 5
                 ? Icon(
                     Icons.person,
                     color: Colors.black,
