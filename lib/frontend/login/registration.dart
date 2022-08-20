@@ -173,7 +173,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     final signUpButton = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
-      color: Colors.green,
+      color: Color(0xff00277d),
       child: MaterialButton(
           padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context).size.width,
@@ -213,7 +213,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Image.asset("assets/images/logo.png"),
+                    Image.asset("assets/images/logo1.png", height: 170),
+                    Text(
+                      "ONE STEP TOWARDS ENVIRONMENT",
+                      style: TextStyle(
+                          color: Color(0xff3472c0),
+                          fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 36),
                     firstNameField,
                     SizedBox(height: 20),
                     emailField,

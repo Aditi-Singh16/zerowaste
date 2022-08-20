@@ -79,7 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
-                              color: Color(0xFFCDF0EA),
+                              color: Colors.blue.shade100,
                             ),
                             padding: EdgeInsets.all(20),
                             child: Column(
@@ -88,14 +88,20 @@ class _ProfilePageState extends State<ProfilePage> {
                                   children: [
                                     Text(
                                       "Name: ",
-                                      style: TextStyle(fontSize: 20),
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: Color(0xff00277d),
+                                          fontWeight: FontWeight.w600),
                                     ),
                                     SizedBox(
                                       width: 10,
                                     ),
                                     Text(
                                       "${loggedInUser.name}",
-                                      style: TextStyle(fontSize: 20),
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: Color(0xff00277d),
+                                          fontWeight: FontWeight.w500),
                                     ),
                                   ],
                                 ),
@@ -104,14 +110,25 @@ class _ProfilePageState extends State<ProfilePage> {
                                   children: [
                                     Text(
                                       "Email: ",
-                                      style: TextStyle(fontSize: 20),
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: Color(0xff00277d),
+                                          fontWeight: FontWeight.w600),
                                     ),
                                     SizedBox(
                                       width: 10,
                                     ),
-                                    Text(
-                                      "${loggedInUser.email}",
-                                      style: TextStyle(fontSize: 20),
+                                    Flexible(
+                                      child: Text(
+                                        '${loggedInUser.email}',
+                                        maxLines: 2,
+                                        softWrap: true,
+                                        overflow: TextOverflow.fade,
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            color: Color(0xff00277d),
+                                            fontWeight: FontWeight.w500),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -120,14 +137,20 @@ class _ProfilePageState extends State<ProfilePage> {
                                   children: [
                                     Text(
                                       "Role: ",
-                                      style: TextStyle(fontSize: 20),
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: Color(0xff00277d),
+                                          fontWeight: FontWeight.w600),
                                     ),
                                     SizedBox(
                                       width: 10,
                                     ),
                                     Text(
                                       "${loggedInUser.type}",
-                                      style: TextStyle(fontSize: 20),
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: Color(0xff00277d),
+                                          fontWeight: FontWeight.w600),
                                     ),
                                   ],
                                 ),
@@ -135,13 +158,19 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Row(children: [
                                   Text(
                                     "Address: ",
-                                    style: TextStyle(fontSize: 20),
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        color: Color(0xff00277d),
+                                        fontWeight: FontWeight.w600),
                                   ),
                                   Expanded(
                                       child: !isEditable
                                           ? Text(
                                               title,
-                                              style: TextStyle(fontSize: 20),
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Color(0xff00277d),
+                                                  fontWeight: FontWeight.w500),
                                             )
                                           : TextFormField(
                                               initialValue: title,
@@ -174,13 +203,19 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Row(children: [
                                   Text(
                                     "Phone: ",
-                                    style: TextStyle(fontSize: 20),
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        color: Color(0xff00277d),
+                                        fontWeight: FontWeight.w600),
                                   ),
                                   Expanded(
                                       child: !isEditablePhone
                                           ? Text(
                                               phone,
-                                              style: TextStyle(fontSize: 20),
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Color(0xff00277d),
+                                                  fontWeight: FontWeight.w500),
                                             )
                                           : TextFormField(
                                               initialValue: phone,
@@ -218,222 +253,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       ],
                     ),
                   ),
-                  Text(
-                    "My Requirements",
-                    style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.height / 50,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        //print(snapshot.data!.docs.length);
-                        DocumentSnapshot doc = snapshot.data!.docs[index];
-                        // print("Doc ID");
-                        // print(doc.id);
-                        // print("Doc length");
-                        // print(doc['requirement_satisfy'].length);
-                        // for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                        //   if (snapshot.data!.docs[index]['requirement_satisfy']
-                        //           .length >
-                        //       0) header = true;
-                        // }
-                        return Column(children: [
-                          // header ? Text("My Requirements")  : SizedBox(width: 0),
-
-                          ListView.builder(
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
-                              itemCount: doc['requirement_satisfy'].length,
-                              itemBuilder: (context, idx) {
-                                //print(snapshot.data!.docs.length);
-
-                                return Container(
-                                  width:
-                                      MediaQuery.of(context).size.width / 2.1,
-                                  height:
-                                      MediaQuery.of(context).size.height / 5.9,
-                                  child: Card(
-                                    margin: EdgeInsets.all(
-                                        MediaQuery.of(context).size.height /
-                                            80),
-                                    elevation: 3,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    color: Colors.white,
-                                    child: InkWell(
-                                      onTap: () {},
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            flex: 2,
-                                            child: Column(
-                                              ////////////////////////////////////////////
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      top:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height /
-                                                              30),
-                                                  child: Padding(
-                                                      padding:
-                                                          EdgeInsets.only(),
-                                                      child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceAround,
-                                                          children: [
-                                                            Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Column(
-                                                                    children: [
-                                                                      Text(
-                                                                          "Manufacturer Email:"),
-                                                                      Text(
-                                                                        doc['requirement_satisfy'][idx]
-                                                                            [
-                                                                            'email'],
-                                                                        maxLines:
-                                                                            2,
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontSize:
-                                                                              MediaQuery.of(context).size.height / 50,
-                                                                          color:
-                                                                              Colors.black,
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                        ),
-                                                                      )
-                                                                    ]),
-                                                                const Spacing(),
-                                                                Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .spaceAround,
-                                                                    children: [
-                                                                      Text(
-                                                                        "In Stock: ",
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontSize:
-                                                                              MediaQuery.of(context).size.height / 55,
-                                                                          color:
-                                                                              Colors.black,
-                                                                        ),
-                                                                      ),
-                                                                      Text(
-                                                                        doc['requirement_satisfy'][idx]
-                                                                            [
-                                                                            'quantity'],
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontSize:
-                                                                              MediaQuery.of(context).size.height / 50,
-                                                                          color:
-                                                                              Colors.black,
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                        ),
-                                                                      ),
-                                                                      //const Spacing(),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            12,
-                                                                      ),
-                                                                      Text(
-                                                                        "Product Name: ",
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontSize:
-                                                                              MediaQuery.of(context).size.height / 55,
-                                                                          color:
-                                                                              Colors.black,
-                                                                        ),
-                                                                      ),
-                                                                      Text(
-                                                                        doc['product_name'],
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontSize:
-                                                                              MediaQuery.of(context).size.height / 50,
-                                                                          color:
-                                                                              Colors.black,
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                        ),
-                                                                      ),
-                                                                    ]),
-                                                              ],
-                                                            ),
-                                                            FlatButton(
-                                                                color: Colors
-                                                                    .green,
-                                                                onPressed: () {
-                                                                  setState(() {
-                                                                    FirebaseFirestore
-                                                                        .instance
-                                                                        .collection(
-                                                                            "requirements")
-                                                                        .doc(doc
-                                                                            .id)
-                                                                        .update({
-                                                                      "is_satisfied":
-                                                                          true
-                                                                    });
-                                                                    FirebaseFirestore
-                                                                        .instance
-                                                                        .collection(
-                                                                            "requirements")
-                                                                        .doc(doc
-                                                                            .id)
-                                                                        .update({
-                                                                      "requirement_satisfy":
-                                                                          []
-                                                                    });
-                                                                  });
-                                                                },
-                                                                child: Text(
-                                                                  "Satisfy",
-                                                                  style: AppStyle
-                                                                      .bodyText
-                                                                      .copyWith(
-                                                                          color: Colors
-                                                                              .white,
-                                                                          fontSize:
-                                                                              16),
-                                                                )),
-                                                          ])),
-                                                ),
-                                              ],
-                                              //////////////////////////////////////////////////////////////////////////
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }),
-                        ]);
-                      }),
-                  const Spacing(),
+                  // const Spacing(),
                   FloatingActionButton(
                     onPressed: () {
                       logout();
                     },
                     child: Icon(Icons.logout_rounded),
-                    backgroundColor: Colors.green,
+                    backgroundColor: Color(0xff3472c0),
                   ),
                 ])));
           }

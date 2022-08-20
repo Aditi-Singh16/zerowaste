@@ -178,11 +178,8 @@ class _DetailsState extends State<Details> {
         actions: <Widget>[
           TextButton(
             onPressed: () {
-
               Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (context) => YourOrders()));
-
-             
             },
             child: Container(
               decoration: BoxDecoration(
@@ -276,6 +273,8 @@ class _DetailsState extends State<Details> {
         validity[4] = data['Coupon4'];
         _controller1.text = data['phone'];
         _controller2.text = data['addr'];
+        phone_number = data['phone'];
+        address = data['addr'];
       });
 
       print(validity);
@@ -610,7 +609,6 @@ class _DetailsState extends State<Details> {
                                 ],
                               ),
 
-
                         //const Spacing(),
                         plant
                             ? Row(
@@ -731,8 +729,6 @@ class _DetailsState extends State<Details> {
                                     });
 
                                     Navigator.of(context).pushReplacement(
-
-
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 ShoppingCart()));

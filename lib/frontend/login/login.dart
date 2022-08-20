@@ -95,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final loginButton = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
-      color: Colors.redAccent,
+      color: Color(0xff00277d),
       child: MaterialButton(
           padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context).size.width,
@@ -124,12 +124,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(
-                        height: 200,
-                        child: Image.asset(
-                          "assets/images/logo.png",
-                          fit: BoxFit.contain,
-                        )),
+                    Image.asset("assets/images/logo1.png", height: 170),
+                    Text(
+                      "ONE STEP TOWARDS ENVIRONMENT",
+                      style: TextStyle(
+                          color: Color(0xff3472c0),
+                          fontWeight: FontWeight.bold),
+                    ),
                     SizedBox(height: 45),
                     emailField,
                     SizedBox(height: 25),
@@ -152,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: Text(
                               "SignUp",
                               style: TextStyle(
-                                  color: Colors.redAccent,
+                                  color: Color(0xff7dbeda),
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15),
                             ),
