@@ -277,8 +277,7 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                   : StreamBuilder(
                       stream: FirebaseFirestore.instance
                           .collection('requirements')
-                          .where('uid',
-                              isEqualTo: '2gJ5SNj9jyVtf6Pc9S2cE0dkRxp1')
+                          .where('uid', isEqualTo: uid)
                           .snapshots(),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if (snapshot.hasError) {
