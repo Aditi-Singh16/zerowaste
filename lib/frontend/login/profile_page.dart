@@ -53,7 +53,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
             .collection('requirements')
-            .where('uid', isEqualTo: '2gJ5SNj9jyVtf6Pc9S2cE0dkRxp1')
+            .where('uid', isEqualTo: uid)
             .get(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasError) {
@@ -62,7 +62,7 @@ class _ProfilePageState extends State<ProfilePage> {
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
                 appBar: AppBar(
-                  title: Text("Your Orders"),
+                  title: Text("Profile"),
                   leading: Icon(Icons.arrow_back),
                   backgroundColor: Color(0xff265D80),
                   centerTitle: true,
@@ -218,14 +218,16 @@ class _ProfilePageState extends State<ProfilePage> {
                       ],
                     ),
                   ),
-                  Text(
-                    "My Requirements",
-                    style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.height / 50,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  loggedInUser.type == 'Consumer' || loggedInUser.type == 'NGO'
+                      ? Text(
+                          "My Requirements",
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.height / 50,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : Text(""),
                   ListView.builder(
                       scrollDirection: Axis.vertical,
                       shrinkWrap: true,
@@ -438,8 +440,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 ])));
           }
           return Scaffold(
-              body:
-                  Center(child: CircularProgressIndicator(color: Colors.grey)));
+              body: Center(
+                  child: SpinKitChasingDots(
+            color: Colors.pink,
+            size: 50.0,
+          )));
         });
   }
 
