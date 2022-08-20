@@ -61,12 +61,27 @@ class _ShoppingCartState extends State<ShoppingCart> {
       .collection('Cart');
 
   get async => null;
+  Future<void> fetch_validity() async {
+    var docSnapshot =
+        await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+
+    if (docSnapshot.exists) {
+      Map<String, dynamic> data = docSnapshot.data()!;
+
+      // You can then retrieve the value from the Map like this:
+      setState(() {
+        _controller1.text = data['phone'];
+        _controller2.text = data['addr'];
+        phone_number = data['phone'];
+        address = data['addr'];
+      });
+    }
+  }
 
   @override
   void initState() {
-    _controller1.text = address;
-    _controller2.text = phone_number;
     super.initState();
+    fetch_validity();
 
     razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlerPaymentSuccess);
     razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlerErrorFailure);
@@ -139,6 +154,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
         newu.doc(doc.id).delete();
       });
     });
+    await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(uid)
+        .update({'phone': phone_number, 'addr': address});
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -800,7 +819,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                       context: context, // set this to true
                                       builder: (_) {
                                         return DraggableScrollableSheet(
-                                          initialChildSize: 0.37,
+                                          initialChildSize: 0.47,
                                           maxChildSize: 0.6,
                                           minChildSize: 0.3,
                                           expand: false,
@@ -813,7 +832,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                 // rounded border container top
                                                 // take input and button click to update data from flutter firebase
                                                 child: Padding(
-                                                    padding: EdgeInsets.all(15),
+                                                    padding: EdgeInsets.all(10),
                                                     child: Column(
                                                       children: <Widget>[
                                                         Text(
@@ -832,10 +851,11 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                         Padding(
                                                           padding:
                                                               EdgeInsets.all(
-                                                                  15),
+                                                                  10),
                                                           child: TextField(
                                                             controller:
-                                                                _controller2,
+                                                                _controller1,
+                                                            enabled: true,
                                                             decoration:
                                                                 InputDecoration(
                                                               prefixIcon: Icon(
@@ -873,13 +893,14 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                         Padding(
                                                           padding:
                                                               EdgeInsets.all(
-                                                                  15),
+                                                                  10),
                                                           child: TextField(
                                                             controller:
-                                                                _controller1,
+                                                                _controller2,
                                                             onChanged: (text) {
                                                               address = text;
                                                             },
+                                                            enabled: true,
                                                             decoration:
                                                                 InputDecoration(
                                                               prefixIcon: Icon(
@@ -908,7 +929,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                           ),
                                                         ),
                                                         SizedBox(
-                                                          height: height / 45,
+                                                          height: 2,
                                                         ),
                                                         CupertinoButton(
                                                             color: Colors.black,
