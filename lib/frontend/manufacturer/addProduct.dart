@@ -108,7 +108,7 @@ class _PageFormState extends State<PageForm> {
     if (_formKey.currentState!.validate() && image != null) {
       // print('${user.name}:${user.phone}:${user.email}');
       sendData();
-      Scaffold.of(context).showSnackBar(SnackBar(
+      Scaffold.of(context).showSnackBar(const SnackBar(
           backgroundColor: Colors.green,
           content: Text('Product Added successfully!')));
       setState(() {
@@ -121,7 +121,7 @@ class _PageFormState extends State<PageForm> {
         imgUrl = '';
       });
     } else {
-      Scaffold.of(context).showSnackBar(SnackBar(
+      Scaffold.of(context).showSnackBar(const SnackBar(
           backgroundColor: Colors.redAccent,
           content: Text('Problem Adding the product :(')));
       setState(() {
@@ -183,12 +183,12 @@ class _PageFormState extends State<PageForm> {
                   radius: 70,
                   backgroundImage: image != null
                       ? FileImage(image)
-                      : NetworkImage(
+                      : const NetworkImage(
                               'https://cdni.iconscout.com/illustration/premium/thumb/add-photo-2670583-2215267.png')
                           as ImageProvider,
                 )),
-            Center(child: Text("Add product photo")),
-            SizedBox(height: 20),
+            const Center(child: Text("Add product photo")),
+            const SizedBox(height: 20),
             TextFormField(
                 focusNode: _nameFocus,
                 controller: _nameController,
@@ -198,7 +198,7 @@ class _PageFormState extends State<PageForm> {
                     size: 24,
                     color: _nameFocus.hasFocus ? _focusColor : _defaultColor,
                   ),
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide:
                         const BorderSide(color: Colors.black, width: 2.0),
@@ -229,7 +229,7 @@ class _PageFormState extends State<PageForm> {
                   }
                   return null;
                 }),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextFormField(
                 controller: _descController,
                 focusNode: _descFocus,
@@ -239,7 +239,7 @@ class _PageFormState extends State<PageForm> {
                     size: 24,
                     color: _descFocus.hasFocus ? _focusColor : _defaultColor,
                   ),
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide:
                         const BorderSide(color: Colors.black, width: 2.0),
@@ -268,7 +268,7 @@ class _PageFormState extends State<PageForm> {
 
                   return null;
                 }),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('categories')
@@ -284,15 +284,15 @@ class _PageFormState extends State<PageForm> {
                   return Container(
                     decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey.shade400)),
-                    padding: EdgeInsets.only(bottom: 10.0, top: 10),
+                    padding: const EdgeInsets.only(bottom: 10.0, top: 10),
                     width: MediaQuery.of(context).size.width * 0.9,
-                    child: new Row(
+                    child: Row(
                       children: <Widget>[
-                        new Expanded(
+                        Expanded(
                             flex: 2,
-                            child: new Container(
-                              padding:
-                                  EdgeInsets.fromLTRB(12.0, 10.0, 10.0, 10.0),
+                            child: Container(
+                              padding: const EdgeInsets.fromLTRB(
+                                  12.0, 10.0, 10.0, 10.0),
                               child: Row(
                                 children: [
                                   Padding(
@@ -310,7 +310,7 @@ class _PageFormState extends State<PageForm> {
                                 ],
                               ),
                             )),
-                        new Expanded(
+                        Expanded(
                           flex: 2,
                           child: DropdownButton(
                             value: _category,
@@ -323,10 +323,10 @@ class _PageFormState extends State<PageForm> {
                             },
                             items: snapshot.data!.docs
                                 .map((DocumentSnapshot document) {
-                              return new DropdownMenuItem<String>(
+                              return DropdownMenuItem<String>(
                                   value: document['name'],
-                                  child: new Container(
-                                    decoration: new BoxDecoration(
+                                  child: Container(
+                                    decoration: BoxDecoration(
                                         borderRadius:
                                             new BorderRadius.circular(5.0)),
                                     height: 100.0,
@@ -343,7 +343,7 @@ class _PageFormState extends State<PageForm> {
                     ),
                   );
                 }),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextFormField(
                 controller: _weightController,
                 focusNode: _weightFocus,
@@ -353,7 +353,7 @@ class _PageFormState extends State<PageForm> {
                     size: 20,
                     color: _weightFocus.hasFocus ? _focusColor : _defaultColor,
                   ),
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide:
                         const BorderSide(color: Colors.black, width: 2.0),
@@ -387,7 +387,7 @@ class _PageFormState extends State<PageForm> {
 
                   return null;
                 }),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextFormField(
                 controller: _quantityController,
                 focusNode: _quantityFocus,
@@ -398,7 +398,7 @@ class _PageFormState extends State<PageForm> {
                     color:
                         _quantityFocus.hasFocus ? _focusColor : _defaultColor,
                   ),
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide:
                         const BorderSide(color: Colors.black, width: 2.0),
@@ -435,7 +435,7 @@ class _PageFormState extends State<PageForm> {
                   }
                   return null;
                 }),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextFormField(
                 controller: _priceController,
                 focusNode: _priceFocus,
@@ -445,7 +445,7 @@ class _PageFormState extends State<PageForm> {
                     size: 20,
                     color: _priceFocus.hasFocus ? _focusColor : _defaultColor,
                   ),
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide:
                         const BorderSide(color: Colors.black, width: 2.0),
@@ -478,13 +478,13 @@ class _PageFormState extends State<PageForm> {
                   }
                   return null;
                 }),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             SizedBox(
                 width: double.infinity,
                 child: RaisedButton(
                     color: (color) ? Colors.black : Colors.grey,
-                    child: Text('Add Product',
-                        style: TextStyle(
+                    child: const Text('Add Product',
+                        style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         )),

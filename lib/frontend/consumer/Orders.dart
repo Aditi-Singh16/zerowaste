@@ -46,7 +46,7 @@ class _YourOrdersState extends State<YourOrders> {
                 );
               case ConnectionState.waiting:
                 return const SpinKitChasingDots(
-                  color: Colors.pink,
+                  color: Colors.blue,
                   size: 50.0,
                 );
 

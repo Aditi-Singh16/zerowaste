@@ -2,18 +2,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:zerowaste/frontend/consumer/consumer_tabbar.dart';
 import 'package:zerowaste/frontend/login/login.dart';
-import 'package:zerowaste/frontend/manufacturer/dashboard.dart';
-import 'package:zerowaste/frontend/consumer/details.dart';
-import 'package:zerowaste/frontend/inputDisposalCategory.dart';
-import 'package:zerowaste/frontend/consumer/Orders.dart';
-import 'package:zerowaste/frontend/wasteDisposal.dart';
 
 void main() async {
   ErrorWidget.builder = (FlutterErrorDetails details) => Center(
           child: SpinKitChasingDots(
-        color: Colors.pink,
+        color: Colors.blue,
         size: 50.0,
       ));
   WidgetsFlutterBinding.ensureInitialized();

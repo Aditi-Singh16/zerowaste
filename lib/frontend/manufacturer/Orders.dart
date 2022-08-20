@@ -86,7 +86,7 @@ class ManuFactureOrders extends StatelessWidget {
                       ),
                     )
                   : const SpinKitChasingDots(
-                      color: Colors.pink,
+                      color: Colors.blue,
                       size: 50.0,
                     );
             }));

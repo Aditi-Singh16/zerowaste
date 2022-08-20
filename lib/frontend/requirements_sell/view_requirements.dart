@@ -6,10 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:scratcher/widgets.dart';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
-import "dart:math";
 
 import 'package:zerowaste/frontend/consumer/details.dart';
+import 'package:zerowaste/frontend/requirements_sell/send_notif.dart';
 
 class ViewRequirements extends StatefulWidget {
   const ViewRequirements({Key? key}) : super(key: key);
@@ -20,7 +19,6 @@ class ViewRequirements extends StatefulWidget {
 
 class _ViewRequirementsState extends State<ViewRequirements> {
   List<bool> _selections = [true, false];
-  TextEditingController _quantityController = TextEditingController();
   List coupon = ['OFF05', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
   List description = [
     'Get 5% off on next purchase',
@@ -34,114 +32,13 @@ class _ViewRequirementsState extends State<ViewRequirements> {
   late int randomindex;
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
-  Future<void> _showMyDialog(Map<String, dynamic> user) async {
-    print(user['uid']);
+  Future<void> _showMyDialog(QueryDocumentSnapshot user) async {
     return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Details'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                ElevatedButton(
-                    onPressed: () async {
-                      await FirebaseFirestore.instance
-                          .collection("pending_requirements")
-                          .doc(user[uid])
-                          .set({
-                        "uid": user[uid],
-                        "requirement_satisfy": FieldValue.arrayUnion([
-                          {
-                            'email': user['email'],
-                            'quantity': user['quantity'],
-                          }
-                        ])
-                      }, SetOptions(merge: true)).then((_) {
-                        print("success!");
-                      });
-
-                      final Email email = Email(
-                        body:
-                            'Hi ${user['name']} I have the whole quantity of the product you require!',
-                        subject: 'Request Fulfilment',
-                        recipients: [user['email']],
-                        isHTML: false,
-                      );
-
-                      await FlutterEmailSender.send(email).then((val) {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: const Text('Emaile sent successfully!'),
-                          duration: const Duration(seconds: 5),
-                        ));
-                      });
-                    },
-                    child: Text('I have the whole quantity')),
-                Text('OR Enter custom quantity'),
-                TextFormField(
-                  controller: _quantityController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.black, width: 2.0),
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    labelText: 'Quantity',
-                    labelStyle: TextStyle(color: Colors.blueGrey),
-                  ),
-                  onChanged: (value) {},
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Connect!'),
-              onPressed: () async {
-                if (_quantityController.text != '') {
-                  await FirebaseFirestore.instance
-                      .collection("pending_requirements")
-                      .doc(user[uid])
-                      .set({
-                    "uid": user[uid],
-                    "requirement_satisfy": FieldValue.arrayUnion([
-                      {
-                        'email': user[
-                            'email'], //loggedin user ka email after shared pref
-                        'quantity': int.parse(_quantityController.text)
-                      }
-                    ])
-                  }, SetOptions(merge: true)).then((_) {
-                    print("success!");
-                  });
-
-                  final Email email = Email(
-                    body:
-                        'Hi ${user['name']} I have ${_quantityController.text} of the product you require!',
-                    subject: 'Request Fulfilment',
-                    recipients: [user['email']],
-                    isHTML: false,
-                  );
-
-                  await FlutterEmailSender.send(email).then((val) {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: const Text('Email sent successfully!'),
-                      duration: const Duration(seconds: 5),
-                    ));
-                  });
-                } else {
-                  Navigator.pop(context);
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          return SendNotification(user: user);
+        });
   }
 
   @override
@@ -218,7 +115,7 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                                   );
                                 case ConnectionState.waiting:
                                   return const SpinKitChasingDots(
-                                    color: Colors.pink,
+                                    color: Colors.blue,
                                     size: 50.0,
                                   );
 
@@ -248,9 +145,8 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                                                     color: Color(0xff001427)),
                                               ),
                                               onPressed: () async {
-                                                _showMyDialog(snapshot
-                                                    .data!.docs[i]
-                                                    .data());
+                                                _showMyDialog(
+                                                    snapshot.data!.docs[i]);
                                                 // randomindex =
                                                 //     Random().nextInt(coupon.length);
                                                 // showScratchCard(context);
@@ -305,7 +201,7 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                               );
                             case ConnectionState.waiting:
                               return const SpinKitChasingDots(
-                                color: Colors.pink,
+                                color: Colors.blue,
                                 size: 50.0,
                               );
 

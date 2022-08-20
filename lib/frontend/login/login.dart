@@ -223,7 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     });
 
                     return SpinKitChasingDots(
-                      color: Colors.pink,
+                      color: Colors.blue,
                       size: 50.0,
                     );
                   })),
