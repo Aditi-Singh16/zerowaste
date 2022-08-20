@@ -53,7 +53,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
             .collection('requirements')
-            .where('uid', isEqualTo: '2gJ5SNj9jyVtf6Pc9S2cE0dkRxp1')
+            .where('uid', isEqualTo: uid)
             .get(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasError) {
@@ -62,7 +62,7 @@ class _ProfilePageState extends State<ProfilePage> {
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
                 appBar: AppBar(
-                  title: Text("Your Orders"),
+                  title: Text("Profile"),
                   leading: Icon(Icons.arrow_back),
                   backgroundColor: Color(0xff265D80),
                   centerTitle: true,
@@ -253,7 +253,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       ],
                     ),
                   ),
+
                   // const Spacing(),
+
                   FloatingActionButton(
                     onPressed: () {
                       logout();
@@ -264,8 +266,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 ])));
           }
           return Scaffold(
-              body:
-                  Center(child: CircularProgressIndicator(color: Colors.grey)));
+              body: Center(
+                  child: SpinKitChasingDots(
+            color: Colors.pink,
+            size: 50.0,
+          )));
         });
   }
 

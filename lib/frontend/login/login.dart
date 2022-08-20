@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
 import 'package:zerowaste/frontend/consumer/consumer_tabbar.dart';
 import 'package:zerowaste/frontend/consumerNavbar.dart';
@@ -222,7 +223,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       }
                     });
 
-                    return CircularProgressIndicator();
+                    return SpinKitChasingDots(
+                      color: Colors.pink,
+                      size: 50.0,
+                    );
                   })),
                 });
       } on FirebaseAuthException catch (error) {

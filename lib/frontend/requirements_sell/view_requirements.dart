@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -32,7 +33,7 @@ class _ViewRequirementsState extends State<ViewRequirements> {
   List Value = [5, 10, 15, 20, 2];
   String userType = "NGO";
   late int randomindex;
-  String uid = 'bcbF3NkrUnQqqeqO49pb';
+  String uid = FirebaseAuth.instance.currentUser!.uid;
 
   Future<void> _showMyDialog(Map<String, dynamic> user) async {
     print(user['uid']);
@@ -129,7 +130,7 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                   await FlutterEmailSender.send(email).then((val) {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: const Text('Emaile sent successfully!'),
+                      content: const Text('Email sent successfully!'),
                       duration: const Duration(seconds: 5),
                     ));
                   });
@@ -147,16 +148,17 @@ class _ViewRequirementsState extends State<ViewRequirements> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          title: Text("View Requirements"),
-          backgroundColor: Color(0xff001427),
-        ),
+        resizeToAvoidBottomInset: false,
+        // appBar: AppBar(
+        //   leading: IconButton(
+        //     icon: Icon(Icons.arrow_back, color: Colors.white),
+        //     onPressed: () {
+        //       Navigator.pop(context);
+        //     },
+        //   ),
+        //   title: Text("View Requirements"),
+        //   backgroundColor: Color(0xff001427),
+        // ),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -189,91 +191,95 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                 },
               ),
               userType == "NGO"
-                  ? StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection('requirements')
-                          .where("type", isEqualTo: "NGO")
-                          .snapshots(),
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.hasError) {
-                          return const Text('something went wrong');
-                        } else {
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.none:
-                              return Column(
-                                children: <Widget>[
-                                  const Icon(
-                                    Icons.info,
-                                    color: Colors.blue,
-                                    size: 60,
-                                  ),
-                                  const Padding(
-                                    padding: EdgeInsets.only(top: 16),
-                                    child: Text('No connection'),
-                                  )
-                                ],
-                              );
-                            case ConnectionState.waiting:
-                              return const SpinKitChasingDots(
-                                color: Colors.pink,
-                                size: 50.0,
-                              );
-
-                            case ConnectionState.active:
-                              return ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: snapshot.data!.docs.length,
-                                  itemBuilder: (context, i) {
-                                    return Card(
-                                      child: ListTile(
-                                        leading: SvgPicture.asset(
-                                            'assets/icons/${snapshot.data!.docs[i]['category']}.svg',
-                                            width: 70.0,
-                                            height: 70.0),
-                                        title: Text(
-                                            '${snapshot.data!.docs[i]['product_name']}'),
-                                        subtitle: Text(
-                                            'Quantity: ${snapshot.data!.docs[i]['quantity']}'),
-                                        trailing: TextButton(
-                                          style: TextButton.styleFrom(
-                                            backgroundColor: Color(
-                                                0xff5CAD81), // Background Color
-                                          ),
-                                          child: Text(
-                                            "I got this!",
-                                            style: TextStyle(
-                                                color: Color(0xff001427)),
-                                          ),
-                                          onPressed: () async {
-                                            _showMyDialog(
-                                                snapshot.data!.docs[i].data());
-                                            // randomindex =
-                                            //     Random().nextInt(coupon.length);
-                                            // showScratchCard(context);
-                                            // String couponn = "Coupon" +
-                                            //     (randomindex).toString();
-
-                                            // await FirebaseFirestore.instance
-                                            //     .collection('Users')
-                                            //     .doc(uid)
-                                            //     .update({couponn: true});
-                                          },
-                                        ),
+                  ? SingleChildScrollView(
+                      child: StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection('requirements')
+                              .where("type", isEqualTo: "NGO")
+                              .snapshots(),
+                          builder:
+                              (BuildContext context, AsyncSnapshot snapshot) {
+                            if (snapshot.hasError) {
+                              return const Text('something went wrong');
+                            } else {
+                              switch (snapshot.connectionState) {
+                                case ConnectionState.none:
+                                  return Column(
+                                    children: <Widget>[
+                                      const Icon(
+                                        Icons.info,
+                                        color: Colors.blue,
+                                        size: 60,
                                       ),
-                                      elevation: 8,
-                                      margin: EdgeInsets.all(10),
-                                      shape: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          borderSide:
-                                              BorderSide(color: Colors.white)),
-                                    );
-                                  });
-                            case ConnectionState.done:
-                              return Container();
-                          }
-                        }
-                      })
+                                      const Padding(
+                                        padding: EdgeInsets.only(top: 16),
+                                        child: Text('No connection'),
+                                      )
+                                    ],
+                                  );
+                                case ConnectionState.waiting:
+                                  return const SpinKitChasingDots(
+                                    color: Colors.pink,
+                                    size: 50.0,
+                                  );
+
+                                case ConnectionState.active:
+                                  return ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: snapshot.data!.docs.length,
+                                      itemBuilder: (context, i) {
+                                        return Card(
+                                          child: ListTile(
+                                            leading: SvgPicture.asset(
+                                                'assets/icons/${snapshot.data!.docs[i]['category']}.svg',
+                                                width: 70.0,
+                                                height: 70.0),
+                                            title: Text(
+                                                '${snapshot.data!.docs[i]['product_name']}'),
+                                            subtitle: Text(
+                                                'Quantity: ${snapshot.data!.docs[i]['quantity']}'),
+                                            trailing: TextButton(
+                                              style: TextButton.styleFrom(
+                                                backgroundColor: Color(
+                                                    0xff5CAD81), // Background Color
+                                              ),
+                                              child: Text(
+                                                "I got this!",
+                                                style: TextStyle(
+                                                    color: Color(0xff001427)),
+                                              ),
+                                              onPressed: () async {
+                                                _showMyDialog(snapshot
+                                                    .data!.docs[i]
+                                                    .data());
+                                                // randomindex =
+                                                //     Random().nextInt(coupon.length);
+                                                // showScratchCard(context);
+                                                // String couponn = "Coupon" +
+                                                //     (randomindex).toString();
+
+                                                // await FirebaseFirestore.instance
+                                                //     .collection('Users')
+                                                //     .doc(uid)
+                                                //     .update({couponn: true});
+                                              },
+                                            ),
+                                          ),
+                                          elevation: 8,
+                                          margin: EdgeInsets.all(10),
+                                          shape: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: BorderSide(
+                                                  color: Colors.white)),
+                                        );
+                                      });
+                                case ConnectionState.done:
+                                  return Container();
+                              }
+                            }
+                          }),
+                    )
                   : StreamBuilder(
                       stream: FirebaseFirestore.instance
                           .collection('requirements')

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
+import 'package:zerowaste/frontend/consumer/learning_modules/moduleoptions.dart';
 import 'package:zerowaste/frontend/login/profile_page.dart';
 import 'package:zerowaste/frontend/manufacturer/dashboard.dart';
 import 'package:zerowaste/frontend/ngo/add_requirements.dart';
@@ -17,6 +18,7 @@ class _NgoNavbarState extends State<NgoNavbar> {
 
   final pages = [
     AddRequirement(),
+    const MyApp(),
     ProfilePage(),
   ];
 
@@ -65,35 +67,35 @@ class _NgoNavbarState extends State<NgoNavbar> {
             },
             icon: pageIndex == 1
                 ? Icon(
-                    CupertinoIcons.person_solid,
+                    CupertinoIcons.leaf_arrow_circlepath,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   )
                 : Icon(
-                    CupertinoIcons.person,
+                    CupertinoIcons.leaf_arrow_circlepath,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   ),
           ),
-          // IconButton(
-          //   enableFeedback: false,
-          //   onPressed: () {
-          //     setState(() {
-          //       pageIndex = 2;
-          //     });
-          //   },
-          //   icon: pageIndex == 2
-          //       ? Icon(
-          //           Icons.person,
-          //           color: Colors.white,
-          //           size: MediaQuery.of(context).size.height / 24,
-          //         )
-          //       : Icon(
-          //           Icons.person_outline,
-          //           color: Colors.white,
-          //           size: MediaQuery.of(context).size.height / 24,
-          //         ),
-          // ),
+          IconButton(
+            enableFeedback: false,
+            onPressed: () {
+              setState(() {
+                pageIndex = 2;
+              });
+            },
+            icon: pageIndex == 2
+                ? Icon(
+                    Icons.person,
+                    color: Colors.black,
+                    size: MediaQuery.of(context).size.height / 24,
+                  )
+                : Icon(
+                    Icons.person_outline,
+                    color: Colors.black,
+                    size: MediaQuery.of(context).size.height / 24,
+                  ),
+          ),
         ],
       ),
     );
