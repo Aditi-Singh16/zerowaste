@@ -343,13 +343,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               .push(MaterialPageRoute(builder: (context) => NgoNavbar()));
         }
         return SpinKitChasingDots(
-          color: Colors.pink,
+          color: Colors.blue,
           size: 50.0,
         );
       });
 
       return SpinKitChasingDots(
-        color: Colors.pink,
+        color: Colors.blue,
         size: 50.0,
       );
     }));

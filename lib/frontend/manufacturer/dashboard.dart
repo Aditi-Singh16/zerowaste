@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'dart:math';
 
@@ -63,11 +63,13 @@ class _DashboardState extends State<Dashboard> {
 
   TooltipBehavior _tooltipAct = TooltipBehavior(enable: true);
   TooltipBehavior _tooltipPred = TooltipBehavior(enable: true);
+  bool isInventoryEmpty = false;
   List<ChartData> predictionChartData = [];
   List<ChartData> actualChartData = [];
   var quantAvail = 0;
 
   Future<void> predData() async {
+    actualChartData = [];
     final interpreter =
         await Interpreter.fromAsset('model/quantity_prediction.tflite');
     var monthSlice = [];
@@ -84,7 +86,12 @@ class _DashboardState extends State<Dashboard> {
           actualChartData.add(ChartData(monthsAct[i], 0));
         }
       }
-      //setState(() {});
+
+      if (actualChartData.every((ele) => ele.y == 0)) {
+        isInventoryEmpty = true;
+      } else {
+        isInventoryEmpty = false;
+      }
     });
 
     var monthval = monthsPred.indexOf(monthvalue);
@@ -138,64 +145,154 @@ class _DashboardState extends State<Dashboard> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Spacer(),
-                DropdownButton(
-                  value: itemvalue,
-                  icon: const Icon(Icons.keyboard_arrow_down),
-                  items: items.map((String items) {
-                    return DropdownMenuItem(
-                      value: items,
-                      child: Text(items),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      itemvalue = newValue!;
-                    });
-                  },
-                ),
-                Spacer(),
-                DropdownButton(
-                  value: monthvalue,
-                  icon: const Icon(Icons.keyboard_arrow_down),
-                  items: months.map((String items) {
-                    return DropdownMenuItem(
-                      value: items,
-                      child: Text(items),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      monthvalue = newValue!;
-                      monthsAct =
-                          monthsPred.sublist(0, monthsPred.indexOf(monthvalue));
-                    });
-                  },
-                ),
-                Spacer(),
-                DropdownButton(
-                  value: cityvalue,
-                  icon: const Icon(Icons.keyboard_arrow_down),
-                  items: city.map((String items) {
-                    return DropdownMenuItem(
-                      value: items,
-                      child: Text(items),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      cityvalue = newValue!;
-                    });
-                  },
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Row(
+                children: [
+                  Spacer(),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.33,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Color(0xff7dbeda),
+                                Color(0xff3472c0),
+                                Color(0xff00277d)
+                              ]),
+                          borderRadius: BorderRadius.circular(5),
+                          boxShadow: <BoxShadow>[
+                            BoxShadow(
+                                color: Color.fromRGBO(
+                                    0, 0, 0, 0.57), //shadow for button
+                                blurRadius: 5) //blur radius of shadow
+                          ]),
+                      child: DropdownButton(
+                        underline: Container(),
+                        value: itemvalue,
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        iconEnabledColor: Colors.white,
+                        items: items.map((String items) {
+                          return DropdownMenuItem(
+                            alignment: Alignment.center,
+                            value: items,
+                            child: Text(items,
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.white)),
+                          );
+                        }).toList(),
+                        dropdownColor: Color(0xff3472c0),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            itemvalue = newValue!;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  Spacer(),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.23,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Color(0xff7dbeda),
+                                Color(0xff3472c0),
+                                Color(0xff00277d)
+                              ]),
+                          borderRadius: BorderRadius.circular(5),
+                          boxShadow: <BoxShadow>[
+                            BoxShadow(
+                                color: Color.fromRGBO(
+                                    0, 0, 0, 0.57), //shadow for button
+                                blurRadius: 5) //blur radius of shadow
+                          ]),
+                      child: DropdownButton(
+                        underline: Container(),
+                        dropdownColor: Color(0xff3472c0),
+                        value: monthvalue,
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        iconEnabledColor: Colors.white,
+                        isExpanded: true,
+                        items: months.map((String items) {
+                          return DropdownMenuItem(
+                            value: items,
+                            child: Center(
+                              child: Text(items,
+                                  style: TextStyle(
+                                      fontSize: 12, color: Colors.white)),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            monthvalue = newValue!;
+                            monthsAct = monthsPred.sublist(
+                                0, monthsPred.indexOf(monthvalue));
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  Spacer(),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.26,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Color(0xff7dbeda),
+                                Color(0xff3472c0),
+                                Color(0xff00277d)
+                              ]),
+                          borderRadius: BorderRadius.circular(5),
+                          boxShadow: <BoxShadow>[
+                            BoxShadow(
+                                color: Color.fromRGBO(
+                                    0, 0, 0, 0.57), //shadow for button
+                                blurRadius: 5) //blur radius of shadow
+                          ]),
+                      child: DropdownButton(
+                        underline: Container(),
+                        iconEnabledColor: Colors.white,
+                        isExpanded: true,
+                        value: cityvalue,
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        items: city.map((String items) {
+                          return DropdownMenuItem(
+                            value: items,
+                            child: Center(
+                                child: Text(items,
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.white))),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            cityvalue = newValue!;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  Spacer(),
+                ],
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 20.0),
               child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Color(0xff3472c0)),
+                  ),
                   onPressed: () {
                     predData();
                   },
@@ -225,21 +322,44 @@ class _DashboardState extends State<Dashboard> {
               padding: const EdgeInsets.only(left: 22.0),
               child: Text('My Inventory', style: TextStyle(fontSize: 25)),
             ),
-            Center(
-                child: Container(
-                    height: MediaQuery.of(context).size.height * 0.4,
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    child: SfCartesianChart(
-                        primaryXAxis: CategoryAxis(),
-                        tooltipBehavior: _tooltipAct,
-                        series: <ChartSeries<ChartData, String>>[
-                          // Renders line chart
-                          LineSeries<ChartData, String>(
-                            dataSource: actualChartData,
-                            xValueMapper: (ChartData data, _) => data.x,
-                            yValueMapper: (ChartData data, _) => data.y,
-                          )
-                        ]))),
+            isInventoryEmpty
+                ? Padding(
+                    padding:
+                        const EdgeInsets.only(top: 10, bottom: 10, left: 22.0),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          color: Color(0xff3472c0),
+                          size: 30,
+                        ),
+                        Spacer(),
+                        Text(
+                            '''Sorry! you don't have\nany products added\nfor this category''',
+                            maxLines: 3,
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff3472c0))),
+                        Spacer(),
+                      ],
+                    ),
+                  )
+                : Center(
+                    child: Container(
+                        height: MediaQuery.of(context).size.height * 0.4,
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: SfCartesianChart(
+                            primaryXAxis: CategoryAxis(),
+                            tooltipBehavior: _tooltipAct,
+                            series: <ChartSeries<ChartData, String>>[
+                              // Renders line chart
+                              ColumnSeries<ChartData, String>(
+                                dataSource: actualChartData,
+                                xValueMapper: (ChartData data, _) => data.x,
+                                yValueMapper: (ChartData data, _) => data.y,
+                              )
+                            ]))),
             Padding(
               padding: const EdgeInsets.only(left: 22.0),
               child: Text('My Products', style: TextStyle(fontSize: 25)),
@@ -270,7 +390,7 @@ class _DashboardState extends State<Dashboard> {
                         );
                       case ConnectionState.waiting:
                         return const SpinKitChasingDots(
-                          color: Colors.pink,
+                          color: Colors.blue,
                           size: 50.0,
                         );
 

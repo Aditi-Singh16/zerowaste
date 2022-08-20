@@ -268,7 +268,7 @@ class _ProfilePageState extends State<ProfilePage> {
           return Scaffold(
               body: Center(
                   child: SpinKitChasingDots(
-            color: Colors.pink,
+            color: Colors.blue,
             size: 50.0,
           )));
         });
