@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
 import 'package:zerowaste/frontend/consumer/learning_modules/learningMod.dart';
+import 'package:zerowaste/frontend/consumer/return.dart';
 import 'package:zerowaste/frontend/consumerNavbar.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 
@@ -253,54 +254,33 @@ class _YourOrdersState extends State<YourOrders> {
                                                 SizedBox(
                                                   width: 60,
                                                 ),
-                                                (doc['delivery_status'] ==
-                                                        "Delivered")
-                                                    ? Text(
-                                                        "Delivered",
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            background: Paint()
-                                                              ..color = Colors
-                                                                  .green
-                                                                  .shade100
-                                                              ..strokeWidth = 20
-                                                              ..style =
-                                                                  PaintingStyle
-                                                                      .stroke,
-                                                            fontSize: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .height /
-                                                                50,
-                                                            color: Colors
-                                                                .green[600]),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      )
-                                                    : Text(
-                                                        "Shipped",
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            background: Paint()
-                                                              ..color = Colors
-                                                                  .orange
-                                                                  .shade100
-                                                              ..strokeWidth = 20
-                                                              ..style =
-                                                                  PaintingStyle
-                                                                      .stroke,
-                                                            fontSize: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .height /
-                                                                50,
-                                                            color: Colors
-                                                                .orange[600]),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
+                                                !doc['is_return']
+                                                    ? ElevatedButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context).push(MaterialPageRoute(
+                                                              builder: (context) => ReturnOrder(
+                                                                  productName: doc[
+                                                                      'ProductName'],
+                                                                  manufacturerId:
+                                                                      doc[
+                                                                          'manufacturerId'],
+                                                                  price: doc[
+                                                                          'price']
+                                                                      .toDouble(),
+                                                                  address: doc[
+                                                                      'address'],
+                                                                  orderedQuantity:
+                                                                      doc['Quantity']
+                                                                          .toInt(),
+                                                                  orderId: doc[
+                                                                      'orderId'],
+                                                                  image: doc[
+                                                                      'image'])));
+                                                        },
+                                                        child: Text(
+                                                          "Return",
+                                                        ))
+                                                    : Text("")
                                               ],
                                             ),
                                           ),
