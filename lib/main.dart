@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:zerowaste/frontend/login/login.dart';
+import 'package:zerowaste/wrapper.dart';
 
 void main() async {
   ErrorWidget.builder = (FlutterErrorDetails details) => Center(
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           scaffoldBackgroundColor: Color(0xffF2F6FD),
           appBarTheme: AppBarTheme(backgroundColor: Color(0xff001427))),
-      home: LoginScreen(),
+      home: Wrapper(),
     );
   }
 }
