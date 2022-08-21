@@ -94,22 +94,30 @@ class _ShoppingCartState extends State<ShoppingCart> {
         String quantity = doc['quantity'].toString();
         String date =
             "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
+        String docId = FirebaseFirestore.instance
+            .collection('Users')
+            .doc(uid)
+            .collection('Orders')
+            .doc()
+            .id;
         FirebaseFirestore.instance
             .collection('Users')
             .doc(uid)
             .collection('Orders')
-            .add({
+            .doc(docId)
+            .set({
           "image": doc['image'],
           "ProductName": doc['name'],
           "Quantity": doc['quantity'],
-          "price": doc['price'],
+          "price": doc['price'].toDouble(),
           "address": address,
           "phone_number": phone_number,
           "Time": time,
           "manufacturerId": doc['manufacturerId'],
           "userId": uid,
           "Date": date,
-          "delivery_status": "Shipped",
+          "orderId": docId,
+          "is_return": false
         });
       });
     });

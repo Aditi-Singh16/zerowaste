@@ -79,7 +79,7 @@ class _GridItemsState extends State<GridItems> {
                                                     ['manufacturerId'],
                                                 image: snapshot.data!.docs[index]['image'],
                                                 is_plant: snapshot.data!.docs[index]['is_plant'],
-                                                q:snapshot.data!.docs[index]['quantity'])));
+                                                q: snapshot.data!.docs[index]['quantity'])));
                                       },
                                     ),
                                     margin: EdgeInsets.all(8),

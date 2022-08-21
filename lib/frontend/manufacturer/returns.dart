@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 //
-class ManuFactureOrders extends StatelessWidget {
+class Returns extends StatelessWidget {
   String manufacturerId = FirebaseAuth.instance.currentUser!.uid;
   final db = FirebaseFirestore.instance;
   @override
@@ -18,7 +18,7 @@ class ManuFactureOrders extends StatelessWidget {
         // ),
         body: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
-                .collectionGroup('Orders')
+                .collection('returns')
                 .where('manufacturerId', isEqualTo: manufacturerId)
                 .snapshots(),
             builder: (context, snapshot) {
@@ -28,6 +28,8 @@ class ManuFactureOrders extends StatelessWidget {
                       child: ListView(
                         scrollDirection: Axis.vertical,
                         children: snapshot.data!.docs.map((doc) {
+                          double amount =
+                              doc['price'] * doc['return_quantity'] * 0.65;
                           return Padding(
                             padding: const EdgeInsets.only(
                                 left: 15.0, right: 15, top: 15),
@@ -38,13 +40,12 @@ class ManuFactureOrders extends StatelessWidget {
                                       size: 30, color: Color(0xff265D80)),
                                   title: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                        "Product: " +
-                                            doc.data()!['ProductName'],
-                                        style: TextStyle(
-                                            // color: Color(0xff265D80),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18)),
+                                    child:
+                                        Text("Product: " + doc['productName'],
+                                            style: TextStyle(
+                                                // color: Color(0xff265D80),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18)),
                                   ),
                                   subtitle: Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -53,23 +54,25 @@ class ManuFactureOrders extends StatelessWidget {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "Quantity: " +
-                                              doc
-                                                  .data()!['Quantity']
-                                                  .toString(),
+                                          "Return Quantity: " +
+                                              doc['return_quantity'].toString(),
                                         ),
                                         SizedBox(height: 10),
                                         Text(
-                                          "Amount: \u{20B9}" +
-                                              doc.data()!['price'].toString() +
+                                          "Price: \u{20B9}" +
+                                              doc['price'].toString() +
                                               "/product",
                                         ),
                                         SizedBox(height: 10),
-                                        Text("Delivery Address: " +
-                                            doc.data()!['address']),
+                                        Text("pickup Address: " +
+                                            doc['address']),
                                         SizedBox(height: 10),
-                                        Text("Phone Number: " +
-                                            doc.data()!['phone_number']),
+                                        Text("Amount to be paid: \u{20B9}" +
+                                            amount.toString()),
+                                        SizedBox(height: 10),
+                                        ElevatedButton(
+                                            onPressed: () {},
+                                            child: Text("Accept Returns"))
                                       ],
                                     ),
                                   ),

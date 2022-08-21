@@ -304,6 +304,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     userModel.Coupon4 = "false";
     userModel.addr = '';
     userModel.phone = '';
+    userModel.wallet = 0;
 
     await firebaseFirestore
         .collection("Users")

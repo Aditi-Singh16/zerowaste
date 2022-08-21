@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:zerowaste/frontend/manufacturer/Orders.dart';
 import 'package:zerowaste/frontend/manufacturer/addProduct.dart';
+import 'package:zerowaste/frontend/manufacturer/returns.dart';
 import 'package:zerowaste/frontend/requirements_sell/view_requirements.dart';
 
-class ProductsTabBar extends StatelessWidget {
-  const ProductsTabBar({Key? key}) : super(key: key);
+class OrdersTabBar extends StatelessWidget {
+  const OrdersTabBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,21 +18,21 @@ class ProductsTabBar extends StatelessWidget {
           appBar: AppBar(
             backgroundColor: Color(0xff001427),
             title: Text(
-              'Products',
+              'Orders and returns',
               style: TextStyle(fontWeight: FontWeight.normal),
             ),
             bottom: TabBar(
               tabs: [
                 Tab(
-                  text: "Add Products",
+                  text: "Orders",
                 ),
-                Tab(text: "View Requirements"),
+                Tab(text: "Returns"),
               ],
             ),
           ),
           body: SafeArea(
             child: TabBarView(
-              children: [AddProduct(), ViewRequirements()],
+              children: [ManuFactureOrders(), Returns()],
             ),
           ),
         ),
