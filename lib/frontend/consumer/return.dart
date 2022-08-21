@@ -84,6 +84,7 @@ class _ReturnOrderState extends State<ReturnOrder> {
         'manufacturerId': widget.manufacturerId,
         'address': widget.address,
         'orderId': widget.orderId,
+        'userId': uid,
       });
       FirebaseFirestore.instance
           .collection("Users")
