@@ -27,9 +27,9 @@ class _InputCategoryState extends State<InputCategory> {
 
           return Padding(
             padding: const EdgeInsets.all(25.0),
-            child: ListView(
+            child: Column(
               children: [
-                SizedBox(height: 50),
+                SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.all(25.0),
                   child: Text(
@@ -44,7 +44,8 @@ class _InputCategoryState extends State<InputCategory> {
 
                 Image.network(
                     'https://static.vecteezy.com/system/resources/previews/003/207/736/original/waste-collection-segregation-and-recycling-illustration-garbage-vector.jpg'),
-                SizedBox(height: 50),
+                SizedBox(height: 20),
+
                 Container(
                   decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey.shade400)),
@@ -118,7 +119,6 @@ class _InputCategoryState extends State<InputCategory> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 30),
                 Container(
                   height: 50,
                   width: MediaQuery.of(context).size.width / 2,
