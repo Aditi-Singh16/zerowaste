@@ -8,7 +8,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:scratcher/widgets.dart';
 
 import 'package:zerowaste/frontend/consumer/details.dart';
+
+import 'package:zerowaste/frontend/consumer/style.dart';
+
 import 'package:zerowaste/frontend/requirements_sell/send_notif.dart';
+
 
 class ViewRequirements extends StatefulWidget {
   const ViewRequirements({Key? key}) : super(key: key);
@@ -67,7 +71,7 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: const Text('Consumer'),
+                    child: const Text('My Requirements'),
                   ),
                 ],
                 isSelected: _selections,
@@ -79,7 +83,7 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                     } else if (index == 0 && !_selections[index]) {
                       userType = "NGO";
                     } else if (index == 1 && _selections[index]) {
-                      userType = "Consumer";
+                      userType = "MyRequirements";
                     } else if (index == 1 && !_selections[index]) {
                       userType = "NGO";
                     }
@@ -178,7 +182,7 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                   : StreamBuilder(
                       stream: FirebaseFirestore.instance
                           .collection('requirements')
-                          .where("type", isEqualTo: "Consumer")
+                          .where('uid', isEqualTo: uid)
                           .snapshots(),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if (snapshot.hasError) {
@@ -207,40 +211,166 @@ class _ViewRequirementsState extends State<ViewRequirements> {
 
                             case ConnectionState.active:
                               return ListView.builder(
+                                  scrollDirection: Axis.vertical,
                                   shrinkWrap: true,
                                   itemCount: snapshot.data!.docs.length,
-                                  itemBuilder: (context, i) {
-                                    return Card(
-                                      child: ListTile(
-                                        leading: SvgPicture.asset(
-                                            'assets/icons/${snapshot.data!.docs[i]['category']}.svg',
-                                            width: 70.0,
-                                            height: 70.0),
-                                        title: Text(
-                                            '${snapshot.data!.docs[i]['product_name']}'),
-                                        subtitle: Text(
-                                            'Quantity: ${snapshot.data!.docs[i]['quantity']}'),
-                                        trailing: TextButton(
-                                          style: TextButton.styleFrom(
-                                            backgroundColor: Color(
-                                                0xff5CAD81), // Background Color
-                                          ),
-                                          child: Text(
-                                            "I got this!",
-                                            style: TextStyle(
-                                                color: Color(0xff001427)),
-                                          ),
-                                          onPressed: () {},
-                                        ),
-                                      ),
-                                      elevation: 8,
-                                      margin: EdgeInsets.all(10),
-                                      shape: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          borderSide:
-                                              BorderSide(color: Colors.white)),
-                                    );
+                                  itemBuilder: (context, index) {
+                                    //print(snapshot.data!.docs.length);
+                                    DocumentSnapshot doc =
+                                        snapshot.data!.docs[index];
+                                    // print("Doc ID");
+                                    // print(doc.id);
+                                    // print("Doc length");
+                                    // print(doc['requirement_satisfy'].length);
+                                    // for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                                    //   if (snapshot.data!.docs[index]['requirement_satisfy']
+                                    //           .length >
+                                    //       0) header = true;
+                                    // }
+                                    return Column(children: [
+                                      // header ? Text("My Requirements")  : SizedBox(width: 0),
+
+                                      ListView.builder(
+                                          scrollDirection: Axis.vertical,
+                                          shrinkWrap: true,
+                                          itemCount:
+                                              doc['requirement_satisfy'].length,
+                                          itemBuilder: (context, idx) {
+                                            //print(snapshot.data!.docs.length);
+
+                                            return Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  2.1,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  5.9,
+                                              child: Card(
+                                                margin: EdgeInsets.all(
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .height /
+                                                        80),
+                                                elevation: 3,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                color: Colors.white,
+                                                child: InkWell(
+                                                  onTap: () {},
+                                                  child: Row(
+                                                    children: [
+                                                      Expanded(
+                                                        flex: 2,
+                                                        child: Column(
+                                                          ////////////////////////////////////////////
+                                                          children: [
+                                                            Padding(
+                                                              padding: EdgeInsets.only(
+                                                                  top: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .height /
+                                                                      30),
+                                                              child: Padding(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .only(),
+                                                                  child: Row(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .spaceAround,
+                                                                      children: [
+                                                                        Column(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.start,
+                                                                          children: [
+                                                                            Column(children: [
+                                                                              Text("Manufacturer Email:"),
+                                                                              Text(
+                                                                                doc['requirement_satisfy'][idx]['email'],
+                                                                                maxLines: 2,
+                                                                                style: TextStyle(
+                                                                                  fontSize: MediaQuery.of(context).size.height / 50,
+                                                                                  color: Colors.black,
+                                                                                  fontWeight: FontWeight.bold,
+                                                                                ),
+                                                                              )
+                                                                            ]),
+                                                                            const Spacing(),
+                                                                            Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+                                                                              Text(
+                                                                                "In Stock: ",
+                                                                                style: TextStyle(
+                                                                                  fontSize: MediaQuery.of(context).size.height / 55,
+                                                                                  color: Colors.black,
+                                                                                ),
+                                                                              ),
+                                                                              Text(
+                                                                                doc['requirement_satisfy'][idx]['quantity'],
+                                                                                style: TextStyle(
+                                                                                  fontSize: MediaQuery.of(context).size.height / 50,
+                                                                                  color: Colors.black,
+                                                                                  fontWeight: FontWeight.bold,
+                                                                                ),
+                                                                              ),
+                                                                              //const Spacing(),
+                                                                              SizedBox(
+                                                                                width: 12,
+                                                                              ),
+                                                                              Text(
+                                                                                "Product Name: ",
+                                                                                style: TextStyle(
+                                                                                  fontSize: MediaQuery.of(context).size.height / 55,
+                                                                                  color: Colors.black,
+                                                                                ),
+                                                                              ),
+                                                                              Text(
+                                                                                doc['product_name'],
+                                                                                style: TextStyle(
+                                                                                  fontSize: MediaQuery.of(context).size.height / 50,
+                                                                                  color: Colors.black,
+                                                                                  fontWeight: FontWeight.bold,
+                                                                                ),
+                                                                              ),
+                                                                            ]),
+                                                                          ],
+                                                                        ),
+                                                                        FlatButton(
+                                                                            color: Colors
+                                                                                .green,
+                                                                            onPressed:
+                                                                                () {
+                                                                              setState(() {
+                                                                                FirebaseFirestore.instance.collection("requirements").doc(doc.id).update({
+                                                                                  "is_satisfied": true
+                                                                                });
+                                                                                FirebaseFirestore.instance.collection("requirements").doc(doc.id).update({
+                                                                                  "requirement_satisfy": []
+                                                                                });
+                                                                              });
+                                                                            },
+                                                                            child:
+                                                                                Text(
+                                                                              "Order",
+                                                                              style: AppStyle.bodyText.copyWith(color: Colors.white, fontSize: 16),
+                                                                            )),
+                                                                      ])),
+                                                            ),
+                                                          ],
+                                                          //////////////////////////////////////////////////////////////////////////
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }),
+                                    ]);
                                   });
 
                             case ConnectionState.done:

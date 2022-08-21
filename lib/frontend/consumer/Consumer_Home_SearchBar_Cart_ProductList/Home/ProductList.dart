@@ -31,6 +31,7 @@ class IndividualCategoryProductList extends StatelessWidget {
         future: FirebaseFirestore.instance
             .collection('products')
             .where('categories', isEqualTo: category)
+            .where('quantity', isGreaterThan: 0)
             .get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {

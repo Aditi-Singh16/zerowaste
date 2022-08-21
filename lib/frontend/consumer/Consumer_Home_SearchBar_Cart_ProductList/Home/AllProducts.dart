@@ -26,7 +26,8 @@ class AllProducts extends StatelessWidget {
     width = size.width;
 
     return FutureBuilder<QuerySnapshot>(
-        future: FirebaseFirestore.instance.collection('products').get(),
+      //get products with quantity greater than 0
+        future: FirebaseFirestore.instance.collection('products').where('quantity', isGreaterThan: 0).get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(

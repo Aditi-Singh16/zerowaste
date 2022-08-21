@@ -10,12 +10,12 @@ class ManuFactureOrders extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Orders"),
-          automaticallyImplyLeading: false,
-          backgroundColor: Color(0xff265D80),
-          centerTitle: true,
-        ),
+        // appBar: AppBar(
+        //   title: Text("Orders"),
+        //   automaticallyImplyLeading: false,
+        //   backgroundColor: Color(0xff265D80),
+        //   centerTitle: true,
+        // ),
         body: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collectionGroup('Orders')
@@ -52,24 +52,17 @@ class ManuFactureOrders extends StatelessWidget {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              "Quantity: " +
-                                                  doc
-                                                      .data()!['Quantity']
-                                                      .toString(),
-                                            ),
-                                            Text(
-                                              "Amount: \u{20B9}" +
-                                                  doc
-                                                      .data()!['price']
-                                                      .toString() +
-                                                  "/product",
-                                            )
-                                          ],
+                                        Text(
+                                          "Quantity: " +
+                                              doc
+                                                  .data()!['Quantity']
+                                                  .toString(),
+                                        ),
+                                        SizedBox(height: 10),
+                                        Text(
+                                          "Amount: \u{20B9}" +
+                                              doc.data()!['price'].toString() +
+                                              "/product",
                                         ),
                                         SizedBox(height: 10),
                                         Text("Delivery Address: " +

@@ -10,6 +10,7 @@ class UserModel {
   bool? Coupon4;
   String? addr;
   String? phone;
+  double? wallet;
 
   UserModel(
       {this.uid,
@@ -22,7 +23,8 @@ class UserModel {
       this.Coupon3,
       this.Coupon4,
       this.addr,
-      this.phone});
+      this.phone,
+      this.wallet});
 
   // receiving data from server
   factory UserModel.fromMap(map) {
@@ -37,7 +39,8 @@ class UserModel {
         Coupon3: map['Coupon3'],
         Coupon4: map['Coupon4'],
         addr: map['addr'],
-        phone: map['phone']);
+        phone: map['phone'],
+        wallet: map['wallet']);
   }
 
   // sending data to our server
@@ -53,7 +56,8 @@ class UserModel {
       'Coupon3': Coupon3,
       'Coupon4': Coupon4,
       'addr': addr,
-      'phone': phone
+      'phone': phone,
+      'wallet': wallet
     };
   }
 }
