@@ -42,7 +42,6 @@ class Details extends StatefulWidget {
 }
 
 class _DetailsState extends State<Details> {
-  String eneteredcoupon = '';
   List validity = [false, false, false, false, false];
   List couponn = ['OFF05', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
   List Value = [5, 10, 15, 20, 2];
@@ -54,6 +53,7 @@ class _DetailsState extends State<Details> {
   bool plant = false;
   bool couponused = false;
   bool walletm = false;
+  String eneteredcoupon = '';
   int indx = 0;
   late Razorpay razorpay;
   String quantity = "";
@@ -198,11 +198,18 @@ class _DetailsState extends State<Details> {
     String time = DateFormat("hh:mm:ss a").format(DateTime.now());
     String date =
         "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
+    String docId = FirebaseFirestore.instance
+        .collection('Users')
+        .doc(widget.uid)
+        .collection('Orders')
+        .doc()
+        .id;
     await FirebaseFirestore.instance
         .collection('Users')
         .doc(widget.uid)
         .collection('Orders')
-        .add({
+        .doc(docId)
+        .set({
       "ProductName": widget.name,
       "ProductId": widget.productid,
       "Quantity": quantity,
@@ -212,7 +219,10 @@ class _DetailsState extends State<Details> {
       "manufacturerId": widget.manufacturerid,
       "phone_number": phone_number,
       "address": address,
-      "image": widget.image
+      "image": widget.image,
+      "price": widget.price,
+      "orderId": docId,
+      "is_return": false
     });
 
     await FirebaseFirestore.instance
