@@ -3,11 +3,11 @@ class UserModel {
   String? email;
   String? name;
   String? type;
-  String? Coupon0;
-  String? Coupon1;
-  String? Coupon2;
-  String? Coupon3;
-  String? Coupon4;
+  bool? Coupon0;
+  bool? Coupon1;
+  bool? Coupon2;
+  bool? Coupon3;
+  bool? Coupon4;
   String? addr;
   String? phone;
   double? wallet;

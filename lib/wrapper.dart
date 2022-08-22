@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:zerowaste/backend/local_data.dart';
 import 'package:zerowaste/frontend/consumerNavbar.dart';
 import 'package:zerowaste/frontend/login/login.dart';
 import 'package:zerowaste/frontend/manufacturerNavbar.dart';
@@ -20,12 +21,14 @@ class Wrapper extends StatefulWidget {
 class _WrapperState extends State<Wrapper> {
   String type = '';
   getType() async {
+    print("dfjkghjkg");
+    print(FirebaseAuth.instance.currentUser);
     if (FirebaseAuth.instance.currentUser != null) {
       var uid = FirebaseAuth.instance.currentUser!.uid;
-      var data = FirebaseFirestore.instance.collection("Users").doc(uid).get();
-      Map<String, dynamic> userData = data as Map<String, dynamic>;
+      String res = await DataBaseHelper.instance.getUsersById(uid);
+      print(res);
       setState(() {
-        type = userData['type'];
+        type = res;
       });
     }
   }

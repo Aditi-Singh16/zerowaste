@@ -42,6 +42,7 @@ class Details extends StatefulWidget {
 }
 
 class _DetailsState extends State<Details> {
+  String eneteredcoupon = '';
   List validity = [false, false, false, false, false];
   List couponn = ['OFF05', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
   List Value = [5, 10, 15, 20, 2];
@@ -53,7 +54,7 @@ class _DetailsState extends State<Details> {
   bool plant = false;
   bool couponused = false;
   bool walletm = false;
-  String eneteredcoupon = '';
+
   int indx = 0;
   late Razorpay razorpay;
   String quantity = "";
@@ -181,12 +182,12 @@ class _DetailsState extends State<Details> {
                 builder: (BuildContext context) => _plantgif(context),
               );
             },
+            textColor: Theme.of(context).primaryColor,
             child: const Text("Yes")),
         FlatButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
-          textColor: Theme.of(context).primaryColor,
           child: const Text('Close'),
         ),
       ],
@@ -523,8 +524,8 @@ class _DetailsState extends State<Details> {
                                       ),
                                       Image.asset(
                                         "assets/images/plant.png",
-                                        height: 40,
-                                        width: 50,
+                                        height: 30,
+                                        width: 30,
                                       ),
                                     ],
                                   ),
@@ -545,6 +546,46 @@ class _DetailsState extends State<Details> {
                                 })
                             : const Spacing(),
 
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                                child: Container(
+                                  child: Text('Apply Coupon',
+                                      style: AppStyle.text
+                                          .copyWith(color: Colors.blue)),
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    coupon = true;
+                                  });
+                                }),
+                            coupon
+                                ? InkWell(
+                                    child: Container(
+                                      child: Text('Remove',
+                                          style: AppStyle.text
+                                              .copyWith(color: Colors.red)),
+                                    ),
+                                    onTap: () {
+                                      setState(() {
+                                        coupon = false;
+                                        if (amount !=
+                                            (widget.price *
+                                                int.parse(quantity))) {
+                                          amount = widget.price *
+                                              int.parse(quantity);
+
+                                          amountd = (plant)
+                                              ? amount + 20 + 5
+                                              : amount + 20;
+                                        }
+                                      });
+                                    })
+                                : Visibility(visible: false, child: Text('')),
+                          ],
+                        ),
+                        const Spacing(),
                         Column(
                           children: [
                             Row(
@@ -742,6 +783,7 @@ class _DetailsState extends State<Details> {
                           ],
                         ),
                         const Spacing(),
+
                         coupon
                             ? Container(
                                 width: MediaQuery.of(context).size.width * 0.8,

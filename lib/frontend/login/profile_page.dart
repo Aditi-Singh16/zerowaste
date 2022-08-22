@@ -131,6 +131,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(25)),
                                 child: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.87,
                                   decoration: BoxDecoration(
                                       gradient: LinearGradient(
                                           colors: [
@@ -225,18 +227,26 @@ class _ProfilePageState extends State<ProfilePage> {
                           ],
                         )
                       : Visibility(visible: false, child: Text(' ')),
-
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    'Details',
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500),
+                  ),
                   Container(
-                    margin: EdgeInsets.only(bottom: 25),
-                    padding: EdgeInsets.all(5),
+                    padding: EdgeInsets.only(bottom: 5, left: 5, right: 5),
                     child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(20.0),
+                          padding: const EdgeInsets.only(
+                              bottom: 20, left: 20, right: 20),
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
-                              color: Colors.blue.shade100,
                             ),
                             padding: EdgeInsets.all(20),
                             child: Column(
@@ -247,7 +257,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       "Name: ",
                                       style: TextStyle(
                                           fontSize: 20,
-                                          color: Color(0xff00277d),
+                                          color: Colors.black,
                                           fontWeight: FontWeight.w600),
                                     ),
                                     SizedBox(
@@ -257,7 +267,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       "${loggedInUser.name}",
                                       style: TextStyle(
                                           fontSize: 20,
-                                          color: Color(0xff00277d),
+                                          color: Colors.black,
                                           fontWeight: FontWeight.w500),
                                     ),
                                   ],
@@ -269,7 +279,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       "Email: ",
                                       style: TextStyle(
                                           fontSize: 20,
-                                          color: Color(0xff00277d),
+                                          color: Colors.black,
                                           fontWeight: FontWeight.w600),
                                     ),
                                     SizedBox(
@@ -283,7 +293,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         overflow: TextOverflow.fade,
                                         style: TextStyle(
                                             fontSize: 20,
-                                            color: Color(0xff00277d),
+                                            color: Colors.black,
                                             fontWeight: FontWeight.w500),
                                       ),
                                     ),
@@ -296,7 +306,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       "Role: ",
                                       style: TextStyle(
                                           fontSize: 20,
-                                          color: Color(0xff00277d),
+                                          color: Colors.black,
                                           fontWeight: FontWeight.w600),
                                     ),
                                     SizedBox(
@@ -306,7 +316,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       "${loggedInUser.type}",
                                       style: TextStyle(
                                           fontSize: 20,
-                                          color: Color(0xff00277d),
+                                          color: Colors.black,
                                           fontWeight: FontWeight.w600),
                                     ),
                                   ],
@@ -317,7 +327,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     "Address: ",
                                     style: TextStyle(
                                         fontSize: 20,
-                                        color: Color(0xff00277d),
+                                        color: Colors.black,
                                         fontWeight: FontWeight.w600),
                                   ),
                                   Expanded(
@@ -326,7 +336,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               title,
                                               style: TextStyle(
                                                   fontSize: 20,
-                                                  color: Color(0xff00277d),
+                                                  color: Colors.black,
                                                   fontWeight: FontWeight.w500),
                                             )
                                           : TextFormField(
@@ -362,7 +372,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     "Phone: ",
                                     style: TextStyle(
                                         fontSize: 20,
-                                        color: Color(0xff00277d),
+                                        color: Colors.black,
                                         fontWeight: FontWeight.w600),
                                   ),
                                   Expanded(
@@ -371,7 +381,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               phone,
                                               style: TextStyle(
                                                   fontSize: 20,
-                                                  color: Color(0xff00277d),
+                                                  color: Colors.black,
                                                   fontWeight: FontWeight.w500),
                                             )
                                           : TextFormField(
@@ -415,7 +425,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     color: Colors.black,
                                     fontWeight: FontWeight.w500),
                               )
-                            : Text(''),
+                            : Visibility(visible: false, child: Text('')),
                         const Spacing(),
                         (type == 'Consumer')
                             ? InkWell(
@@ -429,7 +439,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                         'Collect Reward',
                                         style: TextStyle(
                                             fontSize: 16,
-                                            color: Colors.black,
+                                            color: (count > 0)
+                                                ? Colors.black
+                                                : Colors.grey,
                                             fontWeight: FontWeight.w500),
                                       ),
                                     ),
@@ -480,12 +492,12 @@ class _ProfilePageState extends State<ProfilePage> {
                               )
                             : Text(''),
                         const Spacing(),
-                        (rewards.length == 0)
+                        (rewards.length == 0 && type == 'Consumner')
                             ? Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Image.asset(
-                                    'assets/images/donate.png',
+                                    'assets/images/donate.jpg',
                                     width:
                                         MediaQuery.of(context).size.width * 0.2,
                                     height: MediaQuery.of(context).size.height *
@@ -546,7 +558,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
 
                   // const Spacing(),
-
+                  SizedBox(
+                    height: 10,
+                  ),
                   FloatingActionButton(
                     onPressed: () {
                       logout();
@@ -554,6 +568,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Icon(Icons.logout_rounded),
                     backgroundColor: Color(0xff3472c0),
                   ),
+                  SizedBox(
+                    height: 10,
+                  )
                 ])));
           }
           return Scaffold(
