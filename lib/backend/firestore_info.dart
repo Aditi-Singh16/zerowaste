@@ -1,14 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
-import "package:collection/collection.dart";
+import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 class FirebaseData {
   Future<String> addRequirement(Map<String, dynamic> requirements) async {
     try {
-      var res = await FirebaseFirestore.instance
+      var uid = await HelperFunctions().readUserIdPref();
+      await FirebaseFirestore.instance
           .collection("requirements")
-          .add(requirements);
-      return res.id;
+          .doc(uid)
+          .set(requirements);
+      return uid;
     } catch (e) {
       return e.toString();
     }

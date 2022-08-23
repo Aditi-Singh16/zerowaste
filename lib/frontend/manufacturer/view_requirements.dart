@@ -7,7 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:scratcher/widgets.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import "dart:math";
-
+import 'package:zerowaste/prefs/sharedPrefs.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
 
 class ViewRequirements extends StatefulWidget {
@@ -18,6 +18,7 @@ class ViewRequirements extends StatefulWidget {
 }
 
 class _ViewRequirementsState extends State<ViewRequirements> {
+  HelperFunctions _helperFunctions = HelperFunctions();
   List<bool> _selections = [true, false];
   TextEditingController _quantityController = TextEditingController();
   List coupon = ['OFF05', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
@@ -246,6 +247,29 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                                           onPressed: () async {
                                             _showMyDialog(
                                                 snapshot.data!.docs[i].data());
+
+                                            //accepted_req field bane ga in NGo users
+                                            //requiremnt_Satisfy colln in requirements
+
+                                            FirebaseFirestore.instance
+                                                .collection("requirements")
+                                                .doc(snapshot.data!.docs[i])
+                                                .update({
+                                              "requirment_satisfy":
+                                                  FieldValue.arrayUnion([
+                                                {
+                                                  "email": _helperFunctions
+                                                      .readEmailPref(),
+                                                  "uid": _helperFunctions
+                                                      .readUserIdPref(),
+                                                  "product_name": snapshot.data!
+                                                      .docs[i]['product_name'],
+                                                  "quantity": snapshot.data!
+                                                      .docs[i]['quantity'],
+                                                }
+                                              ])
+                                            });
+
                                             // randomindex =
                                             //     Random().nextInt(coupon.length);
                                             // showScratchCard(context);
@@ -328,7 +352,10 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                                             style: TextStyle(
                                                 color: Color(0xff001427)),
                                           ),
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            //notify email to consumer
+                                            //redirect to add page
+                                          },
                                         ),
                                       ),
                                       elevation: 8,

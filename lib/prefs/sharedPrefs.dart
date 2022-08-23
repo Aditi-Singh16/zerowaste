@@ -67,15 +67,15 @@ class HelperFunctions {
     prefs.setString(typeKey, userType!);
   }
 
-  Future<void> setCoupons(String? couponA, String? couponB, String? couponC,
-      String? couponD, String? couponE) async {
+  Future<void> setCoupons(bool? couponA, bool? couponB, bool? couponC,
+      bool? couponD, bool? couponE) async {
     final prefs = await SharedPreferences.getInstance();
 
-    prefs.setString(coupon0, couponA!);
-    prefs.setString(coupon1, couponB!);
-    prefs.setString(coupon2, couponC!);
-    prefs.setString(coupon3, couponD!);
-    prefs.setString(coupon4, couponE!);
+    prefs.setBool(coupon0, couponA!);
+    prefs.setBool(coupon1, couponB!);
+    prefs.setBool(coupon2, couponC!);
+    prefs.setBool(coupon3, couponD!);
+    prefs.setBool(coupon4, couponE!);
   }
 
   readUserIdPref() async {
@@ -93,6 +93,16 @@ class HelperFunctions {
     return prefs.getString('this_user_email') ?? '0';
   }
 
+  readAddressPref() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('this_addr') ?? '0';
+  }
+
+  readPhonePref() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('this_phone') ?? '0';
+  }
+
   readTypePref() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('this_user_type') ?? '0';
@@ -100,26 +110,26 @@ class HelperFunctions {
 
   readCoupon0Pref() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('this_coupon0') ?? '0';
+    return prefs.getString('this_coupon0') ?? false;
   }
 
   readCoupon1Pref() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('this_coupon1') ?? '0';
+    return prefs.getString('this_coupon1') ?? false;
   }
 
   readCoupon2Pref() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('this_coupon2') ?? '0';
+    return prefs.getString('this_coupon2') ?? false;
   }
 
   readCoupon3Pref() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('this_coupon3') ?? '0';
+    return prefs.getString('this_coupon3') ?? false;
   }
 
   readCoupon4Pref() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('this_coupon4') ?? '0';
+    return prefs.getString('this_coupon4') ?? false;
   }
 }

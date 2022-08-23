@@ -43,14 +43,14 @@ class DataBaseHelper {
       ''');
   }
 
-  Future<int> insertUser(UserModel user) async {
+  Future<int> insertUser(Map<String, dynamic> myuser) async {
     Database db = await instance.database;
     createTable(db, 1);
 
     print('db is: $db');
     return await db.insert(
       'users',
-      user.toMap(),
+      myuser,
     );
   }
 

@@ -81,7 +81,7 @@ class _MyHomePagerState extends State<MyHomePager> {
                 end: Alignment.bottomRight,
                 colors: [
               Color.fromARGB(255, 255, 255, 255),
-              Color.fromARGB(255, 231, 242, 196)
+              Color.fromARGB(255, 255, 255, 255)
             ])),
         child: Scaffold(
             backgroundColor: Colors.transparent,
