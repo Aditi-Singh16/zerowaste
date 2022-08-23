@@ -7,7 +7,10 @@ import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
+import 'package:zerowaste/frontend/consumer/Orders.dart';
+import 'package:zerowaste/frontend/consumer/color.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
+import 'package:zerowaste/frontend/consumer/style.dart';
 
 String? name;
 String phone_number = '';
@@ -22,6 +25,24 @@ num quant2 = 0;
 num price2 = 0;
 var date = new DateTime.now().toString();
 var dateParse = DateTime.parse(date);
+
+List validity = [false, false, false, false, false];
+List couponn = ['OFF05', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
+List Value = [5, 10, 15, 20, 2];
+int wallet = 0;
+double amount1 = 0;
+double amountd = 0;
+int amountw = 0;
+bool coupon = false;
+bool plant = false;
+bool couponused = false;
+bool walletm = false;
+String eneteredcoupon = '';
+int indx = 0;
+num beforediscount = 0;
+num afterdiscount = 0;
+String error = '';
+late num total;
 
 var formattedDate = "${dateParse.day}-${dateParse.month}-${dateParse.year}";
 int delivery_charges = 20;
@@ -61,12 +82,33 @@ class _ShoppingCartState extends State<ShoppingCart> {
       .collection('Cart');
 
   get async => null;
+  Future<void> fetch_validity() async {
+    var docSnapshot =
+        await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+
+    if (docSnapshot.exists) {
+      Map<String, dynamic> data = docSnapshot.data()!;
+
+      // You can then retrieve the value from the Map like this:
+      setState(() {
+        validity[0] = data['Coupon0'];
+        validity[1] = data['Coupon1'];
+        validity[2] = data['Coupon2'];
+        validity[3] = data['Coupon3'];
+        validity[4] = data['Coupon4'];
+        _controller1.text = data['phone'];
+        _controller2.text = data['addr'];
+        phone_number = data['phone'];
+        address = data['addr'];
+        wallet = data['wallet'];
+      });
+    }
+  }
 
   @override
   void initState() {
-    _controller1.text = address;
-    _controller2.text = phone_number;
     super.initState();
+    fetch_validity();
 
     razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlerPaymentSuccess);
     razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlerErrorFailure);
@@ -77,6 +119,68 @@ class _ShoppingCartState extends State<ShoppingCart> {
   void dispose() {
     super.dispose();
     razorpay.clear();
+  }
+
+  Widget _plantgif(BuildContext context) {
+    return new AlertDialog(
+      title: const Text('Congratulations!!!'),
+      content: new Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Image.asset("assets/images/plantatree.gif"),
+        ],
+      ),
+      actions: <Widget>[
+        FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          textColor: Theme.of(context).primaryColor,
+          child: const Text('Close'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPopupDialog(BuildContext context) {
+    return new AlertDialog(
+      title: const Text('Meet Your Plant'),
+      content: new Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text("Plant a Tree just at " +
+              '\u{20B9}' +
+              "5 and take a step towards Green India"),
+        ],
+      ),
+      actions: <Widget>[
+        FlatButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              setState(() {
+                //amount1==0 means coupon is not applied
+                plant = true;
+                megatotal = (amount1 == 0) ? total + 20 + 5 : amount1 + 20 + 5;
+              });
+              print('Megatotal');
+              print(megatotal);
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => _plantgif(context),
+              );
+            },
+            child: const Text("Yes")),
+        FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          textColor: Theme.of(context).primaryColor,
+          child: const Text('Close'),
+        ),
+      ],
+    );
   }
 
   void handlerPaymentSuccess(PaymentSuccessResponse response) async {
@@ -147,6 +251,21 @@ class _ShoppingCartState extends State<ShoppingCart> {
         newu.doc(doc.id).delete();
       });
     });
+    await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(uid)
+        .update({'phone': phone_number, 'addr': address});
+    if (walletm == true) {
+      await FirebaseFirestore.instance.collection('Users').doc(uid).update(
+          {'wallet': (wallet - megatotal) > 0 ? wallet - megatotal : 0});
+    }
+    if (beforediscount != afterdiscount) {
+      String couponname = 'Coupon' + indx.toString();
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(uid)
+          .update({couponname: false});
+    }
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -218,7 +337,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
   Future<void> openCheckout() async {
     var options = {
       "key": "rzp_test_Ienn2nz5hJfAS1",
-      "amount": megatotal * 100,
+      "amount":
+          (walletm) ? (amountw * 100).toString() : (megatotal * 100).toString(),
       "name": "Sample App",
       "description": "Payment for the some random product",
       "prefill": {"contact": phone_number},
@@ -277,15 +397,16 @@ class _ShoppingCartState extends State<ShoppingCart> {
           }
           if (snapshot.hasData) {
             // get length of douments firebas
-            num? total = 0;
+            total = 0;
             num? quant = 0;
             for (int i = 0; i < snapshot.data.docs.length; i++) {
               quant = quant! + snapshot.data.docs[i].data()['quantity'];
-              total = total! +
+              total = total +
                   snapshot.data.docs[i].data()['price'] *
                       snapshot.data.docs[i].data()['quantity'];
+              megatotal = total + 20;
             }
-            megatotal = delivery_charges + total!;
+
             return Scaffold(
               appBar: PreferredSize(
                 preferredSize: Size.fromHeight(height * 0.06),
@@ -707,6 +828,270 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                   );
                                 }),
                             Divider(),
+                            Padding(
+                              padding: EdgeInsets.only(left: 10, right: 10),
+                              child: Container(
+                                  padding: EdgeInsets.only(left: 10, right: 10),
+                                  width: MediaQuery.of(context).size.width,
+                                  decoration: BoxDecoration(
+                                      color: AppColor.secondary,
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(25))),
+                                  child: Column(children: [
+                                    const Spacing(),
+                                    InkWell(
+                                        child: Column(children: [
+                                          Row(
+                                            children: [
+                                              Row(
+                                                children: const [
+                                                  TabTitle(
+                                                      label: 'Meet Your Plant',
+                                                      selected: true),
+                                                  SizedBox(width: 8),
+                                                ],
+                                              ),
+                                              Image.asset(
+                                                "assets/images/plant.png",
+                                                height: 40,
+                                                width: 50,
+                                              ),
+                                            ],
+                                          ),
+                                          const Spacing(),
+                                          Text(
+                                            "Once an order is placed on our app, we initiate the process of planting and linking your order with your sapling. Within a few days, along with the delivery of your products, we will also share the details of your plant by email.",
+                                            style: AppStyle.bodyText
+                                                .copyWith(color: Colors.white),
+                                          ),
+                                          const Spacing(),
+                                        ]),
+                                        onTap: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) =>
+                                                _buildPopupDialog(context),
+                                          );
+                                        }),
+                                    Divider(),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        InkWell(
+                                            child: Container(
+                                              child: Text('Apply Coupon',
+                                                  style: AppStyle.text.copyWith(
+                                                      color: Colors.blue)),
+                                            ),
+                                            onTap: () {
+                                              setState(() {
+                                                coupon = true;
+                                              });
+                                            }),
+                                        coupon
+                                            ? InkWell(
+                                                child: Container(
+                                                  child: Text('Remove',
+                                                      style: AppStyle.text
+                                                          .copyWith(
+                                                              color:
+                                                                  Colors.red)),
+                                                ),
+                                                onTap: () {
+                                                  setState(() {
+                                                    coupon = false;
+                                                    if (beforediscount !=
+                                                        afterdiscount) {
+                                                      amount1 = 0;
+
+                                                      megatotal = (plant)
+                                                          ? (amount1 == 0)
+                                                              ? total + 20 + 5
+                                                              : amount1 + 20 + 5
+                                                          : (amount1 == 0)
+                                                              ? total + 20
+                                                              : amount1 + 20;
+                                                    }
+                                                  });
+                                                })
+                                            : Visibility(
+                                                visible: false,
+                                                child: Text('')),
+                                      ],
+                                    ),
+                                    const Spacing(),
+                                    coupon
+                                        ? Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.8,
+                                            child: TextFormField(
+                                              style: AppStyle.text.copyWith(
+                                                  color: Colors.white),
+                                              onChanged: (val) {
+                                                setState(
+                                                    () => eneteredcoupon = val);
+                                              },
+                                              decoration: InputDecoration(
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: AppColor.primary),
+                                                ),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      width: 1,
+                                                      color: AppColor.primary),
+                                                ),
+                                                labelText: 'ABC',
+                                                labelStyle: TextStyle(
+                                                    color: Colors.white
+                                                        .withOpacity(.5)),
+                                              ),
+                                            ),
+                                          )
+                                        : Visibility(
+                                            visible: false,
+                                            child: SizedBox(height: 0)),
+                                    Text(error,
+                                        style: TextStyle(color: Colors.red)),
+                                    coupon
+                                        ? Center(
+                                            child: ElevatedButton(
+                                                style: ButtonStyle(
+                                                    shape: MaterialStateProperty.all(
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                    16))),
+                                                    minimumSize:
+                                                        MaterialStateProperty.all(
+                                                            Size(
+                                                                size.width /
+                                                                    2.6,
+                                                                37))),
+                                                onPressed: () async {
+                                                  setState(() {
+                                                    error = '';
+                                                  });
+                                                  if (_formkey.currentState!
+                                                      .validate()) {
+                                                    if (couponn.contains(
+                                                        eneteredcoupon)) {
+                                                      print(
+                                                          'entered coupon is in coupon');
+                                                      indx = couponn.indexOf(
+                                                          eneteredcoupon);
+                                                      if (validity[indx] ==
+                                                          true) {
+                                                        print(
+                                                            ' entered coupon is valid coupon');
+                                                        setState(() {
+                                                          //applied coupon amount
+
+                                                          beforediscount =
+                                                              total;
+
+                                                          amount1 = (total -
+                                                              (total *
+                                                                  (Value[
+                                                                      indx]) /
+                                                                  100));
+                                                          afterdiscount =
+                                                              amount1;
+                                                          plant
+                                                              ? megatotal =
+                                                                  (amount1 == 0)
+                                                                      ? total +
+                                                                          5 +
+                                                                          20
+                                                                      : amount +
+                                                                          5 +
+                                                                          20
+                                                              : megatotal =
+                                                                  (amount1 == 0)
+                                                                      ? total +
+                                                                          20
+                                                                      : amount +
+                                                                          20;
+                                                        });
+                                                      } else {
+                                                        setState(() {
+                                                          error =
+                                                              'Invalid Coupon Code';
+                                                        });
+                                                      }
+                                                    } else {
+                                                      setState(() {
+                                                        error =
+                                                            'Invalid Coupon Code';
+                                                      });
+                                                    }
+                                                  }
+                                                },
+                                                child: Text('Apply',
+                                                    style: AppStyle.h3.copyWith(
+                                                        color: Colors.white))),
+                                          )
+                                        : Visibility(
+                                            visible: false, child: Text('')),
+                                    const Spacing(),
+                                    (wallet > 0)
+                                        ? Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              InkWell(
+                                                  child: Container(
+                                                    child: Text(
+                                                        'Use wallet money     Rs.' +
+                                                            '$wallet',
+                                                        style: AppStyle.text
+                                                            .copyWith(
+                                                                color: Colors
+                                                                    .blue)),
+                                                  ),
+                                                  onTap: () {
+                                                    setState(() {
+                                                      walletm = true;
+
+                                                      if (wallet > megatotal) {
+                                                        amountw = 0;
+                                                      } else {
+                                                        amountw =
+                                                            megatotal.floor() -
+                                                                wallet;
+                                                      }
+                                                    });
+                                                  }),
+                                              walletm
+                                                  ? InkWell(
+                                                      child: Container(
+                                                        child: Text('Remove',
+                                                            style: AppStyle.text
+                                                                .copyWith(
+                                                                    color: Colors
+                                                                        .red)),
+                                                      ),
+                                                      onTap: () {
+                                                        setState(() {
+                                                          walletm = false;
+                                                        });
+                                                      })
+                                                  : Visibility(
+                                                      visible: false,
+                                                      child: Text('')),
+                                            ],
+                                          )
+                                        : Visibility(
+                                            visible: false, child: Text('')),
+                                    const Spacing(),
+                                  ])),
+                            ),
+                            const Spacing(),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -722,7 +1107,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                 ),
                                 Container(
                                   padding: EdgeInsets.only(right: 40),
-                                  child: Text(total.toString(),
+                                  child: Text(
+                                      (amount1 == 0)
+                                          ? total.toString()
+                                          : amount1.toString(),
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize:
@@ -761,6 +1149,58 @@ class _ShoppingCartState extends State<ShoppingCart> {
                               ],
                             ),
                             Divider(),
+                            (plant)
+                                ? Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                        Container(
+                                          padding: EdgeInsets.only(left: 40),
+                                          child: Text('Plant Contribution: ',
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    25,
+                                              )),
+                                        ),
+                                        FlatButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                plant = false;
+                                                megatotal = megatotal - 5;
+                                              });
+                                              print('Megatotal');
+                                              print(megatotal);
+                                            },
+                                            child: Text("Remove",
+                                                style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width /
+                                                          25,
+                                                ))),
+                                        const Spacing(),
+                                        Container(
+                                          padding: EdgeInsets.only(right: 40),
+                                          child: Text("5",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    25,
+                                              )),
+                                        ),
+                                      ])
+                                : const Spacing(),
+                            Divider(),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -772,7 +1212,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                         fontWeight: FontWeight.bold,
                                         fontSize:
                                             MediaQuery.of(context).size.width /
-                                                20,
+                                                25,
                                       )),
                                 ),
                                 Container(
@@ -783,12 +1223,74 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                         fontWeight: FontWeight.bold,
                                         fontSize:
                                             MediaQuery.of(context).size.width /
-                                                20,
+                                                25,
                                       )),
                                 ),
                               ],
                             ),
                             Divider(),
+                            (walletm)
+                                ? Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.only(left: 40),
+                                        child: Text('Final Total:',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  20,
+                                            )),
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.only(right: 40),
+                                        child: Text('$amountw',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  20,
+                                            )),
+                                      ),
+                                    ],
+                                  )
+                                : Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.only(left: 40),
+                                        child: Text('Final Total:',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  20,
+                                            )),
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.only(right: 40),
+                                        child: Text(megatotal.toString(),
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  20,
+                                            )),
+                                      ),
+                                    ],
+                                  ),
+                            const Spacing(),
                             Container(
                                 margin: EdgeInsets.only(
                                     top: MediaQuery.of(context).size.height /
@@ -808,7 +1310,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                       context: context, // set this to true
                                       builder: (_) {
                                         return DraggableScrollableSheet(
-                                          initialChildSize: 0.37,
+                                          initialChildSize: 0.47,
                                           maxChildSize: 0.6,
                                           minChildSize: 0.3,
                                           expand: false,
@@ -821,7 +1323,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                 // rounded border container top
                                                 // take input and button click to update data from flutter firebase
                                                 child: Padding(
-                                                    padding: EdgeInsets.all(15),
+                                                    padding: EdgeInsets.all(10),
                                                     child: Column(
                                                       children: <Widget>[
                                                         Text(
@@ -840,10 +1342,11 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                         Padding(
                                                           padding:
                                                               EdgeInsets.all(
-                                                                  15),
+                                                                  10),
                                                           child: TextField(
                                                             controller:
-                                                                _controller2,
+                                                                _controller1,
+                                                            enabled: true,
                                                             decoration:
                                                                 InputDecoration(
                                                               prefixIcon: Icon(
@@ -881,13 +1384,14 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                         Padding(
                                                           padding:
                                                               EdgeInsets.all(
-                                                                  15),
+                                                                  10),
                                                           child: TextField(
                                                             controller:
-                                                                _controller1,
+                                                                _controller2,
                                                             onChanged: (text) {
                                                               address = text;
                                                             },
+                                                            enabled: true,
                                                             decoration:
                                                                 InputDecoration(
                                                               prefixIcon: Icon(
@@ -916,7 +1420,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                           ),
                                                         ),
                                                         SizedBox(
-                                                          height: height / 45,
+                                                          height: 2,
                                                         ),
                                                         CupertinoButton(
                                                             color: Colors.black,
@@ -957,16 +1461,143 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                                         .data()['quantity'];
                                                               }
 
-                                                              if (megatotal >
-                                                                      0 &&
-                                                                  phone_number !=
+                                                              if (phone_number !=
                                                                       null &&
                                                                   regExp.hasMatch(
                                                                       phone_number
                                                                           .toString()) &&
                                                                   address.length >
                                                                       5) {
-                                                                await openCheckout();
+                                                                if (wallet ==
+                                                                        true &&
+                                                                    megatotal ==
+                                                                        0) {
+                                                                  String time = DateFormat(
+                                                                          "hh:mm:ss a")
+                                                                      .format(DateTime
+                                                                          .now());
+                                                                  newu.get().then(
+                                                                      (QuerySnapshot
+                                                                          querySnapshot) {
+                                                                    querySnapshot
+                                                                        .docs
+                                                                        .forEach(
+                                                                            (doc) {
+                                                                      print(
+                                                                          "naaaaameeeeeeee");
+                                                                      print(doc[
+                                                                          'name']);
+                                                                      String
+                                                                          quantity =
+                                                                          doc['quantity']
+                                                                              .toString();
+                                                                      String
+                                                                          date =
+                                                                          "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
+                                                                      String docId = FirebaseFirestore
+                                                                          .instance
+                                                                          .collection(
+                                                                              'Users')
+                                                                          .doc(
+                                                                              uid)
+                                                                          .collection(
+                                                                              'Orders')
+                                                                          .doc()
+                                                                          .id;
+                                                                      FirebaseFirestore
+                                                                          .instance
+                                                                          .collection(
+                                                                              'Users')
+                                                                          .doc(
+                                                                              uid)
+                                                                          .collection(
+                                                                              'Orders')
+                                                                          .doc(
+                                                                              docId)
+                                                                          .set({
+                                                                        "image":
+                                                                            doc['image'],
+                                                                        "ProductName":
+                                                                            doc['name'],
+                                                                        "Quantity":
+                                                                            doc['quantity'],
+                                                                        "price":
+                                                                            doc['price'].toDouble(),
+                                                                        "address":
+                                                                            address,
+                                                                        "phone_number":
+                                                                            phone_number,
+                                                                        "Time":
+                                                                            time,
+                                                                        "manufacturerId":
+                                                                            doc['manufacturerId'],
+                                                                        "userId":
+                                                                            uid,
+                                                                        "Date":
+                                                                            date,
+                                                                        "orderId":
+                                                                            docId,
+                                                                        "is_return":
+                                                                            false
+                                                                      });
+                                                                    });
+                                                                  });
+                                                                  await FirebaseFirestore
+                                                                      .instance
+                                                                      .collection(
+                                                                          'Users')
+                                                                      .doc(uid)
+                                                                      .update({
+                                                                    'wallet': (wallet -
+                                                                                megatotal) >
+                                                                            0
+                                                                        ? wallet -
+                                                                            megatotal
+                                                                        : 0
+                                                                  });
+
+                                                                  showDialog(
+                                                                    context:
+                                                                        context,
+                                                                    builder:
+                                                                        (ctx) =>
+                                                                            AlertDialog(
+                                                                      shape:
+                                                                          RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(20),
+                                                                      ),
+                                                                      title: const Text(
+                                                                          "Order Completed"),
+                                                                      actions: <
+                                                                          Widget>[
+                                                                        TextButton(
+                                                                          onPressed:
+                                                                              () {
+                                                                            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => YourOrders()));
+                                                                          },
+                                                                          child:
+                                                                              Container(
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              borderRadius: BorderRadius.circular(10),
+                                                                              color: Colors.black,
+                                                                            ),
+                                                                            padding:
+                                                                                const EdgeInsets.all(14),
+                                                                            child:
+                                                                                const Text(
+                                                                              "Continue",
+                                                                              style: TextStyle(color: Colors.white),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  );
+                                                                } else {
+                                                                  await openCheckout();
+                                                                }
                                                               } else {
                                                                 if (checkifpayed ==
                                                                     false) {

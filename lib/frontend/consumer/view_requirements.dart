@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:scratcher/widgets.dart';
-
+import 'package:zerowaste/prefs/sharedPrefs.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
 
 import 'package:zerowaste/frontend/consumer/style.dart';
@@ -21,6 +21,7 @@ class ViewRequirements extends StatefulWidget {
 }
 
 class _ViewRequirementsState extends State<ViewRequirements> {
+  HelperFunctions _helperFunctions = HelperFunctions();
   List<bool> _selections = [true, false];
   List coupon = ['OFF05', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
   List description = [
@@ -150,6 +151,28 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                                               onPressed: () async {
                                                 _showMyDialog(
                                                     snapshot.data!.docs[i]);
+
+                                                //ngo ke profile me accepted_req bana hai
+                                                FirebaseFirestore.instance
+                                                    .collection("requirements")
+                                                    .doc(snapshot.data!.docs[i])
+                                                    .update({
+                                                  "requirment_satisfy":
+                                                      FieldValue.arrayUnion([
+                                                    {
+                                                      "email": _helperFunctions
+                                                          .readEmailPref(),
+                                                      "uid": _helperFunctions
+                                                          .readUserIdPref(),
+                                                      "product_name":
+                                                          snapshot.data!.docs[i]
+                                                              ['product_name'],
+                                                      "quantity": snapshot.data!
+                                                          .docs[i]['quantity'],
+                                                    }
+                                                  ])
+                                                });
+
                                                 // randomindex =
                                                 //     Random().nextInt(coupon.length);
                                                 // showScratchCard(context);
@@ -220,156 +243,63 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                                     // print("Doc ID");
                                     // print(doc.id);
                                     // print("Doc length");
-                                    // print(doc['requirement_satisfy'].length);
-                                    // for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                                    //   if (snapshot.data!.docs[index]['requirement_satisfy']
-                                    //           .length >
-                                    //       0) header = true;
-                                    // }
-                                    return Column(children: [
-                                      // header ? Text("My Requirements")  : SizedBox(width: 0),
 
-                                      ListView.builder(
-                                          scrollDirection: Axis.vertical,
-                                          shrinkWrap: true,
-                                          itemCount:
-                                              doc['requirement_satisfy'].length,
-                                          itemBuilder: (context, idx) {
-                                            //print(snapshot.data!.docs.length);
-
-                                            return Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  2.1,
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height /
-                                                  5.9,
-                                              child: Card(
-                                                margin: EdgeInsets.all(
-                                                    MediaQuery.of(context)
-                                                            .size
-                                                            .height /
-                                                        80),
-                                                elevation: 3,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                color: Colors.white,
-                                                child: InkWell(
-                                                  onTap: () {},
-                                                  child: Row(
-                                                    children: [
-                                                      Expanded(
-                                                        flex: 2,
-                                                        child: Column(
-                                                          ////////////////////////////////////////////
-                                                          children: [
-                                                            Padding(
-                                                              padding: EdgeInsets.only(
-                                                                  top: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .height /
-                                                                      30),
-                                                              child: Padding(
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .only(),
-                                                                  child: Row(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .spaceAround,
-                                                                      children: [
-                                                                        Column(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.start,
-                                                                          children: [
-                                                                            Column(children: [
-                                                                              Text("Manufacturer Email:"),
-                                                                              Text(
-                                                                                doc['requirement_satisfy'][idx]['email'],
-                                                                                maxLines: 2,
-                                                                                style: TextStyle(
-                                                                                  fontSize: MediaQuery.of(context).size.height / 50,
-                                                                                  color: Colors.black,
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                ),
-                                                                              )
-                                                                            ]),
-                                                                            const Spacing(),
-                                                                            Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                                                                              Text(
-                                                                                "In Stock: ",
-                                                                                style: TextStyle(
-                                                                                  fontSize: MediaQuery.of(context).size.height / 55,
-                                                                                  color: Colors.black,
-                                                                                ),
-                                                                              ),
-                                                                              Text(
-                                                                                doc['requirement_satisfy'][idx]['quantity'],
-                                                                                style: TextStyle(
-                                                                                  fontSize: MediaQuery.of(context).size.height / 50,
-                                                                                  color: Colors.black,
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                ),
-                                                                              ),
-                                                                              //const Spacing(),
-                                                                              SizedBox(
-                                                                                width: 12,
-                                                                              ),
-                                                                              Text(
-                                                                                "Product Name: ",
-                                                                                style: TextStyle(
-                                                                                  fontSize: MediaQuery.of(context).size.height / 55,
-                                                                                  color: Colors.black,
-                                                                                ),
-                                                                              ),
-                                                                              Text(
-                                                                                doc['product_name'],
-                                                                                style: TextStyle(
-                                                                                  fontSize: MediaQuery.of(context).size.height / 50,
-                                                                                  color: Colors.black,
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                ),
-                                                                              ),
-                                                                            ]),
-                                                                          ],
-                                                                        ),
-                                                                        FlatButton(
-                                                                            color: Colors
-                                                                                .green,
-                                                                            onPressed:
-                                                                                () {
-                                                                              setState(() {
-                                                                                FirebaseFirestore.instance.collection("requirements").doc(doc.id).update({
-                                                                                  "is_satisfied": true
-                                                                                });
-                                                                                FirebaseFirestore.instance.collection("requirements").doc(doc.id).update({
-                                                                                  "requirement_satisfy": []
-                                                                                });
-                                                                              });
-                                                                            },
-                                                                            child:
-                                                                                Text(
-                                                                              "Order",
-                                                                              style: AppStyle.bodyText.copyWith(color: Colors.white, fontSize: 16),
-                                                                            )),
-                                                                      ])),
-                                                            ),
-                                                          ],
-                                                          //////////////////////////////////////////////////////////////////////////
-                                                        ),
-                                                      ),
-                                                    ],
+                                    return Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 15.0, right: 15, top: 15),
+                                      child: Card(
+                                          color: Color(0xffD5EAEF),
+                                          child: ListTile(
+                                            leading: Icon(
+                                                Icons.shopping_bag_rounded,
+                                                size: 30,
+                                                color: Color(0xff265D80)),
+                                            title: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                  "Product: " +
+                                                      doc.data()![
+                                                          'product_name'],
+                                                  style: TextStyle(
+                                                      // color: Color(0xff265D80),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 18)),
+                                            ),
+                                            subtitle: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "Quantity: " +
+                                                        doc
+                                                            .data()!['quantity']
+                                                            .toString(),
                                                   ),
-                                                ),
+                                                  SizedBox(height: 10),
+                                                  Text(
+                                                    "Category: \u{20B9}" +
+                                                        doc
+                                                            .data()!['category']
+                                                            .toString() +
+                                                        "/product",
+                                                  ),
+                                                  SizedBox(height: 10),
+                                                  Text("Description: " +
+                                                      doc.data()![
+                                                          'description']),
+                                                  // SizedBox(height: 10),
+                                                  // Text("Phone Number: " +
+                                                  //     doc.data()!['phone_number']),
+                                                ],
                                               ),
-                                            );
-                                          }),
-                                    ]);
+                                            ),
+                                          )),
+                                    );
                                   });
 
                             case ConnectionState.done:

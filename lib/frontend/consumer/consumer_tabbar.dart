@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/requirements_sell/add_requirements.dart';
-import 'package:zerowaste/frontend/requirements_sell/view_requirements.dart';
+import 'package:zerowaste/frontend/consumer/view_requirements.dart';
 
 class ConsumerTabBar extends StatelessWidget {
   const ConsumerTabBar({Key? key}) : super(key: key);
@@ -10,7 +10,7 @@ class ConsumerTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-       home: DefaultTabController(
+      home: DefaultTabController(
         length: 2,
         child: Scaffold(
           appBar: AppBar(
@@ -19,24 +19,18 @@ class ConsumerTabBar extends StatelessWidget {
               'Consumer',
               style: TextStyle(fontWeight: FontWeight.normal),
             ),
-            bottom: TabBar(  
-            tabs: [  
+            bottom: TabBar(
+              tabs: [
                 Tab(
                   text: "Add",
-                ),  
-                Tab(
-                  text:"View"
-                ),  
+                ),
+                Tab(text: "View"),
               ],
             ),
           ),
-          
-          body:TabBarView(  
-                children: [  
-                  AddRequirement(),
-                  ViewRequirements()
-                ],  
-              ),  
+          body: TabBarView(
+            children: [AddRequirement(), ViewRequirements()],
+          ),
         ),
       ),
     );

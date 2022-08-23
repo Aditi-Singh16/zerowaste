@@ -93,6 +93,16 @@ class HelperFunctions {
     return prefs.getString('this_user_email') ?? '0';
   }
 
+  readAddressPref() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('this_addr') ?? '0';
+  }
+
+  readPhonePref() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('this_phone') ?? '0';
+  }
+
   readTypePref() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('this_user_type') ?? '0';

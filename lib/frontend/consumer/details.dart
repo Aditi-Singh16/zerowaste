@@ -46,12 +46,15 @@ class _DetailsState extends State<Details> {
   List validity = [false, false, false, false, false];
   List couponn = ['OFF05', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
   List Value = [5, 10, 15, 20, 2];
-
+  int wallet = 0;
   double amount = 1;
   double amountd = 0;
+  double amountw = 0;
   bool coupon = false;
   bool plant = false;
   bool couponused = false;
+  bool walletm = false;
+
   int indx = 0;
   late Razorpay razorpay;
   String quantity = "";
@@ -179,12 +182,12 @@ class _DetailsState extends State<Details> {
                 builder: (BuildContext context) => _plantgif(context),
               );
             },
+            textColor: Theme.of(context).primaryColor,
             child: const Text("Yes")),
         FlatButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
-          textColor: Theme.of(context).primaryColor,
           child: const Text('Close'),
         ),
       ],
@@ -212,7 +215,7 @@ class _DetailsState extends State<Details> {
       "ProductId": widget.productid,
       "Quantity": int.parse(quantity),
       "Time": time,
-      "Amount": amountd,
+      "Amount": (walletm) ? amountw : amountd,
       "Date": date,
       "manufacturerId": widget.manufacturerid,
       "phone_number": phone_number,
@@ -231,6 +234,19 @@ class _DetailsState extends State<Details> {
         .collection('products')
         .doc(widget.productid)
         .update({'quantity': (widget.q - int.parse(quantity))});
+    if (walletm == true) {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(widget.uid)
+          .update({'wallet': (wallet - amountd) > 0 ? wallet - amountd : 0});
+    }
+    if (beforediscount != afterdiscount) {
+      String couponname = 'Coupon' + indx.toString();
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(widget.uid)
+          .update({couponname: false});
+    }
     // Toast.show("Pament success", context);
     showDialog(
       context: context,
@@ -302,7 +318,8 @@ class _DetailsState extends State<Details> {
   Future<void> openCheckout() async {
     var options = {
       "key": "rzp_test_Ienn2nz5hJfAS1",
-      "amount": (amountd * 100).toString(),
+      "amount":
+          (walletm) ? (amountw * 100).toString() : (amountd * 100).toString(),
       "name": "Sample App",
       "description": "Payment for the some random product",
       'timeout': 300,
@@ -339,6 +356,7 @@ class _DetailsState extends State<Details> {
         _controller2.text = data['addr'];
         phone_number = data['phone'];
         address = data['addr'];
+        wallet = data['wallet'];
       });
 
       print(validity);
@@ -506,8 +524,8 @@ class _DetailsState extends State<Details> {
                                       ),
                                       Image.asset(
                                         "assets/images/plant.png",
-                                        height: 40,
-                                        width: 50,
+                                        height: 30,
+                                        width: 30,
                                       ),
                                     ],
                                   ),
@@ -577,8 +595,9 @@ class _DetailsState extends State<Details> {
                                   child: Text(
                                     'ESV (Environment Saving Values)  ',
                                     style: AppStyle.text
-                                        .copyWith(color: Colors.white),
+                                        .copyWith(color: Colors.white, fontSize: width * 0.033),
                                   ),
+
                                 ),
                                 SizedBox(
                                     width: MediaQuery.of(context).size.width *
@@ -587,6 +606,7 @@ class _DetailsState extends State<Details> {
                                 IconButton(
                                   icon: Icon(Icons.info_outline),
                                   color: Colors.white,
+                                  iconSize: width * 0.05,
                                   alignment: Alignment.bottomRight,
                                   onPressed: () {
                                     //alert dialogue box pop up
@@ -601,7 +621,7 @@ class _DetailsState extends State<Details> {
                                             child: RichText(
                                           text: TextSpan(
                                               style: TextStyle(
-                                                  color: Colors.black),
+                                                  color: Colors.black,fontSize: width * 0.033),
                                               children: [
                                                 TextSpan(
                                                     text:
@@ -660,7 +680,7 @@ class _DetailsState extends State<Details> {
                                     ClipOval(
                                       child: SizedBox.fromSize(
                                         size:
-                                            Size.fromRadius(48), // Image radius
+                                            Size.fromRadius(width*0.10), // Image radius
                                         child: Image.network(
                                             'https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/esv%20img%2F11zon_cropped.png?alt=media&token=72d9009f-c528-4fd5-a638-e933dffee8f9',
                                             fit: BoxFit.cover),
@@ -669,9 +689,10 @@ class _DetailsState extends State<Details> {
                                     Text("Air Pollution"),
                                     Text(
                                         (esv_ls![0] * w!).toString() +
-                                            " aqi of Air",
-                                        style: AppStyle.text
-                                            .copyWith(color: Colors.white))
+                                            " aqi of Air",style: TextStyle(fontSize: width*0.035,color: Colors.white),
+                                    ),
+
+
                                   ],
                                 ),
                                 SizedBox(
@@ -682,7 +703,7 @@ class _DetailsState extends State<Details> {
                                     ClipOval(
                                       child: SizedBox.fromSize(
                                         size:
-                                            Size.fromRadius(48), // Image radius
+                                            Size.fromRadius(width*0.10), // Image radius
                                         child: Image.network(
                                             'https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/esv%20img%2FPicsart_22-08-19_12-36-20-414.png?alt=media&token=cc0c00fb-a68a-4b69-84cd-2e60fd910215',
                                             fit: BoxFit.cover),
@@ -691,10 +712,9 @@ class _DetailsState extends State<Details> {
                                     Text("Tree"),
                                     Text(
                                         (((esv_ls![1] + w!)).toString())
-                                                .substring(2, 3) +
+                                                .substring(0, 1) +
                                             " Tree saved",
-                                        style: AppStyle.text
-                                            .copyWith(color: Colors.white))
+                                        style: TextStyle(fontSize: width*0.035,color: Colors.white))
                                   ],
                                 ),
                                 SizedBox(
@@ -705,7 +725,7 @@ class _DetailsState extends State<Details> {
                                     ClipOval(
                                       child: SizedBox.fromSize(
                                         size:
-                                            Size.fromRadius(48), // Image radius
+                                            Size.fromRadius(width*0.10), // Image radius
                                         child: Image.network(
                                             'https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/esv%20img%2FPicsart_22-08-19_12-43-19-549.png?alt=media&token=b05f3d35-67ee-451e-8737-08e14c13c5d5',
                                             fit: BoxFit.cover),
@@ -716,8 +736,7 @@ class _DetailsState extends State<Details> {
                                         ((esv_ls![2] * w!).toString())
                                                 .substring(0, 3) +
                                             " ppm of Co2",
-                                        style: AppStyle.text
-                                            .copyWith(color: Colors.white))
+                                        style: TextStyle(fontSize: width*0.035,color: Colors.white))
                                   ],
                                 ),
                               ],
@@ -725,6 +744,47 @@ class _DetailsState extends State<Details> {
                           ],
                         ),
                         const Spacing(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                                child: Container(
+                                  child: Text('Apply Coupon',
+                                      style: AppStyle.text
+                                          .copyWith(color: Colors.blue)),
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    coupon = true;
+                                  });
+                                }),
+                            coupon
+                                ? InkWell(
+                                    child: Container(
+                                      child: Text('Remove',
+                                          style: AppStyle.text
+                                              .copyWith(color: Colors.red)),
+                                    ),
+                                    onTap: () {
+                                      setState(() {
+                                        coupon = false;
+                                        if (amount !=
+                                            (widget.price *
+                                                int.parse(quantity))) {
+                                          amount = widget.price *
+                                              int.parse(quantity);
+
+                                          amountd = (plant)
+                                              ? amount + 20 + 5
+                                              : amount + 20;
+                                        }
+                                      });
+                                    })
+                                : Visibility(visible: false, child: Text('')),
+                          ],
+                        ),
+                        const Spacing(),
+
                         coupon
                             ? Container(
                                 width: MediaQuery.of(context).size.width * 0.8,
@@ -752,6 +812,7 @@ class _DetailsState extends State<Details> {
                             : Visibility(
                                 visible: false, child: SizedBox(height: 0)),
                         Text(error, style: TextStyle(color: Colors.red)),
+
                         coupon
                             ? Center(
                                 child: ElevatedButton(
@@ -833,7 +894,6 @@ class _DetailsState extends State<Details> {
                                 ],
                               ),
 
-                        //const Spacing(),
                         plant
                             ? Row(
                                 mainAxisAlignment:
@@ -896,6 +956,75 @@ class _DetailsState extends State<Details> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Grand Total:',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                  Text('$amountd',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                ],
+                              ),
+                        const Spacing(),
+                        (wallet > 0)
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  InkWell(
+                                      child: Container(
+                                        child: Text(
+                                            'Use wallet money     Rs.' +
+                                                '$wallet',
+                                            style: AppStyle.text
+                                                .copyWith(color: Colors.blue)),
+                                      ),
+                                      onTap: () {
+                                        setState(() {
+                                          walletm = true;
+
+                                          if (wallet > amountd) {
+                                            amountw = 0;
+                                          } else {
+                                            amountw = amountd - wallet;
+                                          }
+                                        });
+                                      }),
+                                  walletm
+                                      ? InkWell(
+                                          child: Container(
+                                            child: Text('Remove',
+                                                style: AppStyle.text.copyWith(
+                                                    color: Colors.red)),
+                                          ),
+                                          onTap: () {
+                                            setState(() {
+                                              walletm = false;
+                                            });
+                                          })
+                                      : Visibility(
+                                          visible: false, child: Text('')),
+                                ],
+                              )
+                            : Visibility(visible: false, child: Text('')),
+
+                        const Spacing(),
+                        (walletm)
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Final Total:',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                  Text('$amountw',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                ],
+                              )
+                            : Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Final Total:',
                                       style: AppStyle.h3
                                           .copyWith(color: Colors.white)),
                                   Text('$amountd',
@@ -1124,14 +1253,52 @@ class _DetailsState extends State<Details> {
                                                                                 20);
                                                                   }
                                                                 });
-                                                                await openCheckout();
+                                                                if (walletm ==
+                                                                        true &&
+                                                                    amountw ==
+                                                                        0) {
+                                                                  String time = DateFormat(
+                                                                          "hh:mm:ss a")
+                                                                      .format(DateTime
+                                                                          .now());
+                                                                  String date =
+                                                                      "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
+                                                                  await FirebaseFirestore
+                                                                      .instance
+                                                                      .collection(
+                                                                          'Users')
+                                                                      .doc(widget
+                                                                          .uid)
+                                                                      .collection(
+                                                                          'Orders')
+                                                                      .add({
+                                                                    "ProductName":
+                                                                        widget
+                                                                            .name,
+                                                                    "ProductId":
+                                                                        widget
+                                                                            .productid,
+                                                                    "Quantity":
+                                                                        quantity,
+                                                                    "Time":
+                                                                        time,
+                                                                    "Amount": (walletm)
+                                                                        ? amountw
+                                                                        : amountd,
+                                                                    "Date":
+                                                                        date,
+                                                                    "manufacturerId":
+                                                                        widget
+                                                                            .manufacturerid,
+                                                                    "phone_number":
+                                                                        phone_number,
+                                                                    "address":
+                                                                        address,
+                                                                    "image":
+                                                                        widget
+                                                                            .image
+                                                                  });
 
-                                                                if (beforediscount !=
-                                                                    afterdiscount) {
-                                                                  String
-                                                                      couponname =
-                                                                      'Coupon' +
-                                                                          indx.toString();
                                                                   await FirebaseFirestore
                                                                       .instance
                                                                       .collection(
@@ -1139,9 +1306,55 @@ class _DetailsState extends State<Details> {
                                                                       .doc(widget
                                                                           .uid)
                                                                       .update({
-                                                                    couponname:
-                                                                        false
+                                                                    'wallet': (wallet -
+                                                                                amountd) >
+                                                                            0
+                                                                        ? wallet -
+                                                                            amountd
+                                                                        : 0
                                                                   });
+
+                                                                  showDialog(
+                                                                    context:
+                                                                        context,
+                                                                    builder:
+                                                                        (ctx) =>
+                                                                            AlertDialog(
+                                                                      shape:
+                                                                          RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(20),
+                                                                      ),
+                                                                      title: const Text(
+                                                                          "Order Completed"),
+                                                                      actions: <
+                                                                          Widget>[
+                                                                        TextButton(
+                                                                          onPressed:
+                                                                              () {
+                                                                            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => YourOrders()));
+                                                                          },
+                                                                          child:
+                                                                              Container(
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              borderRadius: BorderRadius.circular(10),
+                                                                              color: Colors.black,
+                                                                            ),
+                                                                            padding:
+                                                                                const EdgeInsets.all(14),
+                                                                            child:
+                                                                                const Text(
+                                                                              "Continue",
+                                                                              style: TextStyle(color: Colors.white),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  );
+                                                                } else {
+                                                                  await openCheckout();
                                                                 }
                                                               } else {
                                                                 showDialog(

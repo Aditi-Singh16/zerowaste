@@ -1,11 +1,13 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:scratcher/scratcher.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
-import 'package:zerowaste/frontend/consumer/style.dart';
 import 'package:zerowaste/frontend/login/login.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 
@@ -22,16 +24,65 @@ class _ProfilePageState extends State<ProfilePage> {
   UserModel loggedInUser = UserModel();
   bool header = false;
   var name = HelperFunctions().readNamePref();
-
+  String type = '';
   String title = "";
+  int count = 0;
+  int wallet = 0;
   bool isEditable = false;
-
+  List<dynamic> rewards = [];
   String phone = "";
+  late int randomindex;
+  List coupon = ['OFF05', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
+  List description = [
+    'Get 5% off on next purchase',
+    'Get 10% off on next purchase',
+    'Get 15% off on next purchase',
+    'Get 20% off on next purchase',
+    'Get 2% off on next purchase'
+  ];
+
+  List Value = [5, 10, 15, 20, 2];
   bool isEditablePhone = false;
+  bool reward = true;
 
   @override
+  Future<void> fetch_validity() async {
+    var docSnapshot = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(user!.uid)
+        .get();
+
+    if (docSnapshot.exists) {
+      Map<String, dynamic> data = docSnapshot.data()!;
+
+      // You can then retrieve the value from the Map like this:
+      setState(() {
+        count = data['Count'];
+        wallet = data['wallet'];
+        if (data['Coupon0'] == true) {
+          rewards.add('OFF05');
+        }
+        if (data['Coupon1'] == true) {
+          rewards.add('OFF10');
+        }
+        if (data['Coupon2'] == true) {
+          rewards.add('OFF15');
+        }
+        if (data['Coupon3'] == true) {
+          rewards.add('OFF20');
+        }
+        if (data['Coupon4'] == true) {
+          rewards.add('OFF02');
+        }
+      });
+      print('HIIII');
+      print(count);
+    }
+  }
+
   void initState() {
     super.initState();
+    fetch_validity();
     FirebaseFirestore.instance
         .collection("Users")
         .doc(user!.uid)
@@ -40,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage> {
       this.loggedInUser = UserModel.fromMap(value.data());
       title = '${loggedInUser.addr}';
       phone = '${loggedInUser.phone}';
-      setState(() {});
+      type = loggedInUser.type!;
     });
   }
 
@@ -63,23 +114,137 @@ class _ProfilePageState extends State<ProfilePage> {
             return Scaffold(
                 appBar: AppBar(
                   title: Text("Profile"),
-                  leading: Icon(Icons.arrow_back),
                   backgroundColor: Color(0xff265D80),
-                  centerTitle: true,
                 ),
                 body: SingleChildScrollView(
                     child: Column(children: [
+                  (type == 'Consumer')
+                      ? Stack(
+                          children: <Widget>[
+                            Column(children: <Widget>[
+                              SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      0.015),
+                              Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25)),
+                                child: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.87,
+                                  decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                          colors: [
+                                            Color.fromARGB(255, 113, 199, 116),
+                                            Color.fromARGB(255, 86, 153, 207)
+                                          ],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomCenter),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.5),
+                                          blurRadius: 7,
+                                          offset: const Offset(0, 3),
+                                        )
+                                      ],
+                                      borderRadius: BorderRadius.circular(25)),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text('Your Wallet',
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 30)),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text('${loggedInUser.name}',
+                                                style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 23)),
+                                            Image.asset(
+                                              'assets/images/logo1.png',
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.11,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.11,
+                                              color: Colors.white,
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.01,
+                                        ),
+                                        Container(
+                                            margin: const EdgeInsets.only(
+                                                right: 200),
+                                            child: const Text(
+                                              "Available Balance",
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            )),
+                                        SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.01),
+                                        Row(children: <Widget>[
+                                          Text(
+                                            'Rs. ',
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 26,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Text(
+                                            wallet.toString(),
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 26,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ]),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ])
+                          ],
+                        )
+                      : Visibility(visible: false, child: Text(' ')),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    'Details',
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500),
+                  ),
                   Container(
-                    margin: EdgeInsets.only(bottom: 25),
-                    padding: EdgeInsets.all(5),
+                    padding: EdgeInsets.only(bottom: 5, left: 5, right: 5),
                     child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(20.0),
+                          padding: const EdgeInsets.only(
+                              bottom: 20, left: 20, right: 20),
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
-                              color: Colors.blue.shade100,
                             ),
                             padding: EdgeInsets.all(20),
                             child: Column(
@@ -90,7 +255,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       "Name: ",
                                       style: TextStyle(
                                           fontSize: 20,
-                                          color: Color(0xff00277d),
+                                          color: Colors.black,
                                           fontWeight: FontWeight.w600),
                                     ),
                                     SizedBox(
@@ -100,7 +265,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       "${loggedInUser.name}",
                                       style: TextStyle(
                                           fontSize: 20,
-                                          color: Color(0xff00277d),
+                                          color: Colors.black,
                                           fontWeight: FontWeight.w500),
                                     ),
                                   ],
@@ -112,7 +277,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       "Email: ",
                                       style: TextStyle(
                                           fontSize: 20,
-                                          color: Color(0xff00277d),
+                                          color: Colors.black,
                                           fontWeight: FontWeight.w600),
                                     ),
                                     SizedBox(
@@ -126,7 +291,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         overflow: TextOverflow.fade,
                                         style: TextStyle(
                                             fontSize: 20,
-                                            color: Color(0xff00277d),
+                                            color: Colors.black,
                                             fontWeight: FontWeight.w500),
                                       ),
                                     ),
@@ -139,7 +304,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       "Role: ",
                                       style: TextStyle(
                                           fontSize: 20,
-                                          color: Color(0xff00277d),
+                                          color: Colors.black,
                                           fontWeight: FontWeight.w600),
                                     ),
                                     SizedBox(
@@ -149,7 +314,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       "${loggedInUser.type}",
                                       style: TextStyle(
                                           fontSize: 20,
-                                          color: Color(0xff00277d),
+                                          color: Colors.black,
                                           fontWeight: FontWeight.w600),
                                     ),
                                   ],
@@ -160,7 +325,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     "Address: ",
                                     style: TextStyle(
                                         fontSize: 20,
-                                        color: Color(0xff00277d),
+                                        color: Colors.black,
                                         fontWeight: FontWeight.w600),
                                   ),
                                   Expanded(
@@ -169,14 +334,16 @@ class _ProfilePageState extends State<ProfilePage> {
                                               title,
                                               style: TextStyle(
                                                   fontSize: 20,
-                                                  color: Color(0xff00277d),
+                                                  color: Colors.black,
                                                   fontWeight: FontWeight.w500),
                                             )
                                           : TextFormField(
                                               initialValue: title,
                                               textInputAction:
                                                   TextInputAction.done,
-                                              onFieldSubmitted: (value) {
+                                              onFieldSubmitted: (value) async {
+                                                await HelperFunctions()
+                                                    .setAddrPref(value);
                                                 setState(
                                                   () => {
                                                     isEditable = false,
@@ -205,7 +372,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     "Phone: ",
                                     style: TextStyle(
                                         fontSize: 20,
-                                        color: Color(0xff00277d),
+                                        color: Colors.black,
                                         fontWeight: FontWeight.w600),
                                   ),
                                   Expanded(
@@ -214,14 +381,16 @@ class _ProfilePageState extends State<ProfilePage> {
                                               phone,
                                               style: TextStyle(
                                                   fontSize: 20,
-                                                  color: Color(0xff00277d),
+                                                  color: Colors.black,
                                                   fontWeight: FontWeight.w500),
                                             )
                                           : TextFormField(
                                               initialValue: phone,
                                               textInputAction:
                                                   TextInputAction.done,
-                                              onFieldSubmitted: (value) {
+                                              onFieldSubmitted: (value) async {
+                                                await HelperFunctions()
+                                                    .setPhonePref(value);
                                                 setState(
                                                   () => {
                                                     isEditablePhone = false,
@@ -250,12 +419,150 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                         ),
+                        (type == 'Consumer')
+                            ? Text(
+                                'Get Rewards',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500),
+                              )
+                            : Visibility(visible: false, child: Text('')),
+                        const Spacing(),
+                        (type == 'Consumer')
+                            ? InkWell(
+                                child: Container(
+                                  height: 150,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.7,
+                                  child: Card(
+                                    child: Center(
+                                      child: Text(
+                                        'Collect Reward',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: (count > 0)
+                                                ? Colors.black
+                                                : Colors.grey,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ),
+                                    elevation: 8,
+                                    shadowColor: Colors.black12,
+                                    margin: EdgeInsets.all(20),
+                                    color: (count > 0)
+                                        ? Colors.blue
+                                        : Color.fromARGB(255, 109, 106, 106),
+                                  ),
+                                ),
+                                onTap: (count > 0)
+                                    ? () async {
+                                        String couponn = '';
+
+                                        randomindex =
+                                            Random().nextInt(coupon.length);
+                                        showScratchCard(context);
+                                        couponn =
+                                            "Coupon" + (randomindex).toString();
+
+                                        setState(() {
+                                          if (!rewards.contains(couponn)) {
+                                            rewards.add(coupon[randomindex]);
+
+                                            count--;
+                                          }
+                                        });
+                                        await FirebaseFirestore.instance
+                                            .collection('Users')
+                                            .doc(uid)
+                                            .update({
+                                          couponn: true,
+                                          'Count': FieldValue.increment(-1),
+                                        });
+                                      }
+                                    : null,
+                              )
+                            : Text(''),
+                        const Spacing(),
+                        (type == 'Consumer')
+                            ? Text(
+                                'Your Rewards',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500),
+                              )
+                            : Text(''),
+                        const Spacing(),
+                        (rewards.length == 0 && type == 'Consumner')
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Image.asset(
+                                    'assets/images/donate.jpg',
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.2,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.2,
+                                  ),
+                                  Text(
+                                    'Donate to NGO to earn rewards',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                ],
+                              )
+                            : (type == 'Consumer')
+                                ? Column(
+                                    children: rewards.map((data) {
+                                      return Container(
+                                        height: 150,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.7,
+                                        child: Card(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              ListTile(
+                                                title: Text(
+                                                  '${data}',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                ),
+                                              ),
+                                              IconButton(
+                                                icon: const Icon(Icons.copy),
+                                                onPressed: () async {
+                                                  await _copyToClipboard(data);
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                          elevation: 8,
+                                          shadowColor: Colors.black,
+                                          margin: EdgeInsets.all(20),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  )
+                                : Visibility(visible: false, child: Text(' ')),
                       ],
                     ),
                   ),
 
                   // const Spacing(),
-
+                  SizedBox(
+                    height: 10,
+                  ),
                   FloatingActionButton(
                     onPressed: () {
                       logout();
@@ -263,6 +570,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Icon(Icons.logout_rounded),
                     backgroundColor: Color(0xff3472c0),
                   ),
+                  SizedBox(
+                    height: 10,
+                  )
                 ])));
           }
           return Scaffold(
@@ -279,5 +589,73 @@ class _ProfilePageState extends State<ProfilePage> {
     await FirebaseAuth.instance.signOut();
     Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => LoginScreen()));
+  }
+
+  Future<void> _copyToClipboard(String textt) async {
+    await Clipboard.setData(ClipboardData(text: textt));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text('Copied to clipboard'),
+    ));
+  }
+
+  showScratchCard(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            content: Scratcher(
+              brushSize: 100,
+              threshold: 50,
+              color: Colors.blue,
+              onChange: (value) => print("Scratch progress: $value%"),
+              onThreshold: () => print("Threshold reached"),
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.42,
+                width: MediaQuery.of(context).size.width * 0.5,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.18,
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child: Image.asset(
+                        "assets/images/cele.png",
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "You\'ve won",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 24,
+                            letterSpacing: 1,
+                            color: Colors.blue),
+                      ),
+                    ),
+                    Spacing(),
+                    Text(
+                      coupon[randomindex],
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 24,
+                          color: Colors.blue),
+                    ),
+                    Spacing(),
+                    Text(
+                      description[randomindex],
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 20,
+                          color: Colors.blue),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
   }
 }
