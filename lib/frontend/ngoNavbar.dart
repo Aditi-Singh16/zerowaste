@@ -67,12 +67,12 @@ class _NgoNavbarState extends State<NgoNavbar> {
             },
             icon: pageIndex == 1
                 ? Icon(
-                    CupertinoIcons.leaf_arrow_circlepath,
+                    CupertinoIcons.arrow_2_circlepath_circle_fill,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   )
                 : Icon(
-                    CupertinoIcons.leaf_arrow_circlepath,
+                    CupertinoIcons.arrow_2_circlepath_circle,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   ),

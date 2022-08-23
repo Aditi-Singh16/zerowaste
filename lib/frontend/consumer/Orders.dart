@@ -280,7 +280,22 @@ class _YourOrdersState extends State<YourOrders> {
                                                         child: Text(
                                                           "Return",
                                                         ))
-                                                    : Text("")
+                                                    : ElevatedButton(
+                                                        onPressed: () {
+                                                          Scaffold.of(context)
+                                                              .showSnackBar(SnackBar(
+                                                                  content: Text(
+                                                                      "Can only be returned once"),
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .red));
+                                                        },
+                                                        child: Text("Return"),
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                                primary: Colors
+                                                                    .grey),
+                                                      )
                                               ],
                                             ),
                                           ),

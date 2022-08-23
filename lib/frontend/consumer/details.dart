@@ -213,7 +213,7 @@ class _DetailsState extends State<Details> {
         .set({
       "ProductName": widget.name,
       "ProductId": widget.productid,
-      "Quantity": quantity,
+      "Quantity": int.parse(quantity),
       "Time": time,
       "Amount": (walletm) ? amountw : amountd,
       "Date": date,
