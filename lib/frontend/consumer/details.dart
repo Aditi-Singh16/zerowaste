@@ -600,7 +600,7 @@ class _DetailsState extends State<Details> {
                                 ),
                                 SizedBox(
                                     width: MediaQuery.of(context).size.width *
-                                        0.27),
+                                        0.03),
                                 // i icon button with alert dialogue
                                 IconButton(
                                   icon: Icon(Icons.info_outline),
@@ -677,8 +677,9 @@ class _DetailsState extends State<Details> {
                                   children: [
                                     ClipOval(
                                       child: SizedBox.fromSize(
-                                        size:
-                                            Size.fromRadius(48), // Image radius
+                                        size: Size.fromRadius(
+                                            MediaQuery.of(context).size.width *
+                                                0.1), // Image radius
                                         child: Image.network(
                                             'https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/esv%20img%2F11zon_cropped.png?alt=media&token=72d9009f-c528-4fd5-a638-e933dffee8f9',
                                             fit: BoxFit.cover),
@@ -692,15 +693,14 @@ class _DetailsState extends State<Details> {
                                             .copyWith(color: Colors.white))
                                   ],
                                 ),
-                                SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.1),
+                                Spacer(),
                                 Column(
                                   children: [
                                     ClipOval(
                                       child: SizedBox.fromSize(
-                                        size:
-                                            Size.fromRadius(48), // Image radius
+                                        size: Size.fromRadius(
+                                            MediaQuery.of(context).size.width *
+                                                0.1), // Image radius
                                         child: Image.network(
                                             'https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/esv%20img%2FPicsart_22-08-19_12-36-20-414.png?alt=media&token=cc0c00fb-a68a-4b69-84cd-2e60fd910215',
                                             fit: BoxFit.cover),
@@ -715,15 +715,14 @@ class _DetailsState extends State<Details> {
                                             .copyWith(color: Colors.white))
                                   ],
                                 ),
-                                SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.1),
+                                Spacer(),
                                 Column(
                                   children: [
                                     ClipOval(
                                       child: SizedBox.fromSize(
-                                        size:
-                                            Size.fromRadius(48), // Image radius
+                                        size: Size.fromRadius(
+                                            MediaQuery.of(context).size.width *
+                                                0.1), // Image radius
                                         child: Image.network(
                                             'https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/esv%20img%2FPicsart_22-08-19_12-43-19-549.png?alt=media&token=b05f3d35-67ee-451e-8737-08e14c13c5d5',
                                             fit: BoxFit.cover),

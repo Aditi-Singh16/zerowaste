@@ -226,6 +226,7 @@ class _DashboardState extends State<Dashboard> {
                       child: DropdownButton(
                         underline: Container(),
                         iconEnabledColor: Colors.white,
+                        dropdownColor: Color(0xff3472c0),
                         isExpanded: true,
                         value: cityvalue,
                         icon: const Icon(Icons.keyboard_arrow_down),
