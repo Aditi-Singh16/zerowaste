@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/manufacturer/addProduct.dart';
-import 'package:zerowaste/frontend/requirements_sell/view_requirements.dart';
+import 'package:zerowaste/frontend/manufacturer/view_requirements.dart';
 
 class ProductsTabBar extends StatelessWidget {
   const ProductsTabBar({Key? key}) : super(key: key);

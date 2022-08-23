@@ -19,7 +19,7 @@ class _AddRequirementState extends State<AddRequirement> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Add Requirements")),
+        // appBar: AppBar(title: Text("Add Requirements")),
         body: Padding(padding: const EdgeInsets.all(20), child: PageForm()));
   }
 }

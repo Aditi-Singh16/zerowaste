@@ -184,7 +184,7 @@ class _PageFormState extends State<PageForm> {
                   backgroundImage: image != null
                       ? FileImage(image)
                       : const NetworkImage(
-                              'https://cdni.iconscout.com/illustration/premium/thumb/add-photo-2670583-2215267.png')
+                              'https://cdn5.vectorstock.com/i/thumb-large/68/34/add-photo-icon-on-white-vector-34216834.jpg')
                           as ImageProvider,
                 )),
             const Center(child: Text("Add product photo")),

@@ -21,7 +21,7 @@ class _ConsumerNavbarState extends State<ConsumerNavbar> {
   final pages = [
     UserHome(),
     const MyApp(),
-    AddRequirement(),
+    ConsumerTabBar(),
     InputCategory(),
     YourOrders(),
     const ProfilePage(),
@@ -72,12 +72,12 @@ class _ConsumerNavbarState extends State<ConsumerNavbar> {
             },
             icon: pageIndex == 1
                 ? Icon(
-                    CupertinoIcons.leaf_arrow_circlepath,
+                    CupertinoIcons.arrow_2_circlepath_circle_fill,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   )
                 : Icon(
-                    CupertinoIcons.leaf_arrow_circlepath,
+                    CupertinoIcons.arrow_2_circlepath_circle,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   ),
@@ -110,12 +110,12 @@ class _ConsumerNavbarState extends State<ConsumerNavbar> {
             },
             icon: pageIndex == 3
                 ? Icon(
-                    CupertinoIcons.arrow_3_trianglepath,
+                    CupertinoIcons.map_fill,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   )
                 : Icon(
-                    CupertinoIcons.arrow_3_trianglepath,
+                    CupertinoIcons.map,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   ),
@@ -129,12 +129,12 @@ class _ConsumerNavbarState extends State<ConsumerNavbar> {
             },
             icon: pageIndex == 4
                 ? Icon(
-                    Icons.history,
+                    CupertinoIcons.cube_box_fill,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   )
                 : Icon(
-                    Icons.history,
+                    CupertinoIcons.cube_box,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   ),
