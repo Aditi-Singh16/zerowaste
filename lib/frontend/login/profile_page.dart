@@ -341,7 +341,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                               initialValue: title,
                                               textInputAction:
                                                   TextInputAction.done,
-                                              onFieldSubmitted: (value) {
+                                              onFieldSubmitted: (value) async {
+                                                await HelperFunctions()
+                                                    .setAddrPref(value);
                                                 setState(
                                                   () => {
                                                     isEditable = false,
@@ -386,7 +388,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                               initialValue: phone,
                                               textInputAction:
                                                   TextInputAction.done,
-                                              onFieldSubmitted: (value) {
+                                              onFieldSubmitted: (value) async {
+                                                await HelperFunctions()
+                                                    .setPhonePref(value);
                                                 setState(
                                                   () => {
                                                     isEditablePhone = false,
