@@ -98,6 +98,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                     Text(
                                       "${loggedInUser.name}",
+                                      maxLines: 2,
+                                      softWrap: true,
+                                      overflow: TextOverflow.fade,
                                       style: TextStyle(
                                           fontSize: 20,
                                           color: Color(0xff00277d),

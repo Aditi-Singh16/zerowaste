@@ -8,7 +8,7 @@ import 'dart:convert';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
-import 'package:zerowaste/frontend/requirements_sell/view_requirements.dart';
+import 'package:zerowaste/frontend/manufacturer/view_requirements.dart';
 
 class AddProduct extends StatefulWidget {
   AddProduct({Key? key}) : super(key: key);

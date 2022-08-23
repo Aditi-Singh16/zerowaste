@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:zerowaste/frontend/consumer/consumer_tabbar.dart';
 import 'package:zerowaste/frontend/login/login.dart';
+import 'package:zerowaste/frontend/login/registration.dart';
 import 'package:zerowaste/frontend/manufacturer/dashboard.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
 import 'package:zerowaste/frontend/inputDisposalCategory.dart';
