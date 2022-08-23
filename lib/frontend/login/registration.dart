@@ -314,9 +314,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
       String prettyPrint = encoder.convert(result);
 
-      print('gst No' + gstNo);
-      print(prettyPrint);
-      print(result!['error']);
       if (result!['error'] == true) {
         correct = false;
         setState(() {
