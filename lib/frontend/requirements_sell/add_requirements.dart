@@ -32,13 +32,15 @@ class PageForm extends StatefulWidget {
 class _PageFormState extends State<PageForm> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
-
+  final TextEditingController _descriptionController = TextEditingController();
   final FocusNode _nameFocus = FocusNode();
   final FocusNode _quantityFocus = FocusNode();
+  final FocusNode _descriptionFocus = FocusNode();
 
   var _name = "";
   var _quantity = "";
   var _category = "Books";
+  var _description = "";
 
   void ButtonValidate() {
     if (_formKey.currentState!.validate()) {
@@ -176,6 +178,48 @@ class _PageFormState extends State<PageForm> {
                   return null;
                 }),
             SizedBox(height: 20),
+            TextFormField(
+                controller: _descriptionController,
+                focusNode: _descriptionFocus,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(
+                    CupertinoIcons.doc_text,
+                    size: 20,
+                    color: _descriptionFocus.hasFocus
+                        ? _focusColor
+                        : _defaultColor,
+                  ),
+                  border: OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        const BorderSide(color: Colors.black, width: 2.0),
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  labelText: 'Description of Product',
+                  labelStyle: TextStyle(
+                    color: _descriptionFocus.hasFocus
+                        ? _focusColor
+                        : _defaultColor,
+                  ),
+                ),
+                onChanged: (value) {
+                  _description = value;
+                  setState(() {
+                    color = true;
+                  });
+                },
+                onTap: () {
+                  setState(() {
+                    FocusScope.of(context).requestFocus(_descriptionFocus);
+                  });
+                },
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please add the description of product';
+                  }
+                  return null;
+                }),
+            SizedBox(height: 20),
             StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('categories')
@@ -271,7 +315,8 @@ class _PageFormState extends State<PageForm> {
                         "quantity": _quantity,
                         "product_name": _name,
                         "type": await HelperFunctions().readTypePref(),
-                        "is_satisfied": false
+                        "is_satisfied": false,
+                        "description": _description
                       });
                       _nameController.clear();
                       _quantityController.clear();

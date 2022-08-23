@@ -337,8 +337,11 @@ class _ShoppingCartState extends State<ShoppingCart> {
   Future<void> openCheckout() async {
     var options = {
       "key": "rzp_test_Ienn2nz5hJfAS1",
-      "amount":
-          (walletm) ? (amountw * 100).toString() : (megatotal * 100).toString(),
+      "amount": (walletm)
+          ? (amountw * 100).toString()
+          : plant == true
+              ? ((megatotal + 5) * 100).toString()
+              : (megatotal * 100).toString(),
       "name": "Sample App",
       "description": "Payment for the some random product",
       "prefill": {"contact": phone_number},
@@ -1278,15 +1281,27 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                       ),
                                       Container(
                                         padding: EdgeInsets.only(right: 40),
-                                        child: Text(megatotal.toString(),
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  20,
-                                            )),
+                                        child: plant == true
+                                            ? Text((megatotal + 5).toString(),
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width /
+                                                          20,
+                                                ))
+                                            : Text((megatotal).toString(),
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width /
+                                                          20,
+                                                )),
                                       ),
                                     ],
                                   ),
@@ -1698,12 +1713,19 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                       },
                                     );
                                   },
-                                  child: Text('Proceed to Checkout ' +
-                                      '\u{20B9}' +
-                                      megatotal.toString() +
-                                      " (" +
-                                      quant.toString() +
-                                      " Item) "),
+                                  child: plant == true
+                                      ? Text('Proceed to Checkout ' +
+                                          '\u{20B9}' +
+                                          (megatotal + 5).toString() +
+                                          " (" +
+                                          quant.toString() +
+                                          " Item) ")
+                                      : Text('Proceed to Checkout ' +
+                                          '\u{20B9}' +
+                                          (megatotal).toString() +
+                                          " (" +
+                                          quant.toString() +
+                                          " Item) "),
                                   style: ElevatedButton.styleFrom(
                                     primary: Colors.black, // background
                                     onPrimary: Colors.white,

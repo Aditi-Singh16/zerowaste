@@ -342,7 +342,8 @@ class _PageFormState extends State<PageForm> {
                         "quantity": _quantity,
                         "product_name": _name,
                         "type": "NGO",
-                        "is_satisfied": false
+                        "is_satisfied": false,
+                        "description": _description
                       });
                       _nameController.clear();
                       _quantityController.clear();

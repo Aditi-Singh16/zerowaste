@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,6 +13,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:zerowaste/frontend/manufacturerNavbar.dart';
 import 'package:zerowaste/frontend/ngoNavbar.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
+import 'package:gst_verification/gst_verification.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
@@ -36,6 +38,50 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final passwordEditingController = new TextEditingController();
   final confirmPasswordEditingController = new TextEditingController();
   String typeEditingController = 'Consumer';
+  final gstEditingController = new TextEditingController();
+
+  Widget _gstverify(BuildContext context) {
+    return AlertDialog(
+      title: const Text('GST Verification'),
+      content: new Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          TextFormField(
+              autofocus: false,
+              controller: gstEditingController,
+              keyboardType: TextInputType.name,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return ("GST is mandatory for Manufacturer Registration");
+                }
+              },
+              onSaved: (value) {
+                gstEditingController.text = value!;
+              },
+              textInputAction: TextInputAction.next,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.fromLTRB(20, 1, 20, 15),
+                hintText: "Enter GST",
+                // border: OutlineInputBorder(
+                //   borderRadius: BorderRadius.circular(10),
+                // ),
+              ))
+        ],
+      ),
+      actions: <Widget>[
+        FlatButton(
+          onPressed: () {
+            // signUp(emailEditingController.text, passwordEditingController.text);
+            verifyGSTNumber();
+            Navigator.pop(context);
+          },
+          textColor: Theme.of(context).primaryColor,
+          child: const Text('Ok'),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +227,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context).size.width,
           onPressed: () {
-            signUp(emailEditingController.text, passwordEditingController.text);
+            if (typeEditingController == 'Manufacturer') {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => _gstverify(context),
+              );
+            } else {
+              signUp(
+                  emailEditingController.text, passwordEditingController.text);
+            }
           },
           child: Text(
             "SignUp",
@@ -246,6 +300,57 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
+  void verifyGSTNumber() {
+    bool correct = true;
+    var valueOp = 1;
+    setState(() {});
+    String key_secret = 'pbvHf6wo4DROQWHry5WVmNPSTsy2';
+    String gstNo = gstEditingController.text;
+    GstVerification.verifyGST(gstNo: gstNo, key_secret: key_secret)
+        .then((result) {
+      JsonEncoder encoder = new JsonEncoder.withIndent('  ');
+
+      // final data = jsonDecode(result);
+
+      String prettyPrint = encoder.convert(result);
+
+      print('gst No' + gstNo);
+      print(prettyPrint);
+      print(result!['error']);
+      if (result!['error'] == true) {
+        correct = false;
+        setState(() {
+          Fluttertoast.showToast(msg: "Invalid GST");
+          Navigator.pop(context);
+          // Navigator.of(context).push(
+          //     MaterialPageRoute(builder: (context) => RegistrationScreen()));
+        });
+      } else {
+        correct = true;
+        setState(() {
+          signUp(emailEditingController.text, passwordEditingController.text);
+        });
+      }
+
+      String response = "JSON Response:\n\n" + prettyPrint;
+      print(response);
+      valueOp = 0;
+      setState(() {
+        correct = correct;
+      });
+      return correct;
+    }).catchError((error) {
+      print(error);
+      valueOp = 0;
+      correct = false;
+      setState(() {
+        correct = correct;
+      });
+      //return false;
+    });
+    print("Correct: " + correct.toString());
+  }
+
   void signUp(String email, String password) async {
     if (_formKey.currentState!.validate()) {
       try {
@@ -281,6 +386,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         Fluttertoast.showToast(msg: errorMessage!);
         print(error.code);
       }
+    } else {
+      Fluttertoast.showToast(msg: "Invalid GST");
+      //Navigator.pop(context);
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => RegistrationScreen()));
     }
   }
 

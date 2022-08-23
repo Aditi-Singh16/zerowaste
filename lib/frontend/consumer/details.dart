@@ -594,8 +594,9 @@ class _DetailsState extends State<Details> {
                                   alignment: Alignment.centerLeft,
                                   child: Text(
                                     'ESV (Environment Saving Values)  ',
-                                    style: AppStyle.text
-                                        .copyWith(color: Colors.white),
+                                    style: AppStyle.text.copyWith(
+                                        color: Colors.white,
+                                        fontSize: width * 0.033),
                                   ),
                                 ),
                                 SizedBox(
@@ -605,6 +606,7 @@ class _DetailsState extends State<Details> {
                                 IconButton(
                                   icon: Icon(Icons.info_outline),
                                   color: Colors.white,
+                                  iconSize: width * 0.05,
                                   alignment: Alignment.bottomRight,
                                   onPressed: () {
                                     //alert dialogue box pop up
@@ -619,7 +621,8 @@ class _DetailsState extends State<Details> {
                                             child: RichText(
                                           text: TextSpan(
                                               style: TextStyle(
-                                                  color: Colors.black),
+                                                  color: Colors.black,
+                                                  fontSize: width * 0.033),
                                               children: [
                                                 TextSpan(
                                                     text:
@@ -687,10 +690,12 @@ class _DetailsState extends State<Details> {
                                     ),
                                     Text("Air Pollution"),
                                     Text(
-                                        (esv_ls![0] * w!).toString() +
-                                            " aqi of Air",
-                                        style: AppStyle.text
-                                            .copyWith(color: Colors.white))
+                                      (esv_ls![0] * w!).toString() +
+                                          " aqi of Air",
+                                      style: TextStyle(
+                                          fontSize: width * 0.035,
+                                          color: Colors.white),
+                                    ),
                                   ],
                                 ),
                                 Spacer(),
@@ -709,10 +714,11 @@ class _DetailsState extends State<Details> {
                                     Text("Tree"),
                                     Text(
                                         (((esv_ls![1] + w!)).toString())
-                                                .substring(2, 3) +
+                                                .substring(0, 1) +
                                             " Tree saved",
-                                        style: AppStyle.text
-                                            .copyWith(color: Colors.white))
+                                        style: TextStyle(
+                                            fontSize: width * 0.035,
+                                            color: Colors.white))
                                   ],
                                 ),
                                 Spacer(),
@@ -733,8 +739,9 @@ class _DetailsState extends State<Details> {
                                         ((esv_ls![2] * w!).toString())
                                                 .substring(0, 3) +
                                             " ppm of Co2",
-                                        style: AppStyle.text
-                                            .copyWith(color: Colors.white))
+                                        style: TextStyle(
+                                            fontSize: width * 0.035,
+                                            color: Colors.white))
                                   ],
                                 ),
                               ],
