@@ -69,7 +69,10 @@ class _DashboardState extends State<Dashboard> {
   var quantAvail = 0;
 
   Future<void> predData() async {
+    print("hii");
     actualChartData = [];
+    predictionChartData = [];
+
     final interpreter =
         await Interpreter.fromAsset('model/quantity_prediction.tflite');
     var monthSlice = [];

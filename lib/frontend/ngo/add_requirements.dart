@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 
 import 'package:zerowaste/backend/firestore_info.dart';
+import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 class AddRequirement extends StatefulWidget {
   const AddRequirement({Key? key}) : super(key: key);
@@ -332,22 +333,21 @@ class _PageFormState extends State<PageForm> {
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         )),
-                    onPressed: () => {
-                          color ? ButtonValidate() : null,
-                          FirebaseData().addRequirement({
-                            "name": "john",
-                            "email": "example@example.com",
-                            "category": _category,
-                            "quantity": _quantity,
-                            "product_name": _name,
-                            "description": _description,
-                            "type": "NGO",
-                            "is_satisfied": false
-                          }),
-                          _nameController.clear(),
-                          _quantityController.clear(),
-                          _descriptionController.clear(),
-                        }))
+                    onPressed: () async {
+                      color ? ButtonValidate() : null;
+                      FirebaseData().addRequirement({
+                        "name": await HelperFunctions().readNamePref(),
+                        "email": await HelperFunctions().readEmailPref(),
+                        "category": _category,
+                        "quantity": _quantity,
+                        "product_name": _name,
+                        "type": "NGO",
+                        "is_satisfied": false
+                      });
+                      _nameController.clear();
+                      _quantityController.clear();
+                      _descriptionController.clear();
+                    }))
           ])),
     );
   }

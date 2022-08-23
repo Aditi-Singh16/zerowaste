@@ -63,9 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
             return Scaffold(
                 appBar: AppBar(
                   title: Text("Profile"),
-                  leading: Icon(Icons.arrow_back),
                   backgroundColor: Color(0xff265D80),
-                  centerTitle: true,
                 ),
                 body: SingleChildScrollView(
                     child: Column(children: [
