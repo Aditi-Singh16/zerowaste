@@ -1,4 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// ignore_for_file: prefer_const_constructors
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zerowaste/backend/local_data.dart';
@@ -7,7 +8,6 @@ import 'package:zerowaste/frontend/login/login.dart';
 import 'package:zerowaste/frontend/manufacturerNavbar.dart';
 import 'package:zerowaste/frontend/ngoNavbar.dart';
 import 'package:zerowaste/frontend/login/profile_page.dart';
-import 'backend/firestore_info.dart';
 
 class Wrapper extends StatefulWidget {
   const Wrapper({
@@ -21,12 +21,9 @@ class Wrapper extends StatefulWidget {
 class _WrapperState extends State<Wrapper> {
   String type = '';
   getType() async {
-    print("dfjkghjkg");
-    print(FirebaseAuth.instance.currentUser);
     if (FirebaseAuth.instance.currentUser != null) {
       var uid = FirebaseAuth.instance.currentUser!.uid;
       String res = await DataBaseHelper.instance.getUsersById(uid);
-      print(res);
       setState(() {
         type = res;
       });

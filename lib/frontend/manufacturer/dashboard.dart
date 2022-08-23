@@ -153,7 +153,8 @@ class _DashboardState extends State<Dashboard> {
                 children: [
                   Spacer(),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.33,
+                    width: MediaQuery.of(context).size.width * 0.37,
+                    height: MediaQuery.of(context).size.height * 0.067,
                     child: Container(
                       padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -226,6 +227,7 @@ class _DashboardState extends State<Dashboard> {
                       child: DropdownButton(
                         underline: Container(),
                         iconEnabledColor: Colors.white,
+                        dropdownColor: Color(0xff3472c0),
                         isExpanded: true,
                         value: cityvalue,
                         icon: const Icon(Icons.keyboard_arrow_down),

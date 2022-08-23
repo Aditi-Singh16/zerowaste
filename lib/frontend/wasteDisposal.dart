@@ -1,15 +1,17 @@
 // import 'dart:html';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'dart:math' show cos, sqrt, asin;
-
+import 'package:flutter_sms/flutter_sms.dart';
 import 'package:marker_icon/marker_icon.dart';
 
 class WasteDisposal extends StatefulWidget {
@@ -72,7 +74,7 @@ class _WasteDisposalState extends State<WasteDisposal> {
         CameraUpdate.newCameraPosition(
           CameraPosition(
               target: LatLng(l.latitude as double, l.longitude as double),
-              zoom: 15),
+              zoom: 13),
         ),
       );
       setState(() {
@@ -97,6 +99,15 @@ class _WasteDisposalState extends State<WasteDisposal> {
   }
 
   Widget loadMap() {
+    void sending_SMS(String msg, List<String> list_receipents) async {
+      String send_result =
+          await sendSMS(message: msg, recipients: list_receipents)
+              .catchError((err) {
+        print(err);
+      });
+      print(send_result);
+    }
+
     LatLng userCoords = LatLng(userLat, userLng);
     latlng.add(userCoords);
     print(userLat);
@@ -143,10 +154,30 @@ class _WasteDisposalState extends State<WasteDisposal> {
                 icon: BitmapDescriptor.defaultMarkerWithHue(
                     BitmapDescriptor.hueGreen),
                 infoWindow: InfoWindow(
-                    title: snapshot.data!.docs[i]['name'],
+                    onTap: () async {
+                      final Email email = Email(
+                        body:
+                            'Hi, I would like to connect with your recycling unit and access pickup service for my products which I wish to recycle!',
+                        subject:
+                            'Connect with ${snapshot.data!.docs[i]['name']}',
+                        recipients: [snapshot.data!.docs[i]['email']],
+                        isHTML: false,
+                      );
+
+                      await FlutterEmailSender.send(email).then((val) {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: const Text(
+                              'Email sent successfully, we will connect with you soon!'),
+                          duration: const Duration(seconds: 5),
+                        ));
+                      });
+                    },
+                    title:
+                        "${snapshot.data!.docs[i]['name']}         Tap to connect",
                     snippet: "Distance = " +
                         dist.toStringAsFixed(2) +
-                        "km Transportation Cost= \u{20B9}" +
+                        "km Delivery Cost= \u{20B9}" +
                         (dist * 50).toStringAsFixed(2)),
               ));
             }

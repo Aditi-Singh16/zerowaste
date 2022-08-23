@@ -19,7 +19,23 @@ class _AddRequirementState extends State<AddRequirement> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Add Requirements")),
+        appBar: AppBar(
+          toolbarHeight: 70,
+          title: Text(
+            "Add Requirements",
+            // style: TextStyle(color: Colors.black),
+          ),
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: CircleAvatar(
+                foregroundColor: Colors.blueAccent,
+                child: Padding(
+                  padding: const EdgeInsets.all(6.0),
+                  child: Image.asset('assets/images/logo1.png'),
+                )),
+          ),
+          // backgroundColor: Colors.blue.shade50,
+        ),
         body: Padding(padding: const EdgeInsets.all(20), child: PageForm()));
   }
 }
@@ -42,18 +58,6 @@ class _PageFormState extends State<PageForm> {
   var _quantity = "";
   var _category = "Books";
   var _description = "";
-
-  // List of items in our dropdown menu
-  var items = [
-    'Books',
-    'Cloths',
-    'Stationary',
-    'Hygiene',
-    'Toys',
-    'Accessories',
-    'Bags',
-    'Electronics'
-  ];
 
   void ButtonValidate() {
     if (_formKey.currentState!.validate()) {
@@ -234,21 +238,6 @@ class _PageFormState extends State<PageForm> {
                   return null;
                 }),
             SizedBox(height: 20),
-            // DropdownButton(
-            //   value: _category,
-            //   icon: const Icon(Icons.keyboard_arrow_down),
-            //   items: items.map((String items) {
-            //     return DropdownMenuItem(
-            //       value: items,
-            //       child: Text(items),
-            //     );
-            //   }).toList(),
-            //   onChanged: (String? newValue) {
-            //     setState(() {
-            //       _category = newValue!;
-            //     });
-            //   },
-            // ),
             StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('categories')

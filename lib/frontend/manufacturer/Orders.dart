@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -34,7 +35,7 @@ class ManuFactureOrders extends StatelessWidget {
                             child: Card(
                                 color: Color(0xffD5EAEF),
                                 child: ListTile(
-                                  leading: Icon(Icons.shopping_bag_rounded,
+                                  leading: Icon(CupertinoIcons.cube_box_fill,
                                       size: 30, color: Color(0xff265D80)),
                                   title: Padding(
                                     padding: const EdgeInsets.all(8.0),
