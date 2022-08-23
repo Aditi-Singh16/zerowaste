@@ -46,12 +46,15 @@ class _DetailsState extends State<Details> {
   List validity = [false, false, false, false, false];
   List couponn = ['OFF05', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
   List Value = [5, 10, 15, 20, 2];
-
+  int wallet = 0;
   double amount = 1;
   double amountd = 0;
+  double amountw = 0;
   bool coupon = false;
   bool plant = false;
   bool couponused = false;
+  bool walletm = false;
+
   int indx = 0;
   late Razorpay razorpay;
   String quantity = "";
@@ -179,12 +182,12 @@ class _DetailsState extends State<Details> {
                 builder: (BuildContext context) => _plantgif(context),
               );
             },
+            textColor: Theme.of(context).primaryColor,
             child: const Text("Yes")),
         FlatButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
-          textColor: Theme.of(context).primaryColor,
           child: const Text('Close'),
         ),
       ],
@@ -212,7 +215,7 @@ class _DetailsState extends State<Details> {
       "ProductId": widget.productid,
       "Quantity": quantity,
       "Time": time,
-      "Amount": amountd,
+      "Amount": (walletm) ? amountw : amountd,
       "Date": date,
       "manufacturerId": widget.manufacturerid,
       "phone_number": phone_number,
@@ -231,6 +234,19 @@ class _DetailsState extends State<Details> {
         .collection('products')
         .doc(widget.productid)
         .update({'quantity': (widget.q - int.parse(quantity))});
+    if (walletm == true) {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(widget.uid)
+          .update({'wallet': (wallet - amountd) > 0 ? wallet - amountd : 0});
+    }
+    if (beforediscount != afterdiscount) {
+      String couponname = 'Coupon' + indx.toString();
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(widget.uid)
+          .update({couponname: false});
+    }
     // Toast.show("Pament success", context);
     showDialog(
       context: context,
@@ -302,7 +318,8 @@ class _DetailsState extends State<Details> {
   Future<void> openCheckout() async {
     var options = {
       "key": "rzp_test_Ienn2nz5hJfAS1",
-      "amount": (amountd * 100).toString(),
+      "amount":
+          (walletm) ? (amountw * 100).toString() : (amountd * 100).toString(),
       "name": "Sample App",
       "description": "Payment for the some random product",
       'timeout': 300,
@@ -339,6 +356,7 @@ class _DetailsState extends State<Details> {
         _controller2.text = data['addr'];
         phone_number = data['phone'];
         address = data['addr'];
+        wallet = data['wallet'];
       });
 
       print(validity);
@@ -506,8 +524,8 @@ class _DetailsState extends State<Details> {
                                       ),
                                       Image.asset(
                                         "assets/images/plant.png",
-                                        height: 40,
-                                        width: 50,
+                                        height: 30,
+                                        width: 30,
                                       ),
                                     ],
                                   ),
@@ -725,6 +743,47 @@ class _DetailsState extends State<Details> {
                           ],
                         ),
                         const Spacing(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                                child: Container(
+                                  child: Text('Apply Coupon',
+                                      style: AppStyle.text
+                                          .copyWith(color: Colors.blue)),
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    coupon = true;
+                                  });
+                                }),
+                            coupon
+                                ? InkWell(
+                                    child: Container(
+                                      child: Text('Remove',
+                                          style: AppStyle.text
+                                              .copyWith(color: Colors.red)),
+                                    ),
+                                    onTap: () {
+                                      setState(() {
+                                        coupon = false;
+                                        if (amount !=
+                                            (widget.price *
+                                                int.parse(quantity))) {
+                                          amount = widget.price *
+                                              int.parse(quantity);
+
+                                          amountd = (plant)
+                                              ? amount + 20 + 5
+                                              : amount + 20;
+                                        }
+                                      });
+                                    })
+                                : Visibility(visible: false, child: Text('')),
+                          ],
+                        ),
+                        const Spacing(),
+
                         coupon
                             ? Container(
                                 width: MediaQuery.of(context).size.width * 0.8,
@@ -752,6 +811,7 @@ class _DetailsState extends State<Details> {
                             : Visibility(
                                 visible: false, child: SizedBox(height: 0)),
                         Text(error, style: TextStyle(color: Colors.red)),
+
                         coupon
                             ? Center(
                                 child: ElevatedButton(
@@ -833,7 +893,6 @@ class _DetailsState extends State<Details> {
                                 ],
                               ),
 
-                        //const Spacing(),
                         plant
                             ? Row(
                                 mainAxisAlignment:
@@ -896,6 +955,75 @@ class _DetailsState extends State<Details> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Grand Total:',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                  Text('$amountd',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                ],
+                              ),
+                        const Spacing(),
+                        (wallet > 0)
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  InkWell(
+                                      child: Container(
+                                        child: Text(
+                                            'Use wallet money     Rs.' +
+                                                '$wallet',
+                                            style: AppStyle.text
+                                                .copyWith(color: Colors.blue)),
+                                      ),
+                                      onTap: () {
+                                        setState(() {
+                                          walletm = true;
+
+                                          if (wallet > amountd) {
+                                            amountw = 0;
+                                          } else {
+                                            amountw = amountd - wallet;
+                                          }
+                                        });
+                                      }),
+                                  walletm
+                                      ? InkWell(
+                                          child: Container(
+                                            child: Text('Remove',
+                                                style: AppStyle.text.copyWith(
+                                                    color: Colors.red)),
+                                          ),
+                                          onTap: () {
+                                            setState(() {
+                                              walletm = false;
+                                            });
+                                          })
+                                      : Visibility(
+                                          visible: false, child: Text('')),
+                                ],
+                              )
+                            : Visibility(visible: false, child: Text('')),
+
+                        const Spacing(),
+                        (walletm)
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Final Total:',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                  Text('$amountw',
+                                      style: AppStyle.h3
+                                          .copyWith(color: Colors.white)),
+                                ],
+                              )
+                            : Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Final Total:',
                                       style: AppStyle.h3
                                           .copyWith(color: Colors.white)),
                                   Text('$amountd',
@@ -1124,14 +1252,52 @@ class _DetailsState extends State<Details> {
                                                                                 20);
                                                                   }
                                                                 });
-                                                                await openCheckout();
+                                                                if (walletm ==
+                                                                        true &&
+                                                                    amountw ==
+                                                                        0) {
+                                                                  String time = DateFormat(
+                                                                          "hh:mm:ss a")
+                                                                      .format(DateTime
+                                                                          .now());
+                                                                  String date =
+                                                                      "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
+                                                                  await FirebaseFirestore
+                                                                      .instance
+                                                                      .collection(
+                                                                          'Users')
+                                                                      .doc(widget
+                                                                          .uid)
+                                                                      .collection(
+                                                                          'Orders')
+                                                                      .add({
+                                                                    "ProductName":
+                                                                        widget
+                                                                            .name,
+                                                                    "ProductId":
+                                                                        widget
+                                                                            .productid,
+                                                                    "Quantity":
+                                                                        quantity,
+                                                                    "Time":
+                                                                        time,
+                                                                    "Amount": (walletm)
+                                                                        ? amountw
+                                                                        : amountd,
+                                                                    "Date":
+                                                                        date,
+                                                                    "manufacturerId":
+                                                                        widget
+                                                                            .manufacturerid,
+                                                                    "phone_number":
+                                                                        phone_number,
+                                                                    "address":
+                                                                        address,
+                                                                    "image":
+                                                                        widget
+                                                                            .image
+                                                                  });
 
-                                                                if (beforediscount !=
-                                                                    afterdiscount) {
-                                                                  String
-                                                                      couponname =
-                                                                      'Coupon' +
-                                                                          indx.toString();
                                                                   await FirebaseFirestore
                                                                       .instance
                                                                       .collection(
@@ -1139,9 +1305,55 @@ class _DetailsState extends State<Details> {
                                                                       .doc(widget
                                                                           .uid)
                                                                       .update({
-                                                                    couponname:
-                                                                        false
+                                                                    'wallet': (wallet -
+                                                                                amountd) >
+                                                                            0
+                                                                        ? wallet -
+                                                                            amountd
+                                                                        : 0
                                                                   });
+
+                                                                  showDialog(
+                                                                    context:
+                                                                        context,
+                                                                    builder:
+                                                                        (ctx) =>
+                                                                            AlertDialog(
+                                                                      shape:
+                                                                          RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(20),
+                                                                      ),
+                                                                      title: const Text(
+                                                                          "Order Completed"),
+                                                                      actions: <
+                                                                          Widget>[
+                                                                        TextButton(
+                                                                          onPressed:
+                                                                              () {
+                                                                            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => YourOrders()));
+                                                                          },
+                                                                          child:
+                                                                              Container(
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              borderRadius: BorderRadius.circular(10),
+                                                                              color: Colors.black,
+                                                                            ),
+                                                                            padding:
+                                                                                const EdgeInsets.all(14),
+                                                                            child:
+                                                                                const Text(
+                                                                              "Continue",
+                                                                              style: TextStyle(color: Colors.white),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  );
+                                                                } else {
+                                                                  await openCheckout();
                                                                 }
                                                               } else {
                                                                 showDialog(
