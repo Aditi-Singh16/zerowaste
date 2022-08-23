@@ -13,6 +13,10 @@ import 'package:zerowaste/frontend/consumer/style.dart';
 
 import 'package:zerowaste/frontend/requirements_sell/send_notif.dart';
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9418ceb881cbb71535cfec292ab359f074ba220d
 class ViewRequirements extends StatefulWidget {
   const ViewRequirements({Key? key}) : super(key: key);
 
@@ -42,22 +46,10 @@ class _ViewRequirementsState extends State<ViewRequirements> {
         builder: (BuildContext context) {
           return SendNotification(user: user);
         });
+
   }
 
-  String accepted_phone = 'L';
-  String accepted_addr = 'L';
-  String accepted_name = 'L';
-  void getData(String accepted_uid) async {
-    await FirebaseFirestore.instance
-        .collection("Users")
-        .doc(uid)
-        .get()
-        .then((value) => setState(() {
-              accepted_phone = value['phone'];
-              accepted_addr = value['addr'];
-              accepted_name = value['name'];
-            }));
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -376,20 +368,18 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                                                                                 String accepted_uid = doc['requirement_satisfy'][idx]['uid'];
                                                                                 print(accepted_uid);
 
-                                                                                getData(accepted_uid);
-                                                                                print(accepted_addr);
-                                                                                print(accepted_name);
-                                                                                FirebaseFirestore.instance.collection("Users").doc(accepted_uid).update({
-                                                                                  "accepted_requests": FieldValue.arrayUnion([
-                                                                                    {
-                                                                                      "addr": accepted_addr,
-                                                                                      "name": accepted_name,
-                                                                                      "phone": accepted_phone,
-                                                                                      "productName": doc['product_name'],
-                                                                                      "quantity": doc['requirement_satisfy'][idx]['quantity']
-                                                                                    }
-                                                                                  ]),
-                                                                                });
+                                                                               
+                                                                                // FirebaseFirestore.instance.collection("Users").doc(accepted_uid).update({
+                                                                                //   "accepted_requests": FieldValue.arrayUnion([
+                                                                                //     {
+                                                                                //       "addr": accepted_addr,
+                                                                                //       "name": accepted_name,
+                                                                                //       "phone": accepted_phone,
+                                                                                //       "productName": doc['product_name'],
+                                                                                //       "quantity": doc['requirement_satisfy'][idx]['quantity']
+                                                                                //     }
+                                                                                //   ]),
+                                                                                // });
 
                                                                                 // FirebaseFirestore.instance.collection("Users").doc(loggedInuid).update({
                                                                                 //   "Count": FieldValue.increment(1)

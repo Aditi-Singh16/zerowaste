@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
 import 'package:zerowaste/frontend/consumerNavbar.dart';
 import 'package:zerowaste/frontend/login/profile_page.dart';
@@ -474,10 +475,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (context) => NgoNavbar()));
         }
-        return CircularProgressIndicator();
+        return SpinKitChasingDots(
+          color: Colors.blue,
+          size: 50.0,
+        );
       });
 
-      return CircularProgressIndicator();
+      return SpinKitChasingDots(
+        color: Colors.blue,
+        size: 50.0,
+      );
     }));
   }
 }

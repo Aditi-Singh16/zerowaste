@@ -18,6 +18,7 @@ class _AddRequirementState extends State<AddRequirement> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(title: Text("Add Requirements")),
         body: Padding(padding: const EdgeInsets.all(20), child: PageForm()));
   }
 }
@@ -28,32 +29,15 @@ class PageForm extends StatefulWidget {
 }
 
 class _PageFormState extends State<PageForm> {
-
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
 
   final FocusNode _nameFocus = FocusNode();
   final FocusNode _quantityFocus = FocusNode();
 
-
   var _name = "";
   var _quantity = "";
   var _category = "Books";
-  
-
-  // List of items in our dropdown menu
-  var items = [
-    'Books',
-    'Clothes',
-    'Stationary',
-    'Hygiene',
-    'Toys',
-    'Accessories',
-    'Bags',
-    'Electronics'
-  ];
-
-
 
   void ButtonValidate() {
     if (_formKey.currentState!.validate()) {
@@ -77,7 +61,6 @@ class _PageFormState extends State<PageForm> {
     super.initState();
     _nameController.text = "";
     _quantityController.text = "";
-
   }
 
   @override
@@ -183,30 +166,90 @@ class _PageFormState extends State<PageForm> {
                   if (value!.isEmpty) {
                     return 'Please enter quantity available';
                   }
-                  if (int.parse(value) < 0) {
-                    return 'Quantity cannot be less than 0';
-                  }
                   if (!regExp.hasMatch(value)) {
                     return 'Please enter valid quantity';
+                  }
+                  if (int.parse(value) < 0) {
+                    return 'Quantity cannot be less than 0';
                   }
                   return null;
                 }),
             SizedBox(height: 20),
-            DropdownButton(
-                  value: _category,
-                  icon: const Icon(Icons.keyboard_arrow_down),
-                  items: items.map((String items) {
-                    return DropdownMenuItem(
-                      value: items,
-                      child: Text(items),
+            StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('categories')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData)
+                    return const Center(
+                      child: const CupertinoActivityIndicator(),
                     );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _category = newValue!;
-                    });
-                  },
-                ),
+                  var length = snapshot.data!.docs.length;
+                  DocumentSnapshot ds = snapshot.data!.docs[length - 1];
+
+                  return Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade400)),
+                    padding: EdgeInsets.only(bottom: 10.0, top: 10),
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    child: new Row(
+                      children: <Widget>[
+                        new Expanded(
+                            flex: 2,
+                            child: new Container(
+                              padding:
+                                  EdgeInsets.fromLTRB(12.0, 10.0, 10.0, 10.0),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 10.0),
+                                    child: Icon(
+                                      CupertinoIcons.square_grid_2x2_fill,
+                                      color: _category != null
+                                          ? _focusColor
+                                          : _defaultColor,
+                                    ),
+                                  ),
+                                  new Text(
+                                    "Category",
+                                  ),
+                                ],
+                              ),
+                            )),
+                        new Expanded(
+                          flex: 2,
+                          child: DropdownButton(
+                            value: _category,
+                            isDense: true,
+                            onChanged: (newValue) {
+                              setState(() {
+                                _category = newValue.toString();
+                                print(_category);
+                              });
+                            },
+                            items: snapshot.data!.docs
+                                .map((DocumentSnapshot document) {
+                              return new DropdownMenuItem<String>(
+                                  value: document['name'],
+                                  child: new Container(
+                                    decoration: new BoxDecoration(
+                                        borderRadius:
+                                            new BorderRadius.circular(5.0)),
+                                    height: 100.0,
+
+                                    //color: primaryColor,
+                                    child: new Text(
+                                      document['name'],
+                                    ),
+                                  ));
+                            }).toList(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+            SizedBox(height: 20),
             SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -220,20 +263,19 @@ class _PageFormState extends State<PageForm> {
                         )),
                     onPressed: () => {
                           color ? ButtonValidate() : null,
-                          FirebaseData().addRequirement(
-                            {
-                              "name": "john",
-                              "email": "example@example.com",
-                              "category":_category,
-                              "quantity":_quantity,
-                              "product_name":_name,
-                              "type":"Consumer",
-                              "is_satisfied":false
-                            }
-                          )
+                          FirebaseData().addRequirement({
+                            "name": "john",
+                            "email": "example@example.com",
+                            "category": _category,
+                            "quantity": _quantity,
+                            "product_name": _name,
+                            "type": "Consumer",
+                            "is_satisfied": false
+                          }),
+                          _nameController.clear(),
+                          _quantityController.clear(),
                         }))
           ])),
     );
   }
 }
-
