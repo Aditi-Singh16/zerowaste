@@ -393,7 +393,7 @@ class _DetailsState extends State<Details> {
                 width: size.width,
                 decoration: BoxDecoration(
                     image: DecorationImage(
-                        alignment: Alignment.bottomRight,
+                        alignment: Alignment.center,
                         fit: BoxFit.cover,
                         image: NetworkImage(widget.image))),
               ),
@@ -425,9 +425,10 @@ class _DetailsState extends State<Details> {
                           ),
                         ),
                         ProductNameAndPrice(
-                            amount: widget.price,
-                            name: widget.name,
-                            category: widget.category),
+                          amount: widget.price,
+                          name: widget.name,
+                          category: widget.category,
+                        ),
                         const SizedBox(
                           height: 7,
                         ),
@@ -601,7 +602,9 @@ class _DetailsState extends State<Details> {
                                 ),
                                 SizedBox(
                                     width: MediaQuery.of(context).size.width *
+
                                         0.03),
+
                                 // i icon button with alert dialogue
                                 IconButton(
                                   icon: Icon(Icons.info_outline),
@@ -672,6 +675,7 @@ class _DetailsState extends State<Details> {
                               ],
                             ),
                             const Spacing(),
+
                             Row(
                               children: [
                                 const Spacing(),
@@ -746,6 +750,7 @@ class _DetailsState extends State<Details> {
                                 ),
                               ],
                             )
+
                           ],
                         ),
                         const Spacing(),
@@ -1546,12 +1551,12 @@ class ProductNameAndPrice extends StatelessWidget {
       children: [
         Text(
           name,
-          style: AppStyle.h1Light,
+          style: AppStyle.h1Light.copyWith(fontSize: 20),
         ),
         Text(
           ' $amount',
           style: AppStyle.h1Light
-              .copyWith(color: AppColor.primary, fontWeight: FontWeight.w400),
+              .copyWith(color: Colors.white, fontWeight: FontWeight.w400),
         ),
       ],
     );
