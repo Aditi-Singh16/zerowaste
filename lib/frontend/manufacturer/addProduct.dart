@@ -311,7 +311,7 @@ class _PageFormState extends State<PageForm> {
                               ),
                             )),
                         Expanded(
-                          flex: 2,
+                          flex: 3,
                           child: DropdownButton(
                             value: _category,
                             isDense: true,
