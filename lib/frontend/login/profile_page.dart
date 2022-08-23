@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:scratcher/scratcher.dart';
+import 'package:zerowaste/backend/local_data.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -586,7 +587,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // the logout function
   logout() async {
+    var userId = await HelperFunctions().readUserIdPref();
     await FirebaseAuth.instance.signOut();
+    await DataBaseHelper.instance.deleteUser(userId);
     Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => LoginScreen()));
   }
