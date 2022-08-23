@@ -5,6 +5,7 @@ import 'package:zerowaste/frontend/consumer/learning_modules/moduleoptions.dart'
 import 'package:zerowaste/frontend/login/profile_page.dart';
 import 'package:zerowaste/frontend/manufacturer/dashboard.dart';
 import 'package:zerowaste/frontend/ngo/add_requirements.dart';
+import 'package:zerowaste/frontend/ngo/view_requirements.dart';
 
 class NgoNavbar extends StatefulWidget {
   const NgoNavbar({Key? key}) : super(key: key);
@@ -19,6 +20,7 @@ class _NgoNavbarState extends State<NgoNavbar> {
   final pages = [
     AddRequirement(),
     const MyApp(),
+    ViewRequirements(),
     ProfilePage(),
   ];
 
@@ -85,6 +87,25 @@ class _NgoNavbarState extends State<NgoNavbar> {
               });
             },
             icon: pageIndex == 2
+                ? Icon(
+                    Icons.reviews_sharp,
+                    color: Colors.black,
+                    size: MediaQuery.of(context).size.height / 24,
+                  )
+                : Icon(
+                    Icons.reviews_outlined,
+                    color: Colors.black,
+                    size: MediaQuery.of(context).size.height / 24,
+                  ),
+          ),
+          IconButton(
+            enableFeedback: false,
+            onPressed: () {
+              setState(() {
+                pageIndex = 3;
+              });
+            },
+            icon: pageIndex == 3
                 ? Icon(
                     Icons.person,
                     color: Colors.black,
