@@ -1,8 +1,9 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:zerowaste/frontend/login/login.dart';
 import 'package:zerowaste/wrapper.dart';
 
 void main() async {
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           scaffoldBackgroundColor: Color(0xffF2F6FD),
           appBarTheme: AppBarTheme(backgroundColor: Color(0xff001427))),
-      home: LoginScreen(),
+      home: Wrapper(),
     );
   }
 }
