@@ -69,7 +69,6 @@ class _DashboardState extends State<Dashboard> {
   var quantAvail = 0;
 
   Future<void> predData() async {
-    print("hii");
     actualChartData = [];
     predictionChartData = [];
 
@@ -155,23 +154,11 @@ class _DashboardState extends State<Dashboard> {
                   Spacer(),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.33,
-                    child: DecoratedBox(
+                    child: Container(
+                      padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Color(0xff7dbeda),
-                                Color(0xff3472c0),
-                                Color(0xff00277d)
-                              ]),
-                          borderRadius: BorderRadius.circular(5),
-                          boxShadow: <BoxShadow>[
-                            BoxShadow(
-                                color: Color.fromRGBO(
-                                    0, 0, 0, 0.57), //shadow for button
-                                blurRadius: 5) //blur radius of shadow
-                          ]),
+                        color: Color(0xff3472c0), //<-- SEE HERE
+                      ),
                       child: DropdownButton(
                         underline: Container(),
                         value: itemvalue,
@@ -198,23 +185,10 @@ class _DashboardState extends State<Dashboard> {
                   Spacer(),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.23,
-                    child: DecoratedBox(
+                    child: Container(
                       decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Color(0xff7dbeda),
-                                Color(0xff3472c0),
-                                Color(0xff00277d)
-                              ]),
-                          borderRadius: BorderRadius.circular(5),
-                          boxShadow: <BoxShadow>[
-                            BoxShadow(
-                                color: Color.fromRGBO(
-                                    0, 0, 0, 0.57), //shadow for button
-                                blurRadius: 5) //blur radius of shadow
-                          ]),
+                        color: Color(0xff3472c0), //<-- SEE HERE
+                      ),
                       child: DropdownButton(
                         underline: Container(),
                         dropdownColor: Color(0xff3472c0),
@@ -245,23 +219,10 @@ class _DashboardState extends State<Dashboard> {
                   Spacer(),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.26,
-                    child: DecoratedBox(
+                    child: Container(
                       decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Color(0xff7dbeda),
-                                Color(0xff3472c0),
-                                Color(0xff00277d)
-                              ]),
-                          borderRadius: BorderRadius.circular(5),
-                          boxShadow: <BoxShadow>[
-                            BoxShadow(
-                                color: Color.fromRGBO(
-                                    0, 0, 0, 0.57), //shadow for button
-                                blurRadius: 5) //blur radius of shadow
-                          ]),
+                        color: Color(0xff3472c0), //<-- SEE HERE
+                      ),
                       child: DropdownButton(
                         underline: Container(),
                         iconEnabledColor: Colors.white,
@@ -341,9 +302,9 @@ class _DashboardState extends State<Dashboard> {
                             '''Sorry! you don't have\nany products added\nfor this category''',
                             maxLines: 3,
                             style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 15,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xff3472c0))),
+                                color: Colors.red)),
                         Spacer(),
                       ],
                     ),
