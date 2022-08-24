@@ -309,6 +309,7 @@ class _PageFormState extends State<PageForm> {
                     onPressed: () async {
                       color ? ButtonValidate() : null;
                       FirebaseData().addRequirement({
+                        "uid": await HelperFunctions().readUserIdPref(),
                         "name": await HelperFunctions().readNamePref(),
                         "email": await HelperFunctions().readEmailPref(),
                         "category": _category,

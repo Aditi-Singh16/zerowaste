@@ -7,8 +7,8 @@ class FirebaseData {
       var uid = await HelperFunctions().readUserIdPref();
       await FirebaseFirestore.instance
           .collection("requirements")
-          .doc(uid)
-          .set(requirements);
+          .doc()
+           .set(requirements);
       return uid;
     } catch (e) {
       return e.toString();
