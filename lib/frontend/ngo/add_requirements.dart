@@ -324,6 +324,7 @@ class _PageFormState extends State<PageForm> {
                         )),
                     onPressed: () async {
                       color ? ButtonValidate() : null;
+                      var userId = await HelperFunctions().readUserIdPref();
                       FirebaseData().addRequirement({
                         "name": await HelperFunctions().readNamePref(),
                         "email": await HelperFunctions().readEmailPref(),
@@ -332,7 +333,8 @@ class _PageFormState extends State<PageForm> {
                         "product_name": _name,
                         "type": "NGO",
                         "is_satisfied": false,
-                        "description": _description
+                        "description": _description,
+                        "uid": userId
                       });
                       _nameController.clear();
                       _quantityController.clear();

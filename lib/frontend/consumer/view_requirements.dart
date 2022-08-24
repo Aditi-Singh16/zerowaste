@@ -155,9 +155,10 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                                                 //ngo ke profile me accepted_req bana hai
                                                 FirebaseFirestore.instance
                                                     .collection("requirements")
-                                                    .doc(snapshot.data!.docs[i])
+                                                    .doc(snapshot
+                                                        .data!.docs[i].id)
                                                     .update({
-                                                  "requirment_satisfy":
+                                                  "requirement_satisfy":
                                                       FieldValue.arrayUnion([
                                                     {
                                                       "email": _helperFunctions

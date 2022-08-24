@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
 import 'package:zerowaste/frontend/consumer/learning_modules/moduleoptions.dart';
+import 'package:zerowaste/frontend/ngo/view_requirements.dart';
 import 'package:zerowaste/frontend/login/profile_page.dart';
 import 'package:zerowaste/frontend/manufacturer/dashboard.dart';
 import 'package:zerowaste/frontend/ngo/add_requirements.dart';
@@ -19,6 +20,7 @@ class _NgoNavbarState extends State<NgoNavbar> {
   final pages = [
     AddRequirement(),
     const MyApp(),
+    ViewRequirements(),
     ProfilePage(),
   ];
 
@@ -85,6 +87,25 @@ class _NgoNavbarState extends State<NgoNavbar> {
               });
             },
             icon: pageIndex == 2
+                ? Icon(
+                    Icons.task_alt_rounded,
+                    color: Colors.black,
+                    size: MediaQuery.of(context).size.height / 24,
+                  )
+                : Icon(
+                    Icons.task_alt_outlined,
+                    color: Colors.black,
+                    size: MediaQuery.of(context).size.height / 24,
+                  ),
+          ),
+          IconButton(
+            enableFeedback: false,
+            onPressed: () {
+              setState(() {
+                pageIndex = 3;
+              });
+            },
+            icon: pageIndex == 3
                 ? Icon(
                     Icons.person,
                     color: Colors.black,

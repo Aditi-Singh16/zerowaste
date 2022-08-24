@@ -40,28 +40,36 @@ class _ViewRequirementsState extends State<ViewRequirements> {
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        // appBar: AppBar(
-        //   leading: IconButton(
-        //     icon: Icon(Icons.arrow_back, color: Colors.white),
-        //     onPressed: () {
-        //       Navigator.pop(context);
-        //     },
-        //   ),
-        //   title: Text("View Requirements"),
-        //   backgroundColor: Color(0xff001427),
-        // ),
+        appBar: AppBar(
+          toolbarHeight: 70,
+          title: Text(
+            "View Requirements",
+            // style: TextStyle(color: Colors.black),
+          ),
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: CircleAvatar(
+                foregroundColor: Colors.blueAccent,
+                child: Padding(
+                  padding: const EdgeInsets.all(6.0),
+                  child: Image.asset('assets/images/logo1.png'),
+                )),
+          ),
+          // backgroundColor: Colors.blue.shade50,
+        ),
         body: SingleChildScrollView(
           child: Column(
             children: [
               StreamBuilder(
                   stream: FirebaseFirestore.instance
                       .collection('requirements')
-                      .where('uid', isEqualTo: uid)
+                      .doc(uid)
                       .snapshots(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.hasError) {
                       return const Text('something went wrong');
                     } else {
+                      print(snapshot.data.data());
                       switch (snapshot.connectionState) {
                         case ConnectionState.none:
                           return Column(
@@ -87,9 +95,9 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                           return ListView.builder(
                               scrollDirection: Axis.vertical,
                               shrinkWrap: true,
-                              itemCount: snapshot.data!.docs.length,
+                              itemCount: 1,
                               itemBuilder: (context, index) {
-                                //print(snapshot.data!.docs.length);
+                                print(snapshot.data);
                                 DocumentSnapshot doc =
                                     snapshot.data!.docs[index];
                                 // print("Doc ID");

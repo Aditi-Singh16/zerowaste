@@ -589,6 +589,7 @@ class _ProfilePageState extends State<ProfilePage> {
   logout() async {
     var userId = await HelperFunctions().readUserIdPref();
     await FirebaseAuth.instance.signOut();
+    print(userId);
     await DataBaseHelper.instance.deleteUser(userId);
     Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => LoginScreen()));

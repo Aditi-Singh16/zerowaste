@@ -75,11 +75,11 @@ class DataBaseHelper {
     return res[0]['type'];
   }
 
-  Future<void> deleteUser(int id) async {
+  Future<void> deleteUser(String id) async {
     final db = await database;
     await db.delete(
       'users',
-      where: 'id = ?',
+      where: 'uid = ?',
       whereArgs: [id],
     );
   }
