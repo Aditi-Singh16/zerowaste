@@ -61,25 +61,39 @@ class _GridItemsState extends State<GridItems> {
                                   Container(
                                     child: InkWell(
                                       onTap: () {
-                                        Navigator.of(context).push(MaterialPageRoute(
-                                            builder: (context) => Details(
-                                                name: snapshot.data!.docs[index]
-                                                    ['name'],
-                                                description: snapshot.data!.docs[index]
-                                                    ['Desc'],
-                                                price: double.parse(
-                                                    snapshot.data!.docs[index]
-                                                        ['pricePerProduct']),
-                                                category: snapshot.data!.docs[index]
-                                                    ['categories'],
-                                                productid: snapshot.data!.docs[index]
-                                                    ['productId'],
-                                                uid: userauthid,
-                                                manufacturerid: snapshot.data!.docs[index]
-                                                    ['manufacturerId'],
-                                                image: snapshot.data!.docs[index]['image'],
-                                                is_plant: snapshot.data!.docs[index]['is_plant'],
-                                                q: snapshot.data!.docs[index]['quantity'])));
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                                builder: (context) => Details(
+                                                      name: snapshot.data!
+                                                          .docs[index]['name'],
+                                                      description: snapshot
+                                                          .data!
+                                                          .docs[index]['Desc'],
+                                                      price: double.parse(snapshot
+                                                              .data!.docs[index]
+                                                          ['pricePerProduct']),
+                                                      category: snapshot
+                                                              .data!.docs[index]
+                                                          ['categories'],
+                                                      productid: snapshot
+                                                              .data!.docs[index]
+                                                          ['productId'],
+                                                      uid: userauthid,
+                                                      manufacturerid: snapshot
+                                                              .data!.docs[index]
+                                                          ['manufacturerId'],
+                                                      image: snapshot.data!
+                                                          .docs[index]['image'],
+                                                      is_plant: snapshot
+                                                              .data!.docs[index]
+                                                          ['is_plant'],
+                                                      q: snapshot
+                                                              .data!.docs[index]
+                                                          ['quantity'],
+                                                      isResell: snapshot
+                                                              .data!.docs[index]
+                                                          ['is_resell'],
+                                                    )));
                                       },
                                     ),
                                     margin: EdgeInsets.all(8),

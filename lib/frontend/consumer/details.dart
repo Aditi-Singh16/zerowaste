@@ -24,6 +24,7 @@ class Details extends StatefulWidget {
   String manufacturerid;
   String image;
   String is_plant;
+  bool isResell;
 
   Details(
       {required this.name,
@@ -35,7 +36,8 @@ class Details extends StatefulWidget {
       required this.manufacturerid,
       required this.image,
       required this.is_plant,
-      required this.q});
+      required this.q,
+      required this.isResell});
 
   @override
   State<Details> createState() => _DetailsState();
@@ -602,7 +604,6 @@ class _DetailsState extends State<Details> {
                                 ),
                                 SizedBox(
                                     width: MediaQuery.of(context).size.width *
-
                                         0.03),
 
                                 // i icon button with alert dialogue
@@ -675,7 +676,6 @@ class _DetailsState extends State<Details> {
                               ],
                             ),
                             const Spacing(),
-
                             Row(
                               children: [
                                 const Spacing(),
@@ -750,7 +750,6 @@ class _DetailsState extends State<Details> {
                                 ),
                               ],
                             )
-
                           ],
                         ),
                         const Spacing(),
@@ -1240,6 +1239,23 @@ class _DetailsState extends State<Details> {
                                                                 'Continue to Payment...'),
                                                             onPressed:
                                                                 () async {
+                                                              if (widget
+                                                                      .isResell ==
+                                                                  true) {
+                                                                await FirebaseFirestore
+                                                                    .instance
+                                                                    .collection(
+                                                                        'Users')
+                                                                    .doc(widget
+                                                                        .manufacturerid)
+                                                                    .update({
+                                                                  'wallet': amountw ==
+                                                                          0
+                                                                      ? amountw
+                                                                      : amountd
+                                                                });
+                                                              }
+
                                                               if (phone_number !=
                                                                       null &&
                                                                   regExp.hasMatch(
