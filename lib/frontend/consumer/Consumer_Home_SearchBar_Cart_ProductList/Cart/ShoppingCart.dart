@@ -43,9 +43,6 @@ num beforediscount = 0;
 num afterdiscount = 0;
 String error = '';
 late num total;
- double air=0;
-  double          co2=0;
-  double          tree=0;
 
 var formattedDate = "${dateParse.day}-${dateParse.month}-${dateParse.year}";
 int delivery_charges = 20;
@@ -67,44 +64,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
   String productid = '6Ffxps7z7OvLjMtUwcxn';
   String manufacturerid = 'unfoWBpH8AidhiSmwx44';
   int amount = megatotal.toInt();
-
-  List<int>? esv_ls;
-  int? weight;
-  double? w;
- 
-
-  List<int> cat1 = [2, 1, 3];
-  List<int> cat2 = [2, 1, 4];
-  List<int> cat3 = [1, 2, 3];
-  List<int> cat4 = [2, 1, 2];
-  List<int> cat5 = [1, 1, 1];
-  List<int> cat6 = [1, 1, 1];
-  List<int> cat7 = [1, 1, 1];
-
-  // void setEsv() {
-  //   if (widget.category == "Books") {
-  //     esv_ls = cat1;
-  //   } else if (widget.category == "Cotton Clothes") {
-  //     esv_ls = cat2;
-  //   } else if (widget.category == "Recycled Products") {
-  //     esv_ls = cat3;
-  //   } else if (widget.category == "Electronics") {
-  //     esv_ls = cat4;
-  //   } else if (widget.category == "Nylon Clothes") {
-  //     esv_ls = cat5;
-  //   } else if (widget.category == "Silk Clothes") {
-  //     esv_ls = cat6;
-  //   } else {
-  //     esv_ls = cat7;
-  //   }
-  //   //fetch weight from firebase product collection of current product id
-
-  //   getweight();
-
-  //   print("weighttt");
-  //   print(w);
-  //   //multiple weight with esv list with index 0
-  // }
 
   Razorpay razorpay = Razorpay();
   String quantity = "";
@@ -145,7 +104,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
       });
     }
   }
-
 
   @override
   void initState() {
@@ -264,19 +222,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
           "Date": date,
           "orderId": docId,
           "is_return": false,
-          "category" : doc['category']
+          "is_resell": true,
+          "category": doc['categories']
         });
-        
       });
-      await FirebaseFirestore.instance.collection("environment").doc(uid).set({
-      "air" :   (esv_ls![0] * w!),
-      "co2" : (esv_ls![2] * w!),
-      "tree" : (esv_ls![1] + w!) 
-    });
-      await FirebaseFirestore.instance.collection("environment").doc(uid).set({
-      "air" :   (esv_ls![0] * w!),
-      "co2" : (esv_ls![2] * w!),
-      "tree" : (esv_ls![1] + w!) 
     });
 
     checkifpayed = true;
@@ -319,11 +268,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
           .doc(uid)
           .update({couponname: false});
     }
-      await FirebaseFirestore.instance.collection("environment").doc(uid).set({
-      "air" :   FieldValue.increment(air),
-      "co2" : FieldValue.increment(co2),
-      "tree" : FieldValue.increment(tree),
-    });
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -459,34 +403,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
           if (snapshot.hasData) {
             // get length of douments firebas
             total = 0;
-            air=0;
-            co2=0;
-            tree=0;
-
             num? quant = 0;
             for (int i = 0; i < snapshot.data.docs.length; i++) {
               quant = quant! + snapshot.data.docs[i].data()['quantity'];
               total = total +
                   snapshot.data.docs[i].data()['price'] *
                       snapshot.data.docs[i].data()['quantity'];
-                if (snapshot.data.docs[i]['çategories'] == "Books") {
-      esv_ls = cat1;
-    } else if (snapshot.data.docs[i]['çategories'] == "Cotton Clothes") {
-      esv_ls = cat2;
-    } else if (snapshot.data.docs[i]['çategories'] == "Recycled Products") {
-      esv_ls = cat3;
-    } else if (snapshot.data.docs[i]['çategories'] == "Electronics") {
-      esv_ls = cat4;
-    } else if (snapshot.data.docs[i]['çategories'] == "Nylon Clothes") {
-      esv_ls = cat5;
-    } else if (snapshot.data.docs[i]['çategories'] == "Silk Clothes") {
-      esv_ls = cat6;
-    } else {
-      esv_ls = cat7;
-    }
-              air+=quant*esv_ls![0];
-              tree += quant*esv_ls![1];
-               co2 += quant*esv_ls![2];
               megatotal = total + 20;
             }
 
@@ -1634,8 +1556,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                                             docId,
                                                                         "is_return":
                                                                             false
-                                                                            ,
-                                                                            "category" : doc['category']
                                                                       });
                                                                     });
                                                                   });
