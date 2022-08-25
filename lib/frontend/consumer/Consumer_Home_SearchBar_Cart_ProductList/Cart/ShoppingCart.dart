@@ -221,7 +221,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
           "userId": uid,
           "Date": date,
           "orderId": docId,
-          "is_return": false
+          "is_return": false,
+          "is_resell": true
         });
       });
     });
