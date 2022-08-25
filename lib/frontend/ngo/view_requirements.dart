@@ -232,6 +232,12 @@ class _ViewRequirementsState extends State<ViewRequirements> {
 
                                                                             FirebaseFirestore.instance.collection("Users").doc(accepted_uid).update({
                                                                               "Count": FieldValue.increment(1),
+                                                                              "accepted_requests": FieldValue.arrayUnion([
+                                                                                {
+                                                                                  "category": doc['category'],
+                                                                                  "quantity": doc['quantity'],
+                                                                                }
+                                                                              ])
                                                                             });
                                                                             FirebaseFirestore.instance.collection("requirements").doc(doc.id).delete();
                                                                           });

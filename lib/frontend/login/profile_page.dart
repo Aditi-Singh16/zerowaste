@@ -33,16 +33,26 @@ class _ProfilePageState extends State<ProfilePage> {
   List<dynamic> rewards = [];
   String phone = "";
   late int randomindex;
-  List coupon = ['OFF5', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
+  List coupon = ['OFF2', 'OFF5', 'OFF10', 'OFF15', 'OFF20'];
   List description = [
-    'Get 5% off on next purchase',
+    'Get 2% off on next purchase'
+        'Get 5% off on next purchase',
     'Get 10% off on next purchase',
     'Get 15% off on next purchase',
     'Get 20% off on next purchase',
-    'Get 2% off on next purchase'
   ];
+  Map category = {
+    'Books': 50,
+    'Electronics': 5,
+    'Recycled Products': 7,
+    'Cotton Clothes': 5,
+    'Nylon Clothes': 5,
+    'Silk Clothes': 5,
+    'Bags': 7
+  };
+  late List<Map> accepted_requests;
 
-  List Value = [5, 10, 15, 20, 2];
+  List Value = [2, 5, 10, 15, 20];
   bool isEditablePhone = false;
   bool reward = true;
 
@@ -60,20 +70,22 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         count = data['Count'];
         //wallet = data['wallet'];
+        accepted_requests = data['accepted_requests'];
+        //else accepted_requests=[]
         if (data['Coupon0'] == true) {
-          rewards.add('OFF5');
+          rewards.add('OFF2');
         }
         if (data['Coupon1'] == true) {
-          rewards.add('OFF10');
+          rewards.add('OFF5');
         }
         if (data['Coupon2'] == true) {
-          rewards.add('OFF15');
+          rewards.add('OFF10');
         }
         if (data['Coupon3'] == true) {
-          rewards.add('OFF20');
+          rewards.add('OFF15');
         }
         if (data['Coupon4'] == true) {
-          rewards.add('OFF2');
+          rewards.add('OFF20');
         }
       });
       print('HIIII');
@@ -460,9 +472,18 @@ class _ProfilePageState extends State<ProfilePage> {
                                 onTap: (count > 0)
                                     ? () async {
                                         String couponn = '';
-
-                                        randomindex =
-                                            Random().nextInt(coupon.length);
+                                        String categoryy =
+                                            accepted_requests[count - 1]
+                                                ['category'];
+                                        int quantity =
+                                            accepted_requests[count - 1]
+                                                ['quantity'];
+                                        if (quantity >= category[categoryy]) {
+                                          randomindex =
+                                              Random().nextInt(coupon.length);
+                                        } else {
+                                          randomindex = 3 + Random().nextInt(2);
+                                        }
                                         await showScratchCard(context);
                                         couponn =
                                             "Coupon" + (randomindex).toString();
@@ -475,6 +496,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                             rewards.add(coupon[randomindex]);
 
                                             count--;
+                                            accepted_requests
+                                                .removeAt(count - 1);
                                           }
                                         });
                                         await FirebaseFirestore.instance
@@ -483,6 +506,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             .update({
                                           couponn: true,
                                           'Count': FieldValue.increment(-1),
+                                          'accepted_requests': accepted_requests
                                         });
                                       }
                                     : null,
