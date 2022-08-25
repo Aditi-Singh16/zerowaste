@@ -226,7 +226,10 @@ class _DetailsState extends State<Details> {
       "price": widget.price,
       "orderId": docId,
       "is_return": false,
-      "category": widget.category
+      "category": widget.category,
+      "Desc": widget.description,
+      "weight": w,
+      "is_resell": true
     });
 
     await FirebaseFirestore.instance

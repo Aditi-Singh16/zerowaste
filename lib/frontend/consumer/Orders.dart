@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
-import 'package:zerowaste/frontend/consumer/color.dart';
 import 'package:zerowaste/frontend/consumer/learning_modules/learningMod.dart';
 import 'package:zerowaste/frontend/consumer/return.dart';
 import 'package:zerowaste/frontend/consumerNavbar.dart';
@@ -57,10 +56,6 @@ class _YourOrdersState extends State<YourOrders> {
               case ConnectionState.active:
                 if (snapshot.data!.docs.isEmpty) {
                   return Scaffold(
-                    appBar: AppBar(
-                      title: Text("Orders"),
-                      backgroundColor: AppColor.secondary,
-                    ),
                     body: Column(
                       children: [
                         Container(
@@ -245,8 +240,7 @@ class _YourOrdersState extends State<YourOrders> {
                                                     ),
                                                     Text(
                                                       "\u{20B9}" +
-                                                          doc
-                                                              .data()!['price']
+                                                          doc['price']
                                                               .toString(),
                                                       style: TextStyle(
                                                         fontSize: MediaQuery.of(
@@ -268,16 +262,46 @@ class _YourOrdersState extends State<YourOrders> {
                                                         ? ElevatedButton(
                                                             onPressed:
                                                                 () async {
+                                                              String docId =
+                                                                  FirebaseFirestore
+                                                                      .instance
+                                                                      .collection(
+                                                                          'products')
+                                                                      .doc()
+                                                                      .id;
+
                                                               await FirebaseFirestore
                                                                   .instance
                                                                   .collection(
                                                                       'products')
-                                                                  .doc(doc[
-                                                                      'ProductId'])
+                                                                  .doc(docId)
                                                                   .set(
                                                                       {
+                                                                    ''
+                                                                            'name':
+                                                                        doc['ProductName'],
+                                                                    'Desc': doc[
+                                                                        'Desc'],
+                                                                    'image': doc[
+                                                                        'image'],
+                                                                    'categories':
+                                                                        doc['category'],
+                                                                    'quantity':
+                                                                        doc['Quantity'],
+                                                                    'pricePerProduct':
+                                                                        doc['price']
+                                                                            .toString(),
+                                                                    'timestamp':
+                                                                        DateTime
+                                                                            .now(),
+                                                                    'is_plant':
+                                                                        "true",
+                                                                    'weight': doc[
+                                                                        'weight'],
                                                                     "is_resell":
                                                                         true,
+                                                                    "productId":
+                                                                        docId,
                                                                     "manufacturerId":
                                                                         await HelperFunctions()
                                                                             .readUserIdPref()
