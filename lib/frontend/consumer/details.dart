@@ -1442,6 +1442,86 @@ class _DetailsState extends State<Details> {
                                           .copyWith(color: Colors.white))),
                             ],
                           ),
+                          FutureBuilder<QuerySnapshot>(
+                              future: FirebaseFirestore.instance
+                                  .collection('products')
+                                  .where('categories',
+                                      isEqualTo: widget.category)
+                                  .where('quantity', isGreaterThan: 0)
+                                  .get(),
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) {
+                                  return Scaffold(
+                                      body: Center(
+                                          child: CircularProgressIndicator(
+                                              color: Colors.grey)));
+                                }
+                                if (snapshot.connectionState ==
+                                        ConnectionState.done &&
+                                    snapshot.hasData) {
+                                  return Container(
+                                    height: 200,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: ListView(
+                                      scrollDirection: Axis.horizontal,
+                                      children: snapshot.data!.docs.map((doc) {
+                                        return Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 10.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      30), //border corner radius
+                                            ),
+                                            child: Column(
+                                              children: [
+                                                Stack(
+                                                  children: [
+                                                    Container(
+                                                      margin: EdgeInsets.all(8),
+                                                      height: height / 6,
+                                                      width: width / 2.3,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(15),
+                                                        image: DecorationImage(
+                                                          image: NetworkImage(
+                                                              doc['image']),
+                                                          fit: BoxFit.fitHeight,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    // Positioned(
+                                                    //     right:20,
+                                                    //     top:15,
+                                                    //     child: Container(
+                                                    //
+                                                    //
+                                                    //
+                                                    //         child: Icon(Icons.favorite, color: Colors.red,
+                                                    //         size:15),
+                                                    //     )),
+                                                  ],
+                                                ),
+                                                Text(doc['name'],
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      height: 1.5,
+                                                    )),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  );
+                                }
+                                return Text("");
+                              })
                         ],
                       ),
                     ),
