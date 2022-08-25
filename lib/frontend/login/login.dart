@@ -125,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Image.asset("assets/images/logo1.png", height: 170),
+                    Image.asset("assets/images/logo.png", height: 190),
                     Text(
                       "ONE STEP TOWARDS ENVIRONMENT",
                       style: TextStyle(
