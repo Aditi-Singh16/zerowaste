@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/consumer/color.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
+import 'package:zerowaste/frontend/consumer/style.dart';
 import 'package:zerowaste/frontend/login/login.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 
@@ -34,7 +35,10 @@ class _ProfilePageState extends State<ProfilePage> {
   List<dynamic> rewards = [];
   String phone = "";
   late int randomindex;
-  List coupon = ['OFF2', 'OFF5', 'OFF10', 'OFF15', 'OFF20'];
+  List coupon = ['OFF5', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
+  double air = 0.0;
+  double co2 = 0.0;
+  double tree = 0.0;
   List description = [
     'Get 2% off on next purchase'
         'Get 5% off on next purchase',
@@ -56,6 +60,8 @@ class _ProfilePageState extends State<ProfilePage> {
   List Value = [2, 5, 10, 15, 20];
   bool isEditablePhone = false;
   bool reward = true;
+
+  late UserModel currUser;
 
   @override
   Future<void> fetch_validity() async {
@@ -116,6 +122,15 @@ class _ProfilePageState extends State<ProfilePage> {
       phone = '${loggedInUser.phone}';
       type = loggedInUser.type!;
     });
+
+    FirebaseFirestore.instance.collection("environment").doc(user!.uid).get().then((value) {
+       
+     air = value['air'];
+     co2 = value['co2'];
+     tree = value['tree'];
+
+    }
+    );
   }
 
   @override
@@ -248,6 +263,170 @@ class _ProfilePageState extends State<ProfilePage> {
                           ],
                         )
                       : Visibility(visible: false, child: Text(' ')),
+                      const Spacing(),
+                            Column(
+                          children: [
+                            Row(
+                              children: [
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'ESV (Environment Saving Values)  ',
+                                    style: AppStyle.text.copyWith(
+                                        color: Colors.white,
+                                        fontSize: width * 0.033),
+                                  ),
+                                ),
+                                SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.03),
+
+                                // i icon button with alert dialogue
+                                IconButton(
+                                  icon: Icon(Icons.info_outline),
+                                  color: Colors.white,
+                                  iconSize: width * 0.05,
+                                  alignment: Alignment.bottomRight,
+                                  onPressed: () {
+                                    //alert dialogue box pop up
+                                    showDialog(
+                                      context: context,
+                                      builder: (ctx) => AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        title: Center(
+                                            child: RichText(
+                                          text: TextSpan(
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: width * 0.033),
+                                              children: [
+                                                TextSpan(
+                                                    text:
+                                                        "Approximate values per product\n\n",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize:
+                                                            height * 0.02)),
+                                                TextSpan(
+                                                    text:
+                                                        "Air Pollution - numbers here shows the amount of air saved from making the product\n"
+                                                        "Trees Saved - numbers here shows the amount of trees saved from cutting in making this product\n"
+                                                        "CO2 - numbers here show the amount of CO2 saved while making this product",
+                                                    style: TextStyle(
+                                                        fontSize:
+                                                            height * 0.015)),
+                                              ]),
+                                        )),
+                                        actions: <Widget>[
+                                          Center(
+                                            child: TextButton(
+                                              onPressed: () {
+                                                Navigator.of(ctx).pop();
+                                              },
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  color: Colors.black,
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.all(14),
+                                                child: const Text(
+                                                  "Continue",
+                                                  style: TextStyle(
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                            const Spacing(),
+                            Row(
+                              children: [
+                                const Spacing(),
+                                const Spacing(),
+                                Column(
+                                  children: [
+                                    ClipOval(
+                                      child: SizedBox.fromSize(
+                                        size: Size.fromRadius(
+                                            MediaQuery.of(context).size.width *
+                                                0.1), // Image radius
+                                        child: Image.network(
+                                            'https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/esv%20img%2F11zon_cropped.png?alt=media&token=72d9009f-c528-4fd5-a638-e933dffee8f9',
+                                            fit: BoxFit.cover),
+                                      ),
+                                    ),
+                                    Text("Air Pollution"),
+                                    Text(
+                                      air.toString() +
+                                          " aqi of Air",
+                                      style: TextStyle(
+                                          fontSize: width * 0.035,
+                                          color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                                Spacer(),
+                                Column(
+                                  children: [
+                                    ClipOval(
+                                      child: SizedBox.fromSize(
+                                        size: Size.fromRadius(
+                                            MediaQuery.of(context).size.width *
+                                                0.1), // Image radius
+                                        child: Image.network(
+                                            'https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/esv%20img%2FPicsart_22-08-19_12-36-20-414.png?alt=media&token=cc0c00fb-a68a-4b69-84cd-2e60fd910215',
+                                            fit: BoxFit.cover),
+                                      ),
+                                    ),
+                                    Text("Tree"),
+                                    Text(
+                                        tree.toString()
+                                              +
+                                             "Tree saved",
+                                        style: TextStyle(
+                                            fontSize: width * 0.035,
+                                            color: Colors.white))
+                                  ],
+                                ),
+                                Spacer(),
+                                Column(
+                                  children: [
+                                    ClipOval(
+                                      child: SizedBox.fromSize(
+                                        size: Size.fromRadius(
+                                            MediaQuery.of(context).size.width *
+                                                0.1), // Image radius
+                                        child: Image.network(
+                                            'https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/esv%20img%2FPicsart_22-08-19_12-43-19-549.png?alt=media&token=b05f3d35-67ee-451e-8737-08e14c13c5d5',
+                                            fit: BoxFit.cover),
+                                      ),
+                                    ),
+                                    Text("Co2"),
+                                    Text(
+                                        (co2.toString())
+                                                .substring(0, 3) +
+                                            " ppm of Co2",
+                                        style: TextStyle(
+                                            fontSize: width * 0.035,
+                                            color: Colors.white))
+                                  ],
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
                   SizedBox(
                     height: 10,
                   ),
