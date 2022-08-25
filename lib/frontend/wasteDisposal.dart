@@ -74,7 +74,7 @@ class _WasteDisposalState extends State<WasteDisposal> {
         CameraUpdate.newCameraPosition(
           CameraPosition(
               target: LatLng(l.latitude as double, l.longitude as double),
-              zoom: 13),
+              zoom: 15),
         ),
       );
       setState(() {

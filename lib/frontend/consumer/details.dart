@@ -226,15 +226,16 @@ class _DetailsState extends State<Details> {
       "price": widget.price,
       "orderId": docId,
       "is_return": false,
-      "category" : widget.category
+      "category": widget.category
     });
-    
-    await FirebaseFirestore.instance.collection("environment").doc(widget.uid).set({
-      "air" :  FieldValue.increment
-       (esv_ls![0] * w!),
-      "co2" : FieldValue.increment
-      (esv_ls![2] * w!),
-      "tree" : FieldValue.increment (esv_ls![1] + w!) 
+
+    await FirebaseFirestore.instance
+        .collection("environment")
+        .doc(widget.uid)
+        .set({
+      "air": FieldValue.increment(esv_ls![0] * w!),
+      "co2": FieldValue.increment(esv_ls![2] * w!),
+      "tree": FieldValue.increment(esv_ls![1] + w!)
     });
 
     await FirebaseFirestore.instance
@@ -393,9 +394,7 @@ class _DetailsState extends State<Details> {
   }
 
   @override
-  Widget build(BuildContext context) 
-  {
-     
+  Widget build(BuildContext context) {
     // getting the size of the window
     size = MediaQuery.of(context).size;
     height = size.height;
@@ -1307,7 +1306,9 @@ class _DetailsState extends State<Details> {
                                                                     "ProductId":
                                                                         widget
                                                                             .productid,
-                                                                            "category": widget.category,
+                                                                    "category":
+                                                                        widget
+                                                                            .category,
                                                                     "Quantity":
                                                                         quantity,
                                                                     "Time":
@@ -1328,24 +1329,30 @@ class _DetailsState extends State<Details> {
                                                                         widget
                                                                             .image
                                                                   });
-List<int>? esv_ls;
-  int? weight;
-  double? w;
-  //get weight from product collection using product id
-  void getweight() async {
-    await FirebaseFirestore.instance
-        .collection('products')
-        .doc(widget.productid)
-        .get()
-        .then((value) {
-      setState(() {
-        w = value['weight'];
-      });
-    });
-  }
+                                                                  List<int>?
+                                                                      esv_ls;
+                                                                  int? weight;
+                                                                  double? w;
+                                                                  //get weight from product collection using product id
+                                                                  void
+                                                                      getweight() async {
+                                                                    await FirebaseFirestore
+                                                                        .instance
+                                                                        .collection(
+                                                                            'products')
+                                                                        .doc(widget
+                                                                            .productid)
+                                                                        .get()
+                                                                        .then(
+                                                                            (value) {
+                                                                      setState(
+                                                                          () {
+                                                                        w = value[
+                                                                            'weight'];
+                                                                      });
+                                                                    });
+                                                                  }
 
-
-  
                                                                   await FirebaseFirestore
                                                                       .instance
                                                                       .collection(
@@ -1360,7 +1367,7 @@ List<int>? esv_ls;
                                                                             amountd
                                                                         : 0
                                                                   });
-                                                                  
+
                                                                   showDialog(
                                                                     context:
                                                                         context,
@@ -1465,6 +1472,104 @@ List<int>? esv_ls;
                                         .copyWith(color: Colors.white))),
                           ],
                         ),
+                        SizedBox(height: 10),
+                        Text("You can also buy",
+                            style: AppStyle.h3.copyWith(color: Colors.white)),
+                        SizedBox(height: 10),
+
+                        FutureBuilder<QuerySnapshot>(
+                            future: FirebaseFirestore.instance
+                                .collection('products')
+                                .where('categories', isEqualTo: widget.category)
+                                .where('quantity', isGreaterThan: 0)
+                                .limit(5)
+                                // .where('productId',
+                                //     isNotEqualTo: widget.productid)
+                                .get(),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) {
+                                return Scaffold(
+                                    body: Center(
+                                        child: CircularProgressIndicator(
+                                            color: Colors.grey)));
+                              }
+                              if (snapshot.connectionState ==
+                                      ConnectionState.done &&
+                                  snapshot.hasData) {
+                                return Container(
+                                  height: 200,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: snapshot.data!.docs.map((doc) {
+                                      print(doc['productId']);
+                                      print(widget.productid);
+
+                                      return doc['productId'] ==
+                                              widget.productid
+                                          ? Container()
+                                          : Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10.0),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          30), //border corner radius
+                                                ),
+                                                child: Column(
+                                                  children: [
+                                                    Stack(
+                                                      children: [
+                                                        Container(
+                                                          margin:
+                                                              EdgeInsets.all(8),
+                                                          height: height / 6,
+                                                          width: width / 2.3,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        15),
+                                                            image:
+                                                                DecorationImage(
+                                                              image: NetworkImage(
+                                                                  doc['image']),
+                                                              fit: BoxFit
+                                                                  .fitHeight,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        // Positioned(
+                                                        //     right:20,
+                                                        //     top:15,
+                                                        //     child: Container(
+                                                        //
+                                                        //
+                                                        //
+                                                        //         child: Icon(Icons.favorite, color: Colors.red,
+                                                        //         size:15),
+                                                        //     )),
+                                                      ],
+                                                    ),
+                                                    Text(doc['name'],
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          height: 1.5,
+                                                        )),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                    }).toList(),
+                                  ),
+                                );
+                              }
+                              return Text("");
+                            })
                       ],
                     ),
                   ),
