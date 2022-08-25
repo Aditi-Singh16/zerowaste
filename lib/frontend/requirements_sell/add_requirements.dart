@@ -43,20 +43,9 @@ class _PageFormState extends State<PageForm> {
   var _description = "";
 
   void ButtonValidate() {
-    if (_formKey.currentState!.validate()) {
-      // print('${user.name}:${user.phone}:${user.email}');
-
-      Scaffold.of(context).showSnackBar(SnackBar(
-          backgroundColor: Colors.green,
-          content: Text('Requirement Added successfully!')));
-    } else {
-      Scaffold.of(context).showSnackBar(SnackBar(
-          backgroundColor: Colors.redAccent,
-          content: Text('Problem Adding Requirement :(')));
-      setState(() {
-        _autovalidate = true;
-      });
-    }
+    Scaffold.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.green,
+        content: Text('Requirement Added successfully!')));
   }
 
   @override

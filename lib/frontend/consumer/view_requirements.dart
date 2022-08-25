@@ -124,6 +124,7 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                                   );
 
                                 case ConnectionState.active:
+                                  print(snapshot.data);
                                   return ListView.builder(
                                       shrinkWrap: true,
                                       itemCount: snapshot.data!.docs.length,
@@ -151,8 +152,6 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                                               onPressed: () async {
                                                 _showMyDialog(
                                                     snapshot.data!.docs[i]);
-
-                                                
                                               },
                                             ),
                                           ),

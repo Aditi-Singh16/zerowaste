@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_unnecessary_containers, curly_braces_in_flow_control_structures
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -254,6 +256,45 @@ class _YourOrdersState extends State<YourOrders> {
                                                 SizedBox(
                                                   width: 60,
                                                 ),
+                                                !doc['is_resell']
+                                                    ? ElevatedButton(
+                                                        onPressed: () async {
+                                                          await FirebaseFirestore
+                                                              .instance
+                                                              .collection(
+                                                                  'products')
+                                                              .doc(doc.id)
+                                                              .set(
+                                                                  {
+                                                                "is_resell":
+                                                                    true,
+                                                                "manufacturerId":
+                                                                    await HelperFunctions()
+                                                                        .readUserIdPref()
+                                                              },
+                                                                  SetOptions(
+                                                                      merge:
+                                                                          true));
+                                                        },
+                                                        child: Text(
+                                                          "Resell",
+                                                        ))
+                                                    : ElevatedButton(
+                                                        onPressed: () {
+                                                          Scaffold.of(context)
+                                                              .showSnackBar(SnackBar(
+                                                                  content: Text(
+                                                                      "Can be reselled once only"),
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .red));
+                                                        },
+                                                        child: Text("Resell"),
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                                primary: Colors
+                                                                    .grey),
+                                                      ),
                                                 !doc['is_return']
                                                     ? ElevatedButton(
                                                         onPressed: () {
