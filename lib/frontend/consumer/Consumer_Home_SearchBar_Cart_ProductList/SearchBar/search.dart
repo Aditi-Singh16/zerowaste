@@ -58,6 +58,7 @@ class ProductSearch extends SearchDelegate {
                   final String category = document.get('categories');
                   final String is_plant = document.get('is_plant');
                   final int quantity = document.get('quantity');
+                  final bool isResell = document.get('is_resell');
                   return ListTile(
                       title: Text(name),
                       subtitle: Text(document['Desc']),
@@ -67,16 +68,18 @@ class ProductSearch extends SearchDelegate {
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => Details(
-                                name: name,
-                                description: description,
-                                price: double.parse(price),
-                                category: category,
-                                productid: prod_id,
-                                uid: userauthid,
-                                manufacturerid: manufacturerid,
-                                image: image,
-                                is_plant: is_plant,
-                                q: quantity)));
+                                  name: name,
+                                  description: description,
+                                  price: double.parse(price),
+                                  category: category,
+                                  productid: prod_id,
+                                  uid: userauthid,
+                                  manufacturerid: manufacturerid,
+                                  image: image,
+                                  is_plant: is_plant,
+                                  q: quantity,
+                                  isResell: isResell,
+                                )));
                       });
                 }).toList(),
               ],

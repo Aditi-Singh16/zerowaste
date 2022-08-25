@@ -60,20 +60,11 @@ class _PageFormState extends State<PageForm> {
   var _description = "";
 
   void ButtonValidate() {
-    if (_formKey.currentState!.validate()) {
-      // print('${user.name}:${user.phone}:${user.email}');
+    // print('${user.name}:${user.phone}:${user.email}');
 
-      Scaffold.of(context).showSnackBar(SnackBar(
-          backgroundColor: Colors.green,
-          content: Text('Requirement Added successfully!')));
-    } else {
-      Scaffold.of(context).showSnackBar(SnackBar(
-          backgroundColor: Colors.redAccent,
-          content: Text('Problem Adding Requirement :(')));
-      setState(() {
-        _autovalidate = true;
-      });
-    }
+    Scaffold.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.green,
+        content: Text('Requirement Added successfully!')));
   }
 
   @override
@@ -325,14 +316,16 @@ class _PageFormState extends State<PageForm> {
                     onPressed: () async {
                       color ? ButtonValidate() : null;
                       FirebaseData().addRequirement({
+                        "uid": await HelperFunctions().readUserIdPref(),
                         "name": await HelperFunctions().readNamePref(),
                         "email": await HelperFunctions().readEmailPref(),
                         "category": _category,
                         "quantity": _quantity,
                         "product_name": _name,
-                        "type": "NGO",
+                        "type": await HelperFunctions().readTypePref(),
                         "is_satisfied": false,
-                        "description": _description
+                        "description": _description,
+                        "requirement_satisfy": []
                       });
                       _nameController.clear();
                       _quantityController.clear();
