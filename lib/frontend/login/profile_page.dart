@@ -8,6 +8,7 @@ import 'package:zerowaste/backend/local_data.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:zerowaste/frontend/consumer/color.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
 import 'package:zerowaste/frontend/consumer/style.dart';
 import 'package:zerowaste/frontend/login/login.dart';
@@ -39,14 +40,24 @@ class _ProfilePageState extends State<ProfilePage> {
   double co2 = 0.0;
   double tree = 0.0;
   List description = [
-    'Get 5% off on next purchase',
+    'Get 2% off on next purchase'
+        'Get 5% off on next purchase',
     'Get 10% off on next purchase',
     'Get 15% off on next purchase',
     'Get 20% off on next purchase',
-    'Get 2% off on next purchase'
   ];
+  Map category = {
+    'Books': 50,
+    'Electronics': 5,
+    'Recycled Products': 7,
+    'Cotton Clothes': 5,
+    'Nylon Clothes': 5,
+    'Silk Clothes': 5,
+    'Bags': 7
+  };
+  List<Map<String, dynamic>> accepted_requests = [];
 
-  List Value = [5, 10, 15, 20, 2];
+  List Value = [2, 5, 10, 15, 20];
   bool isEditablePhone = false;
   bool reward = true;
 
@@ -62,32 +73,38 @@ class _ProfilePageState extends State<ProfilePage> {
     if (docSnapshot.exists) {
       Map<String, dynamic> data = docSnapshot.data()!;
       print(data);
+
       // You can then retrieve the value from the Map like this:
       setState(() {
         if (data['Count'] != null) {
           count = data['Count'];
+          for (int i = 0; i < count; i++) {
+            accepted_requests.add(data['accepted_requests'][i]);
+          }
+          print('heyy');
         }
         if (data['wallet'] != null) {
           wallet = data['wallet'];
         }
         if (data['Coupon0'] == true) {
-          rewards.add('OFF5');
+          rewards.add('OFF2');
         }
         if (data['Coupon1'] == true) {
-          rewards.add('OFF10');
+          rewards.add('OFF5');
         }
         if (data['Coupon2'] == true) {
-          rewards.add('OFF15');
+          rewards.add('OFF10');
         }
         if (data['Coupon3'] == true) {
-          rewards.add('OFF20');
+          rewards.add('OFF15');
         }
         if (data['Coupon4'] == true) {
-          rewards.add('OFF2');
+          rewards.add('OFF20');
         }
       });
       print('HIIII');
       print(count);
+      print(accepted_requests);
       print(rewards);
     }
   }
@@ -135,7 +152,7 @@ class _ProfilePageState extends State<ProfilePage> {
             return Scaffold(
                 appBar: AppBar(
                   title: Text("Profile"),
-                  backgroundColor: Color(0xff265D80),
+                  backgroundColor: AppColor.secondary,
                 ),
                 body: SingleChildScrollView(
                     child: Column(children: [
@@ -643,9 +660,18 @@ class _ProfilePageState extends State<ProfilePage> {
                                 onTap: (count > 0)
                                     ? () async {
                                         String couponn = '';
-
-                                        randomindex =
-                                            Random().nextInt(coupon.length);
+                                        String categoryy =
+                                            accepted_requests[count - 1]
+                                                ['category'];
+                                        int quantity =
+                                            accepted_requests[count - 1]
+                                                ['quantity'];
+                                        if (quantity >= category[categoryy]) {
+                                          randomindex =
+                                              Random().nextInt(coupon.length);
+                                        } else {
+                                          randomindex = 3 + Random().nextInt(2);
+                                        }
                                         await showScratchCard(context);
                                         couponn =
                                             "Coupon" + (randomindex).toString();
@@ -657,6 +683,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                           } else {
                                             rewards.add(coupon[randomindex]);
 
+                                            accepted_requests
+                                                .removeAt(count - 1);
                                             count--;
                                           }
                                         });
@@ -666,6 +694,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             .update({
                                           couponn: true,
                                           'Count': FieldValue.increment(-1),
+                                          'accepted_requests': accepted_requests
                                         });
                                       }
                                     : null,
