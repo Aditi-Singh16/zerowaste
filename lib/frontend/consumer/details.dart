@@ -225,7 +225,16 @@ class _DetailsState extends State<Details> {
       "image": widget.image,
       "price": widget.price,
       "orderId": docId,
-      "is_return": false
+      "is_return": false,
+      "category" : widget.category
+    });
+    
+    await FirebaseFirestore.instance.collection("environment").doc(widget.uid).set({
+      "air" :  FieldValue.increment
+       (esv_ls![0] * w!),
+      "co2" : FieldValue.increment
+      (esv_ls![2] * w!),
+      "tree" : FieldValue.increment (esv_ls![1] + w!) 
     });
 
     await FirebaseFirestore.instance
@@ -378,7 +387,9 @@ class _DetailsState extends State<Details> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) 
+  {
+     
     // getting the size of the window
     size = MediaQuery.of(context).size;
     height = size.height;
@@ -1304,6 +1315,7 @@ class _DetailsState extends State<Details> {
                                                                     "ProductId":
                                                                         widget
                                                                             .productid,
+                                                                            "category": widget.category,
                                                                     "Quantity":
                                                                         quantity,
                                                                     "Time":
@@ -1324,7 +1336,24 @@ class _DetailsState extends State<Details> {
                                                                         widget
                                                                             .image
                                                                   });
+List<int>? esv_ls;
+  int? weight;
+  double? w;
+  //get weight from product collection using product id
+  void getweight() async {
+    await FirebaseFirestore.instance
+        .collection('products')
+        .doc(widget.productid)
+        .get()
+        .then((value) {
+      setState(() {
+        w = value['weight'];
+      });
+    });
+  }
 
+
+  
                                                                   await FirebaseFirestore
                                                                       .instance
                                                                       .collection(
@@ -1339,7 +1368,7 @@ class _DetailsState extends State<Details> {
                                                                             amountd
                                                                         : 0
                                                                   });
-
+                                                                  
                                                                   showDialog(
                                                                     context:
                                                                         context,
