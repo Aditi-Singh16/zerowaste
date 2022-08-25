@@ -28,7 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String type = '';
   String title = "";
   int count = 0;
-  int wallet = 0;
+  double wallet = 0.0;
   bool isEditable = false;
   List<dynamic> rewards = [];
   String phone = "";
@@ -65,13 +65,16 @@ class _ProfilePageState extends State<ProfilePage> {
 
     if (docSnapshot.exists) {
       Map<String, dynamic> data = docSnapshot.data()!;
-
+      print(data);
       // You can then retrieve the value from the Map like this:
       setState(() {
-        count = data['Count'];
-        //wallet = data['wallet'];
-        accepted_requests = data['accepted_requests'];
-        //else accepted_requests=[]
+        if (data['Count'] != null) {
+          count = data['Count'];
+          accepted_requests = data['accepted_requests'];
+        }
+        if (data['wallet'] != null) {
+          wallet = data['wallet'];
+        }
         if (data['Coupon0'] == true) {
           rewards.add('OFF2');
         }
@@ -613,6 +616,7 @@ class _ProfilePageState extends State<ProfilePage> {
   logout() async {
     var userId = await HelperFunctions().readUserIdPref();
     await FirebaseAuth.instance.signOut();
+    print(userId);
     await DataBaseHelper.instance.deleteUser(userId);
     Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => LoginScreen()));

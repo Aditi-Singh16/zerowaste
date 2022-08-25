@@ -26,8 +26,11 @@ class AllProducts extends StatelessWidget {
     width = size.width;
 
     return FutureBuilder<QuerySnapshot>(
-      //get products with quantity greater than 0
-        future: FirebaseFirestore.instance.collection('products').where('quantity', isGreaterThan: 0).get(),
+        //get products with quantity greater than 0
+        future: FirebaseFirestore.instance
+            .collection('products')
+            .where('quantity', isGreaterThan: 0)
+            .get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(
@@ -69,6 +72,7 @@ class AllProducts extends StatelessWidget {
                     String category = doc['categories'];
                     String is_plant = doc['is_plant'];
                     int quantity = doc['quantity'];
+                    bool isResell = doc['is_resell'];
                     if (name.length > 10) {
                       name = name.substring(0, 10) + "...";
                     }
@@ -89,16 +93,18 @@ class AllProducts extends StatelessWidget {
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => Details(
-                                    name: name,
-                                    description: description,
-                                    price: double.parse(price),
-                                    category: category,
-                                    productid: prod_id,
-                                    uid: userauthid,
-                                    manufacturerid: manufacturerid,
-                                    image: image,
-                                    is_plant: is_plant,
-                                    q: quantity)));
+                                      name: name,
+                                      description: description,
+                                      price: double.parse(price),
+                                      category: category,
+                                      productid: prod_id,
+                                      uid: userauthid,
+                                      manufacturerid: manufacturerid,
+                                      image: image,
+                                      is_plant: is_plant,
+                                      q: quantity,
+                                      isResell: isResell,
+                                    )));
                           },
                           child: Row(
                             children: [

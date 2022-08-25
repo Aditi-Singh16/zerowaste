@@ -63,7 +63,7 @@ class _DashboardState extends State<Dashboard> {
 
   TooltipBehavior _tooltipAct = TooltipBehavior(enable: true);
   TooltipBehavior _tooltipPred = TooltipBehavior(enable: true);
-  bool isInventoryEmpty = false;
+  //bool isInventoryEmpty = false;
   List<ChartData> predictionChartData = [];
   List<ChartData> actualChartData = [];
   var quantAvail = 0;
@@ -89,11 +89,11 @@ class _DashboardState extends State<Dashboard> {
         }
       }
 
-      if (actualChartData.every((ele) => ele.y == 0)) {
-        isInventoryEmpty = true;
-      } else {
-        isInventoryEmpty = false;
-      }
+      // if (actualChartData.every((ele) => ele.y == 0)) {
+      //   isInventoryEmpty = true;
+      // } else {
+      //   isInventoryEmpty = false;
+      // }
     });
 
     var monthval = monthsPred.indexOf(monthvalue);
@@ -288,44 +288,21 @@ class _DashboardState extends State<Dashboard> {
               padding: const EdgeInsets.only(left: 22.0),
               child: Text('My Inventory', style: TextStyle(fontSize: 25)),
             ),
-            isInventoryEmpty
-                ? Padding(
-                    padding:
-                        const EdgeInsets.only(top: 10, bottom: 10, left: 22.0),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.info_outline,
-                          color: Color(0xff3472c0),
-                          size: 30,
-                        ),
-                        Spacer(),
-                        Text(
-                            '''Sorry! you don't have\nany products added\nfor this category''',
-                            maxLines: 3,
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red)),
-                        Spacer(),
-                      ],
-                    ),
-                  )
-                : Center(
-                    child: Container(
-                        height: MediaQuery.of(context).size.height * 0.4,
-                        width: MediaQuery.of(context).size.width * 0.9,
-                        child: SfCartesianChart(
-                            primaryXAxis: CategoryAxis(),
-                            tooltipBehavior: _tooltipAct,
-                            series: <ChartSeries<ChartData, String>>[
-                              // Renders line chart
-                              ColumnSeries<ChartData, String>(
-                                dataSource: actualChartData,
-                                xValueMapper: (ChartData data, _) => data.x,
-                                yValueMapper: (ChartData data, _) => data.y,
-                              )
-                            ]))),
+            Center(
+                child: Container(
+                    height: MediaQuery.of(context).size.height * 0.4,
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    child: SfCartesianChart(
+                        primaryXAxis: CategoryAxis(),
+                        tooltipBehavior: _tooltipAct,
+                        series: <ChartSeries<ChartData, String>>[
+                          // Renders line chart
+                          ColumnSeries<ChartData, String>(
+                            dataSource: actualChartData,
+                            xValueMapper: (ChartData data, _) => data.x,
+                            yValueMapper: (ChartData data, _) => data.y,
+                          )
+                        ]))),
             Padding(
               padding: const EdgeInsets.only(left: 22.0),
               child: Text('My Products', style: TextStyle(fontSize: 25)),

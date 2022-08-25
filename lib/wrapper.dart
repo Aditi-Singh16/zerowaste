@@ -55,7 +55,7 @@ class _WrapperState extends State<Wrapper> {
             } else if (type == 'NGO') {
               return NgoNavbar();
             }
-            return ProfilePage();
+            return LoginScreen();
           } else {
             return LoginScreen();
           }

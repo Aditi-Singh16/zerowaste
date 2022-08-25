@@ -8,7 +8,7 @@ class FirebaseData {
       await FirebaseFirestore.instance
           .collection("requirements")
           .doc()
-           .set(requirements);
+          .set(requirements);
       return uid;
     } catch (e) {
       return e.toString();
