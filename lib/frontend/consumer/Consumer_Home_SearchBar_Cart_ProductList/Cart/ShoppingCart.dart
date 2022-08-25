@@ -391,7 +391,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                         onPressed: () => {},
                       ),
                       title: Text("Failed to load"),
-                      backgroundColor: Colors.white,
+                      backgroundColor: AppColor.secondary,
                     ),
                     body: Center(
                         child: CircularProgressIndicator(

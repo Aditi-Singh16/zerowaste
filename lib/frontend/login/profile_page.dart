@@ -8,6 +8,7 @@ import 'package:zerowaste/backend/local_data.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:zerowaste/frontend/consumer/color.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
 import 'package:zerowaste/frontend/login/login.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
@@ -50,7 +51,7 @@ class _ProfilePageState extends State<ProfilePage> {
     'Silk Clothes': 5,
     'Bags': 7
   };
-  late List<Map> accepted_requests;
+  List<Map<String, dynamic>> accepted_requests = [];
 
   List Value = [2, 5, 10, 15, 20];
   bool isEditablePhone = false;
@@ -66,11 +67,15 @@ class _ProfilePageState extends State<ProfilePage> {
     if (docSnapshot.exists) {
       Map<String, dynamic> data = docSnapshot.data()!;
       print(data);
+
       // You can then retrieve the value from the Map like this:
       setState(() {
         if (data['Count'] != null) {
           count = data['Count'];
-          accepted_requests = data['accepted_requests'];
+          for (int i = 0; i < count; i++) {
+            accepted_requests.add(data['accepted_requests'][i]);
+          }
+          print('heyy');
         }
         if (data['wallet'] != null) {
           wallet = data['wallet'];
@@ -93,6 +98,7 @@ class _ProfilePageState extends State<ProfilePage> {
       });
       print('HIIII');
       print(count);
+      print(accepted_requests);
       print(rewards);
     }
   }
@@ -131,7 +137,7 @@ class _ProfilePageState extends State<ProfilePage> {
             return Scaffold(
                 appBar: AppBar(
                   title: Text("Profile"),
-                  backgroundColor: Color(0xff265D80),
+                  backgroundColor: AppColor.secondary,
                 ),
                 body: SingleChildScrollView(
                     child: Column(children: [
@@ -498,9 +504,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                           } else {
                                             rewards.add(coupon[randomindex]);
 
-                                            count--;
                                             accepted_requests
                                                 .removeAt(count - 1);
+                                            count--;
                                           }
                                         });
                                         await FirebaseFirestore.instance

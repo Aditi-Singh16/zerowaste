@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zerowaste/frontend/consumer/color.dart';
 import 'learningMod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -50,6 +51,10 @@ class _MyHomePageState extends State<MyHomePage> {
             Color.fromARGB(255, 255, 255, 255)
           ])),
       child: Scaffold(
+        appBar: AppBar(
+          title: Text("Learning Module"),
+          backgroundColor: AppColor.secondary,
+        ),
         backgroundColor: Colors.transparent,
         body: Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <
