@@ -222,6 +222,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
           "Date": date,
           "orderId": docId,
           "is_return": false,
+          "is_resell": true,
+          "category": doc['categories'],
+          "Desc": doc['description'],
+          "weight": doc['weight'],
           "is_resell": true
         });
       });

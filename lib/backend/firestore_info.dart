@@ -26,4 +26,52 @@ class FirebaseData {
       return [];
     }
   }
+
+  Future<num> getManufactureSoldCount()async{
+    var uid = await HelperFunctions().readUserIdPref();
+    var res = await FirebaseFirestore.instance.collectionGroup('Orders')
+                    .where('manufactureId',isEqualTo: uid)
+                    .get();
+    num quantity = 0;
+    res.docs.forEach((element) {
+      quantity = quantity+element['Quantity'];
+    });
+    return quantity;
+  }
+
+  Future<int> getManufactureCustomerCount()async{
+    var uid = await HelperFunctions().readUserIdPref();
+    var res = await FirebaseFirestore.instance
+                    .collectionGroup('Orders')
+                    .where('manufacturerId',isEqualTo: uid)
+                    .get();
+      return res.docs.length;
+  }
+
+  Future<int> getManufacureReturnCount()async{
+    var uid = await HelperFunctions().readUserIdPref();
+    var res = await FirebaseFirestore.instance
+                    .collectionGroup('Orders')
+                    .where('manufacturerId',isEqualTo: uid)
+                    .where('is_return',isEqualTo: true)
+                    .get();
+
+    return res.docs.length;
+  }
+
+  Future<int> getManufactureDonationCount()async{
+    var email = await HelperFunctions().readEmailPref();
+    var res = await FirebaseFirestore.instance
+                    .collection('Users')
+                    .where("accepted_requests",isNull: false).get();
+    int count=0;
+    res.docs.forEach((element) {
+      element['accepted_requests'].forEach((ele){
+        if(ele['email']== email ){
+          count=count+1;
+        } 
+      });
+    });
+    return count;            
+  }
 }

@@ -226,7 +226,10 @@ class _DetailsState extends State<Details> {
       "price": widget.price,
       "orderId": docId,
       "is_return": false,
-      "category": widget.category
+      "category": widget.category,
+      "Desc": widget.description,
+      "weight": w,
+      "is_resell": true
     });
 
     await FirebaseFirestore.instance
@@ -565,46 +568,6 @@ class _DetailsState extends State<Details> {
                                 })
                             : const Spacing(),
 
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            InkWell(
-                                child: Container(
-                                  child: Text('Apply Coupon',
-                                      style: AppStyle.text
-                                          .copyWith(color: Colors.blue)),
-                                ),
-                                onTap: () {
-                                  setState(() {
-                                    coupon = true;
-                                  });
-                                }),
-                            coupon
-                                ? InkWell(
-                                    child: Container(
-                                      child: Text('Remove',
-                                          style: AppStyle.text
-                                              .copyWith(color: Colors.red)),
-                                    ),
-                                    onTap: () {
-                                      setState(() {
-                                        coupon = false;
-                                        if (amount !=
-                                            (widget.price *
-                                                int.parse(quantity))) {
-                                          amount = widget.price *
-                                              int.parse(quantity);
-
-                                          amountd = (plant)
-                                              ? amount + 20 + 5
-                                              : amount + 20;
-                                        }
-                                      });
-                                    })
-                                : Visibility(visible: false, child: Text('')),
-                          ],
-                        ),
-                        const Spacing(),
                         Column(
                           children: [
                             Row(

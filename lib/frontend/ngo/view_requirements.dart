@@ -230,6 +230,7 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                                                                                     {
                                                                                       "category": doc['category'],
                                                                                       "quantity": doc['quantity'],
+                                                                                      "email":doc['requirement_satisfy'][idx]['email']
                                                                                     }
                                                                                   ])
                                                                                 });
