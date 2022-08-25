@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:zerowaste/frontend/consumer/color.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -85,6 +86,10 @@ class _MyHomePagerState extends State<MyHomePager> {
               Color.fromARGB(255, 255, 255, 255)
             ])),
         child: Scaffold(
+            appBar: AppBar(
+              title: Text("Learning Module"),
+              backgroundColor: AppColor.secondary,
+            ),
             backgroundColor: Colors.transparent,
             /* body: ListView.builder(
             itemCount: _ids.length,

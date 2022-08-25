@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
+import 'package:zerowaste/frontend/consumer/color.dart';
 import 'package:zerowaste/frontend/consumer/learning_modules/learningMod.dart';
 import 'package:zerowaste/frontend/consumer/return.dart';
 import 'package:zerowaste/frontend/consumerNavbar.dart';
@@ -56,6 +57,10 @@ class _YourOrdersState extends State<YourOrders> {
               case ConnectionState.active:
                 if (snapshot.data!.docs.isEmpty) {
                   return Scaffold(
+                    appBar: AppBar(
+                      title: Text("Orders"),
+                      backgroundColor: AppColor.secondary,
+                    ),
                     body: Column(
                       children: [
                         Container(
@@ -117,9 +122,10 @@ class _YourOrdersState extends State<YourOrders> {
                         itemCount: snapshot.data!.docs.length,
                         itemBuilder: (context, index) {
                           DocumentSnapshot doc = snapshot.data!.docs[index];
+                          print(doc.data());
                           return Container(
                             width: MediaQuery.of(context).size.width / 1.1,
-                            height: MediaQuery.of(context).size.height / 5.9,
+                            height: MediaQuery.of(context).size.height / 4.5,
                             child: Card(
                               margin: EdgeInsets.all(
                                   MediaQuery.of(context).size.height / 80),
@@ -256,87 +262,117 @@ class _YourOrdersState extends State<YourOrders> {
                                                 SizedBox(
                                                   width: 60,
                                                 ),
-                                                !doc['is_resell']
-                                                    ? ElevatedButton(
-                                                        onPressed: () async {
-                                                          await FirebaseFirestore
-                                                              .instance
-                                                              .collection(
-                                                                  'products')
-                                                              .doc(doc.id)
-                                                              .set(
-                                                                  {
-                                                                "is_resell":
-                                                                    true,
-                                                                "manufacturerId":
-                                                                    await HelperFunctions()
-                                                                        .readUserIdPref()
-                                                              },
-                                                                  SetOptions(
-                                                                      merge:
-                                                                          true));
-                                                        },
-                                                        child: Text(
-                                                          "Resell",
-                                                        ))
-                                                    : ElevatedButton(
-                                                        onPressed: () {
-                                                          Scaffold.of(context)
-                                                              .showSnackBar(SnackBar(
+                                                Column(
+                                                  children: [
+                                                    doc['is_resell']
+                                                        ? ElevatedButton(
+                                                            onPressed:
+                                                                () async {
+                                                              await FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'products')
+                                                                  .doc(doc[
+                                                                      'ProductId'])
+                                                                  .set(
+                                                                      {
+                                                                    "is_resell":
+                                                                        true,
+                                                                    "manufacturerId":
+                                                                        await HelperFunctions()
+                                                                            .readUserIdPref()
+                                                                  },
+                                                                      SetOptions(
+                                                                          merge:
+                                                                              true));
+                                                              await FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'Users')
+                                                                  .doc(uid)
+                                                                  .collection(
+                                                                      'Orders')
+                                                                  .doc(doc.id)
+                                                                  .set(
+                                                                      {
+                                                                    'is_resell':
+                                                                        false
+                                                                  },
+                                                                      SetOptions(
+                                                                          merge:
+                                                                              true)).then(
+                                                                      (value) {
+                                                                Scaffold.of(
+                                                                        context)
+                                                                    .showSnackBar(SnackBar(
+                                                                        content:
+                                                                            Text('Initiated Resell')));
+                                                              });
+                                                            },
+                                                            child: Text(
+                                                              "Resell",
+                                                            ))
+                                                        : ElevatedButton(
+                                                            onPressed: () {
+                                                              Scaffold.of(context).showSnackBar(SnackBar(
                                                                   content: Text(
                                                                       "Can be reselled once only"),
                                                                   backgroundColor:
                                                                       Colors
                                                                           .red));
-                                                        },
-                                                        child: Text("Resell"),
-                                                        style: ElevatedButton
-                                                            .styleFrom(
-                                                                primary: Colors
-                                                                    .grey),
-                                                      ),
-                                                !doc['is_return']
-                                                    ? ElevatedButton(
-                                                        onPressed: () {
-                                                          Navigator.of(context).push(MaterialPageRoute(
-                                                              builder: (context) => ReturnOrder(
-                                                                  productName: doc[
-                                                                      'ProductName'],
-                                                                  manufacturerId:
-                                                                      doc[
-                                                                          'manufacturerId'],
-                                                                  price: doc[
-                                                                          'price']
-                                                                      .toDouble(),
-                                                                  address: doc[
-                                                                      'address'],
-                                                                  orderedQuantity:
-                                                                      doc['Quantity']
-                                                                          .toInt(),
-                                                                  orderId: doc[
-                                                                      'orderId'],
-                                                                  image: doc[
-                                                                      'image'])));
-                                                        },
-                                                        child: Text(
-                                                          "Return",
-                                                        ))
-                                                    : ElevatedButton(
-                                                        onPressed: () {
-                                                          Scaffold.of(context)
-                                                              .showSnackBar(SnackBar(
+                                                            },
+                                                            child:
+                                                                Text("Resell"),
+                                                            style: ElevatedButton
+                                                                .styleFrom(
+                                                                    primary: Colors
+                                                                        .grey),
+                                                          ),
+                                                    !doc['is_return']
+                                                        ? ElevatedButton(
+                                                            onPressed: () {
+                                                              Navigator.of(context).push(MaterialPageRoute(
+                                                                  builder: (context) => ReturnOrder(
+                                                                      productName:
+                                                                          doc[
+                                                                              'ProductName'],
+                                                                      manufacturerId:
+                                                                          doc[
+                                                                              'manufacturerId'],
+                                                                      price: doc[
+                                                                              'price']
+                                                                          .toDouble(),
+                                                                      address: doc[
+                                                                          'address'],
+                                                                      orderedQuantity:
+                                                                          doc['Quantity']
+                                                                              .toInt(),
+                                                                      orderId: doc[
+                                                                          'orderId'],
+                                                                      image: doc[
+                                                                          'image'])));
+                                                            },
+                                                            child: Text(
+                                                              "Return",
+                                                            ))
+                                                        : ElevatedButton(
+                                                            onPressed: () {
+                                                              Scaffold.of(context).showSnackBar(SnackBar(
                                                                   content: Text(
                                                                       "Can only be returned once"),
                                                                   backgroundColor:
                                                                       Colors
                                                                           .red));
-                                                        },
-                                                        child: Text("Return"),
-                                                        style: ElevatedButton
-                                                            .styleFrom(
-                                                                primary: Colors
-                                                                    .grey),
-                                                      )
+                                                            },
+                                                            child:
+                                                                Text("Return"),
+                                                            style: ElevatedButton
+                                                                .styleFrom(
+                                                                    primary: Colors
+                                                                        .grey),
+                                                          )
+                                                  ],
+                                                )
                                               ],
                                             ),
                                           ),
