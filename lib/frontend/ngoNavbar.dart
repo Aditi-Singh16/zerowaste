@@ -6,6 +6,7 @@ import 'package:zerowaste/frontend/ngo/view_requirements.dart';
 import 'package:zerowaste/frontend/login/profile_page.dart';
 import 'package:zerowaste/frontend/manufacturer/dashboard.dart';
 import 'package:zerowaste/frontend/ngo/add_requirements.dart';
+import 'package:zerowaste/frontend/ngo/view_requirements.dart';
 
 class NgoNavbar extends StatefulWidget {
   const NgoNavbar({Key? key}) : super(key: key);

@@ -33,7 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
   List<dynamic> rewards = [];
   String phone = "";
   late int randomindex;
-  List coupon = ['OFF05', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
+  List coupon = ['OFF5', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
   List description = [
     'Get 5% off on next purchase',
     'Get 10% off on next purchase',
@@ -65,7 +65,7 @@ class _ProfilePageState extends State<ProfilePage> {
           wallet = data['wallet'];
         }
         if (data['Coupon0'] == true) {
-          rewards.add('OFF05');
+          rewards.add('OFF5');
         }
         if (data['Coupon1'] == true) {
           rewards.add('OFF10');
@@ -77,11 +77,12 @@ class _ProfilePageState extends State<ProfilePage> {
           rewards.add('OFF20');
         }
         if (data['Coupon4'] == true) {
-          rewards.add('OFF02');
+          rewards.add('OFF2');
         }
       });
       print('HIIII');
       print(count);
+      print(rewards);
     }
   }
 
@@ -466,12 +467,15 @@ class _ProfilePageState extends State<ProfilePage> {
 
                                         randomindex =
                                             Random().nextInt(coupon.length);
-                                        showScratchCard(context);
+                                        await showScratchCard(context);
                                         couponn =
                                             "Coupon" + (randomindex).toString();
-
+                                        print('COUPON');
                                         setState(() {
-                                          if (!rewards.contains(couponn)) {
+                                          if (rewards
+                                              .contains(coupon[randomindex])) {
+                                            print('NO');
+                                          } else {
                                             rewards.add(coupon[randomindex]);
 
                                             count--;
@@ -479,7 +483,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         });
                                         await FirebaseFirestore.instance
                                             .collection('Users')
-                                            .doc(uid)
+                                            .doc(loggedInUser.uid)
                                             .update({
                                           couponn: true,
                                           'Count': FieldValue.increment(-1),
@@ -531,18 +535,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                           child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceAround,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
                                             children: [
-                                              ListTile(
-                                                title: Text(
-                                                  '${data}',
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.w500),
-                                                ),
+                                              Text(
+                                                '${data}',
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.w500),
                                               ),
                                               IconButton(
                                                 icon: const Icon(Icons.copy),
@@ -620,7 +620,7 @@ class _ProfilePageState extends State<ProfilePage> {
               onChange: (value) => print("Scratch progress: $value%"),
               onThreshold: () => print("Threshold reached"),
               child: Container(
-                height: MediaQuery.of(context).size.height * 0.42,
+                height: MediaQuery.of(context).size.height * 0.6,
                 width: MediaQuery.of(context).size.width * 0.5,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -659,6 +659,19 @@ class _ProfilePageState extends State<ProfilePage> {
                           fontSize: 20,
                           color: Colors.blue),
                     ),
+                    Spacing(),
+                    IconButton(
+                      icon: const Icon(Icons.copy),
+                      onPressed: () async {
+                        await _copyToClipboard(coupon[randomindex]);
+                      },
+                    ),
+                    ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('OK')),
+                    Spacing(),
                   ],
                 ),
               ),

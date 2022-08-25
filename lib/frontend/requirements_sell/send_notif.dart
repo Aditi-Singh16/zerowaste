@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
+import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 class SendNotification extends StatefulWidget {
   SendNotification({
