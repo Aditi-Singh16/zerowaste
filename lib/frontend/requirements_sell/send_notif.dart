@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 class SendNotification extends StatefulWidget {
   SendNotification({
@@ -33,8 +34,10 @@ class _SendNotificationState extends State<SendNotification> {
                       .set({
                     "requirement_satisfy": FieldValue.arrayUnion([
                       {
-                        'email': widget.user.data()['email'],
+                        'email': await HelperFunctions().readEmailPref(),
                         'quantity': widget.user.data()['quantity'],
+                        'uid': await HelperFunctions().readUserIdPref(),
+                        'product_name': widget.user.data()['product_name']
                       }
                     ])
                   }, SetOptions(merge: true)).then((_) {
@@ -86,9 +89,11 @@ class _SendNotificationState extends State<SendNotification> {
                   .set({
                 "requirement_satisfy": FieldValue.arrayUnion([
                   {
-                    'email': widget.user.data()[
-                        'email'], //loggedin widget.user.data() ka email after shared pref
-                    'quantity': int.parse(_quantityController.text)
+                    'email': await HelperFunctions()
+                        .readEmailPref(), //loggedin widget.user.data() ka email after shared pref
+                    'quantity': int.parse(_quantityController.text),
+                    'uid': await HelperFunctions().readUserIdPref(),
+                    'product_name': widget.user.data()['product_name']
                   }
                 ])
               }, SetOptions(merge: true)).then((_) {

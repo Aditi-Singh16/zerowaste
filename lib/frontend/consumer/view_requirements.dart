@@ -124,6 +124,7 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                                   );
 
                                 case ConnectionState.active:
+                                  print(snapshot.data);
                                   return ListView.builder(
                                       shrinkWrap: true,
                                       itemCount: snapshot.data!.docs.length,
@@ -151,39 +152,6 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                                               onPressed: () async {
                                                 _showMyDialog(
                                                     snapshot.data!.docs[i]);
-
-                                                //ngo ke profile me accepted_req bana hai
-                                                FirebaseFirestore.instance
-                                                    .collection("requirements")
-                                                    .doc(snapshot
-                                                        .data!.docs[i].id)
-                                                    .update({
-                                                  "requirement_satisfy":
-                                                      FieldValue.arrayUnion([
-                                                    {
-                                                      "email": _helperFunctions
-                                                          .readEmailPref(),
-                                                      "uid": _helperFunctions
-                                                          .readUserIdPref(),
-                                                      "product_name":
-                                                          snapshot.data!.docs[i]
-                                                              ['product_name'],
-                                                      "quantity": snapshot.data!
-                                                          .docs[i]['quantity'],
-                                                    }
-                                                  ])
-                                                });
-
-                                                // randomindex =
-                                                //     Random().nextInt(coupon.length);
-                                                // showScratchCard(context);
-                                                // String couponn = "Coupon" +
-                                                //     (randomindex).toString();
-
-                                                // await FirebaseFirestore.instance
-                                                //     .collection('Users')
-                                                //     .doc(uid)
-                                                //     .update({couponn: true});
                                               },
                                             ),
                                           ),

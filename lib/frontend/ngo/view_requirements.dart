@@ -34,28 +34,28 @@ class _ViewRequirementsState extends State<ViewRequirements> {
   List Value = [5, 10, 15, 20, 2];
 
   late int randomindex;
-  String uid = FirebaseAuth.instance.currentUser!.uid;
+  String uid = "";
+
+  setUID() async {
+    String user = await HelperFunctions().readUserIdPref();
+    setState(() {
+      uid = user;
+    });
+  }
+
+  @override
+  void initState() {
+    setUID();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          toolbarHeight: 70,
-          title: Text(
-            "View Requirements",
-            // style: TextStyle(color: Colors.black),
-          ),
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: CircleAvatar(
-                foregroundColor: Colors.blueAccent,
-                child: Padding(
-                  padding: const EdgeInsets.all(6.0),
-                  child: Image.asset('assets/images/logo1.png'),
-                )),
-          ),
-          // backgroundColor: Colors.blue.shade50,
+          title: Text("View Requirements"),
+          backgroundColor: Color(0xff001427),
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -63,13 +63,12 @@ class _ViewRequirementsState extends State<ViewRequirements> {
               StreamBuilder(
                   stream: FirebaseFirestore.instance
                       .collection('requirements')
-                      .doc(uid)
+                      .where('uid', isEqualTo: uid)
                       .snapshots(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.hasError) {
                       return const Text('something went wrong');
                     } else {
-                      print(snapshot.data.data());
                       switch (snapshot.connectionState) {
                         case ConnectionState.none:
                           return Column(
@@ -92,87 +91,80 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                           );
 
                         case ConnectionState.active:
+                          print(uid);
+                          print(snapshot.data);
+                          print(snapshot.data!.docs.length);
                           return ListView.builder(
                               scrollDirection: Axis.vertical,
                               shrinkWrap: true,
-                              itemCount: 1,
+                              itemCount: snapshot.data!.docs.length,
                               itemBuilder: (context, index) {
-                                print(snapshot.data);
+                                print(snapshot.data!.docs.length);
                                 DocumentSnapshot doc =
                                     snapshot.data!.docs[index];
-                                // print("Doc ID");
-                                // print(doc.id);
-                                // print("Doc length");
-                                // print(doc['requirement_satisfy'].length);
-                                // for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                                //   if (snapshot.data!.docs[index]['requirement_satisfy']
-                                //           .length >
-                                //       0) header = true;
-                                // }
                                 return Column(children: [
                                   // header ? Text("My Requirements")  : SizedBox(width: 0),
+                                  doc['requirement_satisfy'].length == 0
+                                      ? Container()
+                                      : ListView.builder(
+                                          scrollDirection: Axis.vertical,
+                                          shrinkWrap: true,
+                                          itemCount:
+                                              doc['requirement_satisfy'].length,
+                                          itemBuilder: (context, idx) {
+                                            //print(snapshot.data!.docs.length);
 
-                                  ListView.builder(
-                                      scrollDirection: Axis.vertical,
-                                      shrinkWrap: true,
-                                      itemCount:
-                                          doc['requirement_satisfy'].length,
-                                      itemBuilder: (context, idx) {
-                                        //print(snapshot.data!.docs.length);
-
-                                        return Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2.1,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height /
-                                              5.9,
-                                          child: Card(
-                                            margin: EdgeInsets.all(
-                                                MediaQuery.of(context)
-                                                        .size
-                                                        .height /
-                                                    80),
-                                            elevation: 3,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            color: Colors.white,
-                                            child: InkWell(
-                                              onTap: () {},
-                                              child: Row(
-                                                children: [
-                                                  Expanded(
-                                                    flex: 2,
-                                                    child: Column(
-                                                      ////////////////////////////////////////////
-                                                      children: [
-                                                        Padding(
-                                                          padding: EdgeInsets.only(
-                                                              top: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height /
-                                                                  30),
-                                                          child: Padding(
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .only(),
-                                                              child: Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceAround,
-                                                                  children: [
-                                                                    Column(
+                                            return Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  2.1,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  5.9,
+                                              child: Card(
+                                                margin: EdgeInsets.all(
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .height /
+                                                        80),
+                                                elevation: 3,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                color: Colors.white,
+                                                child: InkWell(
+                                                  onTap: () {},
+                                                  child: Row(
+                                                    children: [
+                                                      Expanded(
+                                                        flex: 2,
+                                                        child: Column(
+                                                          ////////////////////////////////////////////
+                                                          children: [
+                                                            Padding(
+                                                              padding: EdgeInsets.only(
+                                                                  top: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .height /
+                                                                      30),
+                                                              child: Padding(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .only(),
+                                                                  child: Row(
                                                                       mainAxisAlignment:
                                                                           MainAxisAlignment
-                                                                              .start,
+                                                                              .spaceAround,
                                                                       children: [
                                                                         Column(
-                                                                            children: [
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.start,
+                                                                          children: [
+                                                                            Column(children: [
                                                                               Text("Manufacturer Email:"),
                                                                               Text(
                                                                                 doc['requirement_satisfy'][idx]['email'],
@@ -184,11 +176,8 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                                                                                 ),
                                                                               )
                                                                             ]),
-                                                                        const Spacing(),
-                                                                        Row(
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.spaceAround,
-                                                                            children: [
+                                                                            const Spacing(),
+                                                                            Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
                                                                               Text(
                                                                                 "In Stock: ",
                                                                                 style: TextStyle(
@@ -224,45 +213,40 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                                                                                 ),
                                                                               ),
                                                                             ]),
-                                                                      ],
-                                                                    ),
-                                                                    FlatButton(
-                                                                        color: Colors
-                                                                            .green,
-                                                                        onPressed:
-                                                                            () {
-                                                                          setState(
-                                                                              () {
-                                                                            String
-                                                                                accepted_uid =
-                                                                                doc['requirement_satisfy'][idx]['uid'];
-                                                                            print(accepted_uid);
+                                                                          ],
+                                                                        ),
+                                                                        FlatButton(
+                                                                            color: Colors
+                                                                                .green,
+                                                                            onPressed:
+                                                                                () {
+                                                                              setState(() {
+                                                                                String accepted_uid = doc['requirement_satisfy'][idx]['uid'];
+                                                                                print(accepted_uid);
 
-                                                                            FirebaseFirestore.instance.collection("Users").doc(accepted_uid).update({
-                                                                              "Count": FieldValue.increment(1),
-                                                                            });
-                                                                            FirebaseFirestore.instance.collection("requirements").doc(doc.id).delete();
-                                                                          });
-                                                                        },
-                                                                        child:
-                                                                            Text(
-                                                                          "Order",
-                                                                          style: AppStyle.bodyText.copyWith(
-                                                                              color: Colors.white,
-                                                                              fontSize: 16),
-                                                                        )),
-                                                                  ])),
+                                                                                FirebaseFirestore.instance.collection("Users").doc(accepted_uid).update({
+                                                                                  "Count": FieldValue.increment(1),
+                                                                                });
+                                                                                FirebaseFirestore.instance.collection("requirements").doc(doc.id).delete();
+                                                                              });
+                                                                            },
+                                                                            child:
+                                                                                Text(
+                                                                              "Order",
+                                                                              style: AppStyle.bodyText.copyWith(color: Colors.white, fontSize: 16),
+                                                                            )),
+                                                                      ])),
+                                                            ),
+                                                          ],
+                                                          //////////////////////////////////////////////////////////////////////////
                                                         ),
-                                                      ],
-                                                      //////////////////////////////////////////////////////////////////////////
-                                                    ),
+                                                      ),
+                                                    ],
                                                   ),
-                                                ],
+                                                ),
                                               ),
-                                            ),
-                                          ),
-                                        );
-                                      }),
+                                            );
+                                          }),
                                 ]);
                               });
 

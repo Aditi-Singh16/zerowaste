@@ -413,7 +413,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     userModel.Coupon4 = false;
     userModel.addr = '';
     userModel.phone = '';
-    userModel.wallet = 0;
+    userModel.wallet = 0.0;
 
     DataBaseHelper dataBaseHelper = DataBaseHelper.instance;
 
@@ -429,7 +429,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       'Coupon3': "0",
       'Coupon4': "0",
       'addr': '',
-      'wallet': 0
     });
 
     await firebaseFirestore.collection("Users").doc(user.uid).set({
@@ -444,7 +443,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       'Coupon3': false,
       'Coupon4': false,
       'addr': '',
-      'wallet': 0
+      'wallet': 0.0
     });
     Fluttertoast.showToast(msg: "Account created successfully :) ");
     print(userModel.name);
