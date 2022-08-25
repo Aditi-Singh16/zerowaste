@@ -268,6 +268,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
         });
         
       });
+      await FirebaseFirestore.instance.collection("environment").doc(uid).set({
+      "air" :   (esv_ls![0] * w!),
+      "co2" : (esv_ls![2] * w!),
+      "tree" : (esv_ls![1] + w!) 
     });
       await FirebaseFirestore.instance.collection("environment").doc(uid).set({
       "air" :   (esv_ls![0] * w!),

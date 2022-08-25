@@ -258,6 +258,12 @@ class _DetailsState extends State<Details> {
           .doc(widget.uid)
           .update({couponname: false});
     }
+    if (widget.isResell == true) {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(widget.manufacturerid)
+          .update({'wallet': amountw == 0 ? amountd : amountw});
+    }
     // Toast.show("Pament success", context);
     showDialog(
       context: context,
@@ -1250,22 +1256,8 @@ class _DetailsState extends State<Details> {
                                                                 'Continue to Payment...'),
                                                             onPressed:
                                                                 () async {
-                                                              if (widget
-                                                                      .isResell ==
-                                                                  true) {
-                                                                await FirebaseFirestore
-                                                                    .instance
-                                                                    .collection(
-                                                                        'Users')
-                                                                    .doc(widget
-                                                                        .manufacturerid)
-                                                                    .update({
-                                                                  'wallet': amountw ==
-                                                                          0
-                                                                      ? amountw
-                                                                      : amountd
-                                                                });
-                                                              }
+                                                              print(widget
+                                                                  .isResell);
 
                                                               if (phone_number !=
                                                                       null &&
