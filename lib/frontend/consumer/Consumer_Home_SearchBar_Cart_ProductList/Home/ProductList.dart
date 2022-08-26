@@ -33,9 +33,9 @@ class _IndividualCategoryProductListState extends State<IndividualCategoryProduc
   List<int> cat5 = [1, 1, 1];
   List<int> cat6 = [1, 1, 1];
   List<int> cat7 = [1, 1, 1];
-  List<int>? esv_ls;
+  List<int> esv_ls = [];
 
-  void setEsv() {
+  void setEsv(String category) {
     if (category == "Books") {
       esv_ls = cat1;
     } else if (category == "Cotton Clothes") {
@@ -74,28 +74,24 @@ class _IndividualCategoryProductListState extends State<IndividualCategoryProduc
           children: [
             const Spacing(),
             const Spacing(),
-            Column(
-              children: [
-                Text('Environment Saving Values(per 100gm)'),
-                ClipOval(
-                  child: SizedBox.fromSize(
-                    size: Size.fromRadius(
-                        MediaQuery.of(context).size.width *
-                            0.1), // Image radius
-                    child: Image.network(
-                        'https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/esv%20img%2F11zon_cropped.png?alt=media&token=72d9009f-c528-4fd5-a638-e933dffee8f9',
-                        fit: BoxFit.cover),
-                  ),
-                ),
-                Text("Air Pollution"),
-                Text(
-                  (esv_ls![0]).toString() +
-                      " aqi of Air",
-                  style: TextStyle(
-                      fontSize: width * 0.035,
-                      color: Colors.white),
-                ),
-              ],
+            Text('Environment Saving Values(per 100gm)'),
+            ClipOval(
+              child: SizedBox.fromSize(
+                size: Size.fromRadius(
+                    MediaQuery.of(context).size.width *
+                        0.1), // Image radius
+                child: Image.network(
+                    'https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/esv%20img%2F11zon_cropped.png?alt=media&token=72d9009f-c528-4fd5-a638-e933dffee8f9',
+                    fit: BoxFit.cover),
+              ),
+            ),
+            Text("Air Pollution"),
+            Text(
+              (esv_ls[0]).toString() +
+                  " aqi of Air",
+              style: TextStyle(
+                  fontSize: width * 0.035,
+                  color: Colors.white),
             ),
             Spacer(),
             Column(
@@ -112,7 +108,7 @@ class _IndividualCategoryProductListState extends State<IndividualCategoryProduc
                 ),
                 Text("Tree"),
                 Text(
-                    (((esv_ls![1])).toString())
+                    (esv_ls[1]).toString()
                             .substring(0, 1) +
                         " Tree saved",
                     style: TextStyle(
@@ -145,7 +141,7 @@ class _IndividualCategoryProductListState extends State<IndividualCategoryProduc
             ),
           ],
         ),
-FutureBuilder<QuerySnapshot>(
+        FutureBuilder<QuerySnapshot>(
 future: FirebaseFirestore.instance
 .collection('products')
 .where('categories', isEqualTo: widget.category)
@@ -292,7 +288,7 @@ return Container(
             ),
           ),
           Expanded(
-            flex: 2,
+            flex: 3,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
