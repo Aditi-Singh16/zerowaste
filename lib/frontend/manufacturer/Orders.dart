@@ -71,6 +71,29 @@ class ManuFactureOrders extends StatelessWidget {
                                         SizedBox(height: 10),
                                         Text("Phone Number: " +
                                             doc.data()!['phone_number']),
+                                        ElevatedButton(onPressed: ()async{
+                                          var numer =0.0;
+                                          var deno = 0.0;
+                                            var returned = await FirebaseFirestore.instance
+                                                                  .collectionGroup('Orders')
+                                                                  .get();
+                                            returned.docs.forEach((element) {
+                                              //print(element.data()!['Quantity']);
+                                              numer = numer+element.data()!['Quantity'];
+                                            });
+                                              print(numer);
+                                            var bought = await FirebaseFirestore.instance
+                                                                  .collectionGroup('Orders')
+                                                                  .where("is_return",isEqualTo: true)
+                                                                  .get();
+                                             bought.docs.forEach((element) {
+                                              //print(element.data()!['Quantity']);
+                                              deno = deno+element.data()!['Quantity'];
+                                            });        
+                                             print(deno);
+
+                                                  
+                                        }, child: Text('Return Rate'))
                                       ],
                                     ),
                                   ),

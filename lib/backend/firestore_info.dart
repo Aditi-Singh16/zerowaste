@@ -116,4 +116,35 @@ class FirebaseData {
 
     return res.docs.length;
   }
+
+  Future<dynamic> getReturnRate(uid) async {
+    var totalProducts = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(uid)
+        .collection('Orders')
+        .get();
+
+    var bought = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(uid)
+        .collection('Orders')
+        .where('is_return', isEqualTo: true)
+        .get();
+    double soldquantity = 0;
+    totalProducts.docs.forEach((element) {
+      soldquantity = soldquantity + element['Quantity'];
+    });
+    var res1 = await FirebaseFirestore.instance
+        .collectionGroup('Orders')
+        .where('manufacturerId', isEqualTo: uid)
+        .where('is_return', isEqualTo: true)
+        .get();
+    double returnquantity = 0;
+    res1.docs.forEach((element) {
+      returnquantity = returnquantity + element['Quantity'];
+    });
+    double value = returnquantity / (returnquantity + soldquantity) * 100;
+    print(value);
+    return value;
+  }
 }
