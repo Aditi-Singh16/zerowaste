@@ -27,51 +27,71 @@ class FirebaseData {
     }
   }
 
-  Future<num> getManufactureSoldCount()async{
+  Future<num> getManufactureSoldCount() async {
     var uid = await HelperFunctions().readUserIdPref();
-    var res = await FirebaseFirestore.instance.collectionGroup('Orders')
-                    .where('manufactureId',isEqualTo: uid)
-                    .get();
+    print(uid);
+    var res = await FirebaseFirestore.instance
+        .collectionGroup('Orders')
+        .where('manufacturerId', isEqualTo: uid)
+        .get();
     num quantity = 0;
     res.docs.forEach((element) {
-      quantity = quantity+element['Quantity'];
+      quantity = quantity + element['Quantity'];
     });
     return quantity;
   }
 
-  Future<int> getManufactureCustomerCount()async{
+  Future<int> getManufactureCustomerCount() async {
     var uid = await HelperFunctions().readUserIdPref();
     var res = await FirebaseFirestore.instance
-                    .collectionGroup('Orders')
-                    .where('manufacturerId',isEqualTo: uid)
-                    .get();
-      return res.docs.length;
+        .collectionGroup('Orders')
+        .where('manufacturerId', isEqualTo: uid)
+        .get();
+    return res.docs.length;
   }
 
-  Future<int> getManufacureReturnCount()async{
+  Future<int> getManufacureReturnCount() async {
     var uid = await HelperFunctions().readUserIdPref();
     var res = await FirebaseFirestore.instance
-                    .collectionGroup('Orders')
-                    .where('manufacturerId',isEqualTo: uid)
-                    .where('is_return',isEqualTo: true)
-                    .get();
+        .collectionGroup('Orders')
+        .where('manufacturerId', isEqualTo: uid)
+        .where('is_return', isEqualTo: true)
+        .get();
+
+    print(res.docs.length);
+    return res.docs.length;
+  }
+
+  Future<int> getManufactureDonationCount() async {
+    var email = await HelperFunctions().readEmailPref();
+    var uid = await HelperFunctions().readUserIdPref();
+    var res =
+        await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+    int count = 0;
+    if (res['accepted_requests'].length > 0) {
+      return res['accepted_requests'].length;
+    } else {
+      return 0;
+    }
+  }
+
+  Future<int> getProductSoldCount() async {
+    var uid = await HelperFunctions().readUserIdPref();
+    var res = await FirebaseFirestore.instance
+        .collectionGroup('Orders')
+        .where('manufacturerId', isEqualTo: uid)
+        .get();
 
     return res.docs.length;
   }
 
-  Future<int> getManufactureDonationCount()async{
-    var email = await HelperFunctions().readEmailPref();
+  Future<int> getProductReturnCount() async {
+    var uid = await HelperFunctions().readUserIdPref();
     var res = await FirebaseFirestore.instance
-                    .collection('Users')
-                    .where("accepted_requests",isNull: false).get();
-    int count=0;
-    res.docs.forEach((element) {
-      element['accepted_requests'].forEach((ele){
-        if(ele['email']== email ){
-          count=count+1;
-        } 
-      });
-    });
-    return count;            
+        .collection('returns')
+        .where('manufacturerId', isEqualTo: uid)
+        .get();
+
+    return res.docs.length;
   }
 }
