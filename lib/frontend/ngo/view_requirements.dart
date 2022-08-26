@@ -205,7 +205,7 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                                                                                 ),
                                                                               ),
                                                                               Text(
-                                                                                doc['product_name'],
+                                                                                doc['requirement_satisfy'][idx]['product_name'],
                                                                                 style: TextStyle(
                                                                                   fontSize: MediaQuery.of(context).size.height / 50,
                                                                                   color: Colors.black,
