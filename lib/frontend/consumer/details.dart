@@ -73,7 +73,7 @@ class _DetailsState extends State<Details> {
 
   List<int>? esv_ls;
   int? weight;
-  double? w;
+  double w = 0;
   //get weight from product collection using product id
   void getweight() async {
     await FirebaseFirestore.instance
@@ -229,7 +229,8 @@ class _DetailsState extends State<Details> {
       "category": widget.category,
       "Desc": widget.description,
       "weight": w,
-      "is_resell": true
+      "is_resell": true,
+      "uid": uid
     });
 
     await FirebaseFirestore.instance
@@ -474,6 +475,23 @@ class _DetailsState extends State<Details> {
                             Text(widget.q.toString(),
                                 style: AppStyle.text
                                     .copyWith(color: Colors.white)),
+                            Container(
+                              child: Row(
+                                children: [
+                                  Text("Sold by: ",
+                                      style: AppStyle.text
+                                          .copyWith(color: Colors.white)),
+                                  const Spacing(),
+                                  widget.isResell
+                                      ? Text("Consumer",
+                                          style: AppStyle.text
+                                              .copyWith(color: Colors.white))
+                                      : Text("Manufacturer",
+                                          style: AppStyle.text
+                                              .copyWith(color: Colors.white))
+                                ],
+                              ),
+                            )
                           ],
                         ),
                         const Spacing(),
@@ -1288,33 +1306,15 @@ class _DetailsState extends State<Details> {
                                                                         phone_number,
                                                                     "address":
                                                                         address,
-                                                                    "image":
-                                                                        widget
-                                                                            .image
+                                                                    "image": widget
+                                                                        .image,
+                                                                    "uid": uid,
+                                                                    "Desc": widget
+                                                                        .description,
+                                                                    "weight": w,
+                                                                    "is_resell":
+                                                                        true,
                                                                   });
-                                                                  List<int>?
-                                                                      esv_ls;
-                                                                  int? weight;
-                                                                  double? w;
-                                                                  //get weight from product collection using product id
-                                                                  void
-                                                                      getweight() async {
-                                                                    await FirebaseFirestore
-                                                                        .instance
-                                                                        .collection(
-                                                                            'products')
-                                                                        .doc(widget
-                                                                            .productid)
-                                                                        .get()
-                                                                        .then(
-                                                                            (value) {
-                                                                      setState(
-                                                                          () {
-                                                                        w = value[
-                                                                            'weight'];
-                                                                      });
-                                                                    });
-                                                                  }
 
                                                                   await FirebaseFirestore
                                                                       .instance

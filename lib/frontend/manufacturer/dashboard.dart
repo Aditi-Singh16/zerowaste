@@ -12,6 +12,8 @@ import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:zerowaste/backend/firestore_info.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
+import 'package:zerowaste/frontend/manufacturer/Analytics.dart';
+import 'package:zerowaste/frontend/manufacturer/CustomerAnalytics.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -21,6 +23,46 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  num? sales;
+  num? customers;
+  num? returns;
+  num? donations;
+  getSales() async {
+    print("hii");
+    var val = await FirebaseData().getManufactureSoldCount();
+    print(val);
+    setState(() {
+      sales = val;
+    });
+  }
+
+  getCustomers() async {
+    print("hii");
+    var val = await FirebaseData().getManufactureCustomerCount();
+    print(val);
+    setState(() {
+      customers = val;
+    });
+  }
+
+  getReturns() async {
+    print("hii");
+    var val = await FirebaseData().getManufacureReturnCount();
+    print(val);
+    setState(() {
+      returns = val;
+    });
+  }
+
+  getDonations() async {
+    print("hii");
+    var val = await FirebaseData().getManufactureDonationCount();
+    print(val);
+    setState(() {
+      donations = val;
+    });
+  }
+
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
   String itemvalue = 'Cotton Clothes';
@@ -118,6 +160,10 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   void initState() {
+    getSales();
+    getCustomers();
+    getReturns();
+    getDonations();
     var start = int.parse(DateFormat.M().format(DateTime.now()));
     monthvalue = months[start - 1];
     monthsAct = months.sublist(0, start - 1);
@@ -132,7 +178,7 @@ class _DashboardState extends State<Dashboard> {
       this.loggedInUser = UserModel.fromMap(value.data());
       setState(() {});
     });
-
+//
     super.initState();
   }
 
@@ -147,6 +193,125 @@ class _DashboardState extends State<Dashboard> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(
+              height: 30,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Column(
+                  children: [
+                    Card(
+                        child: Container(
+                      color: Color(0xff3698F3),
+                      width: MediaQuery.of(context).size.width / 3,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              sales.toString(),
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Total Sales",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+                    SizedBox(height: 20),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => CustomerAnalytics()));
+                      },
+                      child: Card(
+                          child: Container(
+                        color: Color(0xffE05A71),
+                        width: MediaQuery.of(context).size.width / 3,
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                customers.toString(),
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                "Total Customers",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )),
+                    )
+                  ],
+                ),
+                Column(
+                  children: [
+                    Card(
+                        child: Container(
+                      color: Color(0xffC87FFC),
+                      width: MediaQuery.of(context).size.width / 3,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              returns.toString(),
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Total Returns",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+                    SizedBox(height: 20),
+                    Card(
+                        child: Container(
+                      color: Color(0xffFE9E87),
+                      width: MediaQuery.of(context).size.width / 3,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              donations.toString(),
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Total Donations",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ))
+                  ],
+                ),
+              ],
+            ),
+            Divider(
+              thickness: 5,
+            ),
             Padding(
               padding: const EdgeInsets.only(top: 10),
               child: Row(
@@ -339,15 +504,24 @@ class _DashboardState extends State<Dashboard> {
 
                       case ConnectionState.active:
                         return Center(
-                            child: Container(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.4,
-                                width: MediaQuery.of(context).size.width * 0.9,
-                                child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: snapshot.data!.docs.length,
-                                    itemBuilder: (context, i) {
-                                      return Card(
+                          child: Container(
+                              height: MediaQuery.of(context).size.height * 0.4,
+                              width: MediaQuery.of(context).size.width * 0.9,
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: snapshot.data!.docs.length,
+                                  itemBuilder: (context, i) {
+                                    return InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ManuFacture(
+                                                        ProdctId: snapshot
+                                                                .data!.docs[i]
+                                                            ['productId'])));
+                                      },
+                                      child: Card(
                                         child: ListTile(
                                           leading: SvgPicture.asset(
                                               'assets/icons/${snapshot.data!.docs[i]['categories']}.svg',
@@ -365,8 +539,10 @@ class _DashboardState extends State<Dashboard> {
                                                 BorderRadius.circular(10),
                                             borderSide: BorderSide(
                                                 color: Colors.white)),
-                                      );
-                                    })));
+                                      ),
+                                    );
+                                  })),
+                        );
 
                       case ConnectionState.done:
                         return Container();

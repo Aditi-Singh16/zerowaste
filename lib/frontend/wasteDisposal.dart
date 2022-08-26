@@ -13,6 +13,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'dart:math' show cos, sqrt, asin;
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:marker_icon/marker_icon.dart';
+import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 class WasteDisposal extends StatefulWidget {
   String category;
@@ -22,6 +23,9 @@ class WasteDisposal extends StatefulWidget {
 }
 
 class _WasteDisposalState extends State<WasteDisposal> {
+  String uid = FirebaseAuth.instance.currentUser!.uid;
+  HelperFunctions _helperFunctions = HelperFunctions();
+
   LatLng _initialcameraposition = LatLng(20.5937, 78.9629);
   late GoogleMapController _controller;
   Location _location = Location();
@@ -74,7 +78,7 @@ class _WasteDisposalState extends State<WasteDisposal> {
         CameraUpdate.newCameraPosition(
           CameraPosition(
               target: LatLng(l.latitude as double, l.longitude as double),
-              zoom: 15),
+              zoom: 17),
         ),
       );
       setState(() {
@@ -155,9 +159,13 @@ class _WasteDisposalState extends State<WasteDisposal> {
                     BitmapDescriptor.hueGreen),
                 infoWindow: InfoWindow(
                     onTap: () async {
+                      String username = await _helperFunctions.readNamePref();
+                      String userPhone = await _helperFunctions.readPhonePref();
+                      String userAddress =
+                          await _helperFunctions.readAddressPref();
                       final Email email = Email(
                         body:
-                            'Hi, I would like to connect with your recycling unit and access pickup service for my products which I wish to recycle!',
+                            'Hi, I $username would like to connect with your recycling unit and access pickup service for my products which I wish to recycle!\n\nPhone Number: $userPhone\nAddress: $userAddress',
                         subject:
                             'Connect with ${snapshot.data!.docs[i]['name']}',
                         recipients: [snapshot.data!.docs[i]['email']],
