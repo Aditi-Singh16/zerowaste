@@ -95,6 +95,28 @@ class FirebaseData {
     return res.docs.length;
   }
 
+  Future<int> getUserOrdersCount(customer) async {
+    var uid = await HelperFunctions().readUserIdPref();
+    var res = await FirebaseFirestore.instance
+        .collectionGroup('Orders')
+        .where('manufacturerId', isEqualTo: uid)
+        .where('uid', isEqualTo: customer)
+        .get();
+
+    return res.docs.length;
+  }
+
+  Future<int> getUserReturnCount(customer) async {
+    var uid = await HelperFunctions().readUserIdPref();
+    var res = await FirebaseFirestore.instance
+        .collection('returns')
+        .where('manufacturerId', isEqualTo: uid)
+        .where('userId', isEqualTo: customer)
+        .get();
+
+    return res.docs.length;
+  }
+
   Future<dynamic> getReturnRate(uid) async {
     var totalProducts = await FirebaseFirestore.instance
         .collection('Users')
@@ -103,11 +125,11 @@ class FirebaseData {
         .get();
 
     var bought = await FirebaseFirestore.instance
-                        .collection('Users')
-                        .doc(uid)
-                        .collection('Orders')
-                        .where('is_return',isEqualTo: true)
-                        .get();
+        .collection('Users')
+        .doc(uid)
+        .collection('Orders')
+        .where('is_return', isEqualTo: true)
+        .get();
     double soldquantity = 0;
     totalProducts.docs.forEach((element) {
       soldquantity = soldquantity + element['Quantity'];

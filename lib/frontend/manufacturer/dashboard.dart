@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:zerowaste/backend/firestore_info.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
 import 'package:zerowaste/frontend/manufacturer/Analytics.dart';
+import 'package:zerowaste/frontend/manufacturer/CustomerAnalytics.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -224,29 +225,35 @@ class _DashboardState extends State<Dashboard> {
                       ),
                     )),
                     SizedBox(height: 20),
-                    Card(
-                        child: Container(
-                      color: Color(0xffE05A71),
-                      width: MediaQuery.of(context).size.width / 3,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              customers.toString(),
-                              style: TextStyle(color: Colors.white),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => CustomerAnalytics()));
+                      },
+                      child: Card(
+                          child: Container(
+                        color: Color(0xffE05A71),
+                        width: MediaQuery.of(context).size.width / 3,
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                customers.toString(),
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "Total Customers",
-                              style: TextStyle(color: Colors.white),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                "Total Customers",
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ))
+                          ],
+                        ),
+                      )),
+                    )
                   ],
                 ),
                 Column(
