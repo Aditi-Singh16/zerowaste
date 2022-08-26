@@ -94,4 +94,26 @@ class FirebaseData {
 
     return res.docs.length;
   }
+
+  Future<int> getUserOrdersCount(customer) async {
+    var uid = await HelperFunctions().readUserIdPref();
+    var res = await FirebaseFirestore.instance
+        .collectionGroup('Orders')
+        .where('manufacturerId', isEqualTo: uid)
+        .where('uid', isEqualTo: customer)
+        .get();
+
+    return res.docs.length;
+  }
+
+  Future<int> getUserReturnCount(customer) async {
+    var uid = await HelperFunctions().readUserIdPref();
+    var res = await FirebaseFirestore.instance
+        .collection('returns')
+        .where('manufacturerId', isEqualTo: uid)
+        .where('userId', isEqualTo: customer)
+        .get();
+
+    return res.docs.length;
+  }
 }

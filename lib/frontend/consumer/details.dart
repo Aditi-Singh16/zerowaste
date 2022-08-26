@@ -474,6 +474,23 @@ class _DetailsState extends State<Details> {
                             Text(widget.q.toString(),
                                 style: AppStyle.text
                                     .copyWith(color: Colors.white)),
+                            Container(
+                              child: Row(
+                                children: [
+                                  Text("Sold by: ",
+                                      style: AppStyle.text
+                                          .copyWith(color: Colors.white)),
+                                  const Spacing(),
+                                  widget.isResell
+                                      ? Text("Consumer",
+                                          style: AppStyle.text
+                                              .copyWith(color: Colors.white))
+                                      : Text("Manufacturer",
+                                          style: AppStyle.text
+                                              .copyWith(color: Colors.white))
+                                ],
+                              ),
+                            )
                           ],
                         ),
                         const Spacing(),
