@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:zerowaste/frontend/CompanyAnalysis.dart';
+import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/analytics.dart';
 import 'package:zerowaste/frontend/consumer/Orders.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
 import 'package:zerowaste/frontend/consumer/consumer_tabbar.dart';
@@ -26,7 +26,7 @@ class _ConsumerNavbarState extends State<ConsumerNavbar> {
     // InputCategory(),
     Company(),
     YourOrders(),
-    const ProfilePage(),
+    const ProfilePage()
   ];
 
   @override

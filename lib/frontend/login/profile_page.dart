@@ -8,10 +8,12 @@ import 'package:zerowaste/backend/local_data.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/analytics.dart';
 import 'package:zerowaste/frontend/consumer/color.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
 import 'package:zerowaste/frontend/consumer/style.dart';
 import 'package:zerowaste/frontend/login/login.dart';
+import 'package:zerowaste/frontend/ngo/analytics_ngo.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -156,6 +158,16 @@ class _ProfilePageState extends State<ProfilePage> {
                 appBar: AppBar(
                   title: Text("Profile"),
                   backgroundColor: AppColor.secondary,
+                  actions: [
+                    IconButton(
+                        onPressed: () {
+                          (type == 'Consumer')
+                              ? Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => ConsumerAnalytics()))
+                              : null;
+                        },
+                        icon: Icon(Icons.auto_graph_rounded))
+                  ],
                 ),
                 body: SingleChildScrollView(
                     child: Column(children: [

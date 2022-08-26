@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
+import 'package:zerowaste/frontend/consumer/color.dart';
 import 'package:zerowaste/frontend/consumer/learning_modules/learningMod.dart';
 import 'package:zerowaste/frontend/consumer/return.dart';
 import 'package:zerowaste/frontend/consumerNavbar.dart';
@@ -108,7 +109,7 @@ class _YourOrdersState extends State<YourOrders> {
                     appBar: AppBar(
                       title: Text("Your Orders"),
                       automaticallyImplyLeading: false,
-                      backgroundColor: Color(0xff265D80),
+                      backgroundColor: AppColor.secondary,
                       centerTitle: true,
                     ),
                     body: ListView.builder(
@@ -277,9 +278,8 @@ class _YourOrdersState extends State<YourOrders> {
                                                                   .doc(docId)
                                                                   .set(
                                                                       {
-                                                                    ''
-                                                                            'name':
-                                                                        doc['ProductName'],
+                                                                    'name': doc[
+                                                                        'ProductName'],
                                                                     'Desc': doc[
                                                                         'Desc'],
                                                                     'image': doc[
