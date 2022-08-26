@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:zerowaste/frontend/inputDisposalCategory.dart';
 import 'package:zerowaste/frontend/login/profile_page.dart';
+import 'package:zerowaste/frontend/manufacturer/Analytics.dart';
 import 'package:zerowaste/frontend/manufacturer/Orders.dart';
 import 'package:zerowaste/frontend/manufacturer/addProduct.dart';
 import 'package:zerowaste/frontend/manufacturer/dashboard.dart';
@@ -24,6 +25,7 @@ class _ManufacturerNavbarState extends State<ManufacturerNavbar> {
     OrdersTabBar(),
     ProductsTabBar(),
     InputCategory(),
+    // ManufactureAnalytics(),
     ProfilePage(),
   ];
 
@@ -120,6 +122,25 @@ class _ManufacturerNavbarState extends State<ManufacturerNavbar> {
                     size: MediaQuery.of(context).size.height / 24,
                   ),
           ),
+          // IconButton(
+          //   enableFeedback: false,
+          //   onPressed: () {
+          //     setState(() {
+          //       pageIndex = 4;
+          //     });
+          //   },
+          //   icon: pageIndex == 4
+          //       ? Icon(
+          //           Icons.analytics,
+          //           color: Colors.black,
+          //           size: MediaQuery.of(context).size.height / 24,
+          //         )
+          //       : Icon(
+          //           Icons.analytics_outlined,
+          //           color: Colors.black,
+          //           size: MediaQuery.of(context).size.height / 24,
+          //         ),
+          // ),
           IconButton(
             enableFeedback: false,
             onPressed: () {
