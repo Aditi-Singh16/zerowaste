@@ -219,7 +219,7 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                                                                             color: Colors
                                                                                 .green,
                                                                             onPressed:
-                                                                                () {
+                                                                                () async {
                                                                               setState(() {
                                                                                 String accepted_uid = doc['requirement_satisfy'][idx]['uid'];
                                                                                 print(accepted_uid);
@@ -233,8 +233,12 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                                                                                     }
                                                                                   ])
                                                                                 });
+
                                                                                 FirebaseFirestore.instance.collection("requirements").doc(doc.id).delete();
                                                                               });
+                                                                              await FirebaseFirestore.instance.collection("Users").doc(uid).set({
+                                                                                "donor": FieldValue.increment(1),
+                                                                              }, SetOptions(merge: true));
                                                                             },
                                                                             child:
                                                                                 Text(
