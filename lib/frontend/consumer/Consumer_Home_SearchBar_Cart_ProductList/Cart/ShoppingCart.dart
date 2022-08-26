@@ -226,7 +226,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
           "category": doc['categories'],
           "Desc": doc['description'],
           "weight": doc['weight'],
-          "is_resell": true
+          "is_resell": true,
+          "uid": uid
         });
       });
     });
@@ -1558,7 +1559,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                                         "orderId":
                                                                             docId,
                                                                         "is_return":
-                                                                            false
+                                                                            false,
+                                                                        "uid":
+                                                                            uid
                                                                       });
                                                                     });
                                                                   });
