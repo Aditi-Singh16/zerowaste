@@ -74,15 +74,15 @@ class _Company extends State<Company> {
     });
   }
 
-  getTotalResell() async {
-    var resc = await FirebaseData().CompanyConsumerToConsumer();
-    setState(() {
-      resell = resc;
-      //  prod_sold =
-      // print("hiiiiiiiiiiiiiiii");
-      // print(totalNGO);
-    });
-  }
+  // getTotalResell() async {
+  //   var resc = await FirebaseData().CompanyConsumerToConsumer();
+  //   setState(() {
+  //     resell = resc;
+  //     //  prod_sold =
+  //     // print("hiiiiiiiiiiiiiiii");
+  //     // print(totalNGO);
+  //   });
+  // }
 
   getAir() async {
     var resa = await FirebaseData().CompanyESVAir();
@@ -120,7 +120,7 @@ class _Company extends State<Company> {
     getTotalManu();
     getTotalNGO();
     getTotalProds();
-    getTotalResell();
+    //getTotalResell();
     getAir();
     getTree();
     getCo2();
@@ -133,247 +133,320 @@ class _Company extends State<Company> {
     return Scaffold(
         appBar: AppBar(title: Text("Overall Analytics")),
         body: Center(
-          child: ListView(children: [
-            SizedBox(
-              height: 30,
-            ),
+            child: ListView(children: [
+          SizedBox(
+            height: 150,
+          ),
+          Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
             Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Row(
-                  children: [
-                    Card(
-                        child: Container(
-                      color: Color(0xff3698F3),
-                      width: MediaQuery.of(context).size.width / 3,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              (totConsumer + totManu + totalNGO).toString(),
-                              style: TextStyle(color: Colors.white),
-                            ),
+                InkWell(
+                  child: Card(
+                      child: Container(
+                    color: Color(0xff3698F3),
+                    width: MediaQuery.of(context).size.width / 1.6,
+                    height: MediaQuery.of(context).size.height / 10,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Total Users:-  " +
+                              (totConsumer + totalNGO + totManu).toString(),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "Total Users ",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
-                    SizedBox(height: 20),
-                    Card(
-                        child: Container(
-                      color: Color(0xffE05A71),
-                      width: MediaQuery.of(context).size.width / 3,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              totConsumer.toString(),
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "Total Consumers",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ))
-                  ],
+                        ),
+                      ],
+                    ),
+                  )),
+                  onTap: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) => Scaffold(
+                                    body: Center(
+                                  child: Column(children: [
+                                    SizedBox(height: 240),
+                                    Card(
+                                        child: Container(
+                                      color: Color(0xff3698F3),
+                                      width: MediaQuery.of(context).size.width /
+                                          1.6,
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              10,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Total Consumers:-  " +
+                                                totConsumer.toString(),
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 22,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )),
+                                    SizedBox(height: 20),
+                                    Card(
+                                        child: Container(
+                                      color: Color(0xff3698F3),
+                                      width: MediaQuery.of(context).size.width /
+                                          1.6,
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              10,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Total Manufacturers:-  " +
+                                                totManu.toString(),
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 22,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )),
+                                    SizedBox(height: 20),
+                                    Card(
+                                        child: Container(
+                                      color: Color(0xff3698F3),
+                                      width: MediaQuery.of(context).size.width /
+                                          1.6,
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              10,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Total NGO:-  " +
+                                                totalNGO.toString(),
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 22,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )),
+                                  ]),
+                                ))));
+                  },
                 ),
-                Row(
-                  children: [
-                    Card(
-                        child: Container(
-                      color: Color(0xffC87FFC),
-                      width: MediaQuery.of(context).size.width / 3,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              totManu.toString(),
-                              style: TextStyle(color: Colors.white),
-                            ),
+                ///////
+                InkWell(
+                  child: Card(
+                      child: Container(
+                    color: Color(0xff3698F3),
+                    width: MediaQuery.of(context).size.width / 1.6,
+                    height: MediaQuery.of(context).size.height / 10,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Total Transactions:-  " +
+                              (prod_sold + resell).toString(),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "Total Manufacturer",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
-                    SizedBox(height: 20),
-                    Card(
-                        child: Container(
-                      color: Color(0xffFE9E87),
-                      width: MediaQuery.of(context).size.width / 3,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              totalNGO.toString(),
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "Total NGO Connected",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ))
-                  ],
+                        ),
+                      ],
+                    ),
+                  )),
+                  onTap: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) => Scaffold(
+                                    body: Center(
+                                  child: Column(children: [
+                                    SizedBox(height: 240),
+                                    Card(
+                                        child: Container(
+                                      color: Color(0xff3698F3),
+                                      width: MediaQuery.of(context).size.width /
+                                          1.6,
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              10,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Total Products Sold:-  " +
+                                                prod_sold.toString(),
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 22,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )),
+                                    SizedBox(height: 20),
+                                    Card(
+                                        child: Container(
+                                      color: Color(0xff3698F3),
+                                      width: MediaQuery.of(context).size.width /
+                                          1.6,
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              10,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Total Resell:-  " +
+                                                resell.toString(),
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 22,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )),
+                                  ]),
+                                ))));
+                  },
                 ),
-                Row(
-                  children: [
-                    Card(
-                        child: Container(
-                      color: Color(0xffC87FFC),
-                      width: MediaQuery.of(context).size.width / 3,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              prod_sold.toString(),
-                              style: TextStyle(color: Colors.white),
-                            ),
+
+                ///
+                ///
+                InkWell(
+                  child: Card(
+                      child: Container(
+                    color: Color(0xff3698F3),
+                    width: MediaQuery.of(context).size.width / 1.6,
+                    height: MediaQuery.of(context).size.height / 10,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Environment Saving Values",
+                          softWrap: true,
+                          overflow: TextOverflow.fade,
+                          maxLines: 2,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "Total Products Sold",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
-                    SizedBox(height: 20),
-                    Card(
-                        child: Container(
-                      color: Color(0xffFE9E87),
-                      width: MediaQuery.of(context).size.width / 3,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              resell.toString(),
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "Total Resell Products",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ))
-                  ],
-                ),
-                Row(
-                  children: [
-                    Card(
-                        child: Container(
-                      color: Color(0xffC87FFC),
-                      width: MediaQuery.of(context).size.width / 3,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              air.toString().substring(0, 4),
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "Environment Saving Values: Air",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
-                    SizedBox(height: 20),
-                    Card(
-                        child: Container(
-                      color: Color(0xffFE9E87),
-                      width: MediaQuery.of(context).size.width / 3,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              co2.toString().substring(0, 4),
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "Environment Saving Values: Co2",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ))
-                  ],
-                ),
-                Row(
-                  children: [
-                    Card(
-                        child: Container(
-                      color: Color(0xffC87FFC),
-                      width: MediaQuery.of(context).size.width / 3,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              tree.toString().substring(0, 4),
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "Environment Saving Values: Tree",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
-                  ],
+                        ),
+                      ],
+                    ),
+                  )),
+                  onTap: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) => Scaffold(
+                                    body: Center(
+                                  child: Column(children: [
+                                    SizedBox(height: 240),
+                                    Card(
+                                        child: Container(
+                                      color: Color(0xff3698F3),
+                                      width: MediaQuery.of(context).size.width /
+                                          1.6,
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              10,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "ESV Air:-  " +
+                                                air.toString() +
+                                                "aqi",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 22,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )),
+                                    SizedBox(height: 20),
+                                    Card(
+                                        child: Container(
+                                      color: Color(0xff3698F3),
+                                      width: MediaQuery.of(context).size.width /
+                                          1.6,
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              10,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "ESV Co2:-  " +
+                                                co2.toString() +
+                                                "ppm",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 22,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )),
+                                    SizedBox(height: 20),
+                                    Card(
+                                        child: Container(
+                                      color: Color(0xff3698F3),
+                                      width: MediaQuery.of(context).size.width /
+                                          1.6,
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              10,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "ESV Soil:-  " + tree.toString(),
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 22,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )),
+                                  ]),
+                                ))));
+                  },
                 ),
               ],
-            )
+            ),
+            //??/////////////////////////
           ]),
-        ));
+        ])));
   }
 }

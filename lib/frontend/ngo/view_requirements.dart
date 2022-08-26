@@ -229,8 +229,8 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                                                                                   "accepted_requests": FieldValue.arrayUnion([
                                                                                     {
                                                                                       "category": doc['category'],
-                                                                                      "quantity": doc['quantity'],
-                                                                                      "email":doc['requirement_satisfy'][idx]['email']
+                                                                                      "quantity": doc['quantity'].toString(),
+                                                                                      "email": doc['requirement_satisfy'][idx]['email']
                                                                                     }
                                                                                   ])
                                                                                 });

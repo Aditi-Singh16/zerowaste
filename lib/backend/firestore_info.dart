@@ -27,4 +27,122 @@ class FirebaseData {
       return [];
     }
   }
+
+  CompanyTotalManu() async {
+    var res = await FirebaseFirestore.instance
+        .collection("Users")
+        .where("type", isEqualTo: "Manufacturer")
+        .get();
+    return res.docs.length;
+  }
+
+  Future<int> CompanyTotalConsumer() async {
+    var res = await FirebaseFirestore.instance
+        .collection('Users')
+        .where('type', isEqualTo: "Consumer")
+        .get();
+    return res.docs.length;
+  }
+
+  CompanyTotalNGO() async {
+    var res = await FirebaseFirestore.instance
+        .collection("Users")
+        .where("type", isEqualTo: "NGO")
+        .get();
+    return res.docs.length;
+  }
+
+  CompanyTotalDonors() async {
+    //var email = await HelperFunctions().readEmailPref();
+    var res = await FirebaseFirestore.instance
+        .collection('Users')
+        .where("accepted_requests", isNotEqualTo: []).get();
+    int count = 0;
+    res.docs.forEach((element) {
+      element['accepted_requests'].forEach((ele) {
+        count = count + 1;
+      });
+    });
+    return count;
+  }
+
+  Future<int> CompanyConsumerToConsumer() async {
+    var uid = await HelperFunctions().readUserIdPref();
+    var res = await FirebaseFirestore.instance
+        .collectionGroup('Orders')
+        .where('is_resell', isEqualTo: false)
+        .get();
+
+    return res.docs.length;
+  }
+
+  CompanyESVAir() async {
+    double air = 0;
+
+    var res = await FirebaseFirestore.instance.collection('environment').get();
+
+    res.docs.forEach((element) {
+      if (element['air'] != null) {
+        air = air + element['air'];
+      }
+    });
+
+    return air;
+  }
+
+  CompanyESVTree() async {
+    double air = 0, tree = 0, co2 = 0;
+
+    var res = await FirebaseFirestore.instance.collection('environment').get();
+
+    res.docs.forEach((element) {
+      if (element['tree'] != null) {
+        tree = tree + element['tree'];
+      }
+    });
+
+    return tree;
+  }
+
+  CompanyESVCo2() async {
+    double air = 0, tree = 0, co2 = 0;
+
+    var res = await FirebaseFirestore.instance.collection('environment').get();
+
+    res.docs.forEach((element) {
+      print(element['co2']);
+
+      co2 = co2 + element['co2'];
+      print(co2);
+      print("for");
+    });
+    print("hiiii");
+    print(co2);
+    return co2;
+  }
+
+  TotalProds() async {
+    num quant = 0;
+    var res = await FirebaseFirestore.instance.collectionGroup("Orders").get();
+    res.docs.forEach((element) {
+      //print(element['co2']);
+
+      quant = quant + element['Quantity'];
+      print(quant);
+      print("Tot prod");
+      // print(co2);
+      // print("for");
+    });
+    return quant;
+  }
+
+  TotalUser() async {
+    var res =
+        await FirebaseFirestore.instance.collection('Users').snapshots().length;
+    return res;
+  }
 }
+  // CompanyUsersPerDay() async {
+  //    var res = Fireb
+  // }
+
