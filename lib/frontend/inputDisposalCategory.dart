@@ -26,13 +26,12 @@ class _InputCategoryState extends State<InputCategory> {
           DocumentSnapshot ds = snapshot.data!.docs[length - 1];
 
           return Padding(
-            padding: const EdgeInsets.all(25.0),
+            padding: const EdgeInsets.only(left: 25.0, right: 25.0),
             child: SingleChildScrollView(
               physics: BouncingScrollPhysics(),
               child: ListView(
                 shrinkWrap: true,
                 children: [
-                  SizedBox(height: 50),
                   Padding(
                     padding: const EdgeInsets.all(25.0),
                     child: Text(
@@ -104,10 +103,9 @@ class _InputCategoryState extends State<InputCategory> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
-            // SizedBox(height: 300),
             input(),
             InkWell(
               onTap: () {
