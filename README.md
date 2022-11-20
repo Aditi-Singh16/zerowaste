@@ -22,3 +22,15 @@ This application was developed by the team TechItUp, which won the First runner-
 
 
 
+## Application
+
+### TechStack 
+|   Framework/language   | Task | 
+| :------------- | :------------- | 
+| Flutter         | Mobile Application development      |
+| Firebase          | Real-time Cloud Database     |
+| Tensorflow        | Quantity production recommendation model using deep neural networks |
+
+
+### App Preview
+
