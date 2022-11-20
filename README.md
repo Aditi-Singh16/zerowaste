@@ -1,16 +1,24 @@
-# zerowaste
+# ZeroWaste
 
-A new Flutter project.
+ZeroWaste is an application to track supply chain and reverse logistics of products and calculate its negative environmental
+and social impact across the value chain.
+This application was developed by the team TechItUp, which won the First runner-up position at Smart India Hackathon 2022.
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+## :sparkles: Features
 
-A few resources to get you started if this is your first Flutter project:
+1. Manufacturer dashboard for predicting a product demand to reduce waste.
+2. Tie up with waste recycling plants for easier recycling process by auto-classification of the recyclable products.
+3. Carbon footprint prediction for all products.
+4. Recommendations and bough-return trends will be really helpful for a consumer/manufacturer to make business decision and plan recycling efficiently.
+5. Connects needy NGOs to Manufacturers and Consumers.
+6. Learning Modules to educate people on recycling.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## :recycle: Use Cases
+
+![image](https://user-images.githubusercontent.com/74586135/202919504-1448aa3c-fec5-4150-8bea-5a25f7529980.png)
+
+
+
+
