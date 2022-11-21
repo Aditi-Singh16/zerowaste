@@ -1,16 +1,43 @@
-# zerowaste
 
-A new Flutter project.
+<p align="center">
+<img src="https://user-images.githubusercontent.com/74586135/202977470-e7476c93-99b2-4d4e-8b31-6296aebc8c28.png" width=40% height=40%>
+</p>
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+## :monocle_face: About ZeroWaste
 
-A few resources to get you started if this is your first Flutter project:
+ZeroWaste is an application to track supply chain and reverse logistics of products and calculate its negative environmental
+and social impact across the value chain.
+This application was developed by the team TechItUp, which won the First runner-up position at Smart India Hackathon 2022.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## :sparkles: Features
+
+1. Manufacturer dashboard for predicting a product demand to reduce waste.
+2. Tie up with waste recycling plants for easier recycling process.
+3. Carbon footprint prediction for all products.
+4. Recommendations and bough-return trends will be really helpful for a consumer/manufacturer to make business decision and plan recycling efficiently.
+5. Connects needy NGOs to Manufacturers and Consumers.
+6. Learning Modules to educate people on recycling.
+7. Analytics Dashboard for stakeholders.
+
+
+## :recycle: Use Cases
+
+![image](https://user-images.githubusercontent.com/74586135/202919504-1448aa3c-fec5-4150-8bea-5a25f7529980.png)
+
+
+
+
+## :iphone: Application
+
+### TechStack 
+|   Framework/language   | Task | 
+| :------------- | :------------- | 
+| Flutter         | Mobile Application development      |
+| Firebase          | Real-time Cloud Database     |
+| TensorFlow        | Quantity production recommendation model using deep neural networks |
+
+
+### App Preview
+
