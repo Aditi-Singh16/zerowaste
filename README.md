@@ -1,4 +1,10 @@
-# ZeroWaste
+
+<p align="center">
+<img src="https://user-images.githubusercontent.com/74586135/202977470-e7476c93-99b2-4d4e-8b31-6296aebc8c28.png" width=40% height=40%>
+</p>
+
+
+## :monocle_face: About ZeroWaste
 
 ZeroWaste is an application to track supply chain and reverse logistics of products and calculate its negative environmental
 and social impact across the value chain.
@@ -8,11 +14,12 @@ This application was developed by the team TechItUp, which won the First runner-
 ## :sparkles: Features
 
 1. Manufacturer dashboard for predicting a product demand to reduce waste.
-2. Tie up with waste recycling plants for easier recycling process by auto-classification of the recyclable products.
+2. Tie up with waste recycling plants for easier recycling process.
 3. Carbon footprint prediction for all products.
 4. Recommendations and bough-return trends will be really helpful for a consumer/manufacturer to make business decision and plan recycling efficiently.
 5. Connects needy NGOs to Manufacturers and Consumers.
 6. Learning Modules to educate people on recycling.
+7. Analytics Dashboard for stakeholders.
 
 
 ## :recycle: Use Cases
@@ -22,7 +29,7 @@ This application was developed by the team TechItUp, which won the First runner-
 
 
 
-## Application
+## :iphone: Application
 
 ### TechStack 
 |   Framework/language   | Task | 
