@@ -1,18 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:intl/intl.dart';
 import 'package:zerowaste/backend/firestore_info.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 class ManuFacture extends StatefulWidget {
-  final String ProdctId;
+  final String prodctId;
   const ManuFacture({
     Key? key,
-    required this.ProdctId,
+    required this.prodctId,
   }) : super(key: key);
 
   @override
@@ -22,28 +20,18 @@ class ManuFacture extends StatefulWidget {
 class _ManuFactureState extends State<ManuFacture> {
   num? returns;
   num? sold;
-  getReturns() async {
-    print("hii");
-    var val = await FirebaseData().getProductReturnCount();
-    print(val);
+  getDetails() async {
+    var val1 = await FirebaseData().getProductReturnCount();
+    var val2 = await FirebaseData().getProductSoldCount();
     setState(() {
-      returns = val;
-    });
-  }
-
-  getSold() async {
-    print("hii");
-    var val = await FirebaseData().getProductSoldCount();
-    print(val);
-    setState(() {
-      sold = val;
+      returns = val1;
+      sold = val2;
     });
   }
 
   @override
   void initState() {
-    getSold();
-    getReturns();
+    getDetails();
     super.initState();
   }
 
@@ -78,20 +66,16 @@ class _ManuFactureState extends State<ManuFacture> {
     var res = await FirebaseFirestore.instance
         .collectionGroup('Orders')
         .where('manufacturerId', isEqualTo: uid)
-        .where('ProductId', isEqualTo: widget.ProdctId)
+        .where('ProductId', isEqualTo: widget.prodctId)
         .get();
 
-    print(res.docs);
     return res;
   }
 
   Future<void> predData() async {
-    print("jsdfhjsdf");
     actualChartData = [];
     var res = await getManufactureProductCount();
-    print(res);
     res.docs.forEach((element) {
-      print(element);
       totalSoldCount = totalSoldCount.toInt() + element['Quantity'].toInt();
       var date = element['Date'];
       var start = date.indexOf('/');
@@ -103,29 +87,26 @@ class _ManuFactureState extends State<ManuFacture> {
               .add(ChartData(months[i + 1], element['Quantity'].toInt()));
         }
       }
-      print(element);
     });
 
     setState(() {});
-
-    print(actualChartData);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          AppBar(title: Text('Analytics'), automaticallyImplyLeading: false),
+      appBar: AppBar(
+          title: const Text('Analytics'), automaticallyImplyLeading: false),
       body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Row(
               children: [
                 Card(
                     child: Container(
-                  color: Color(0xffC87FFC),
+                  color: const Color(0xffC87FFC),
                   width: MediaQuery.of(context).size.width / 3,
                   child: Column(
                     children: [
@@ -133,11 +114,11 @@ class _ManuFactureState extends State<ManuFacture> {
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           sold.toString(),
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
                         child: Text(
                           "Total Sales",
                           style: TextStyle(color: Colors.white),
@@ -146,10 +127,10 @@ class _ManuFactureState extends State<ManuFacture> {
                     ],
                   ),
                 )),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Card(
                     child: Container(
-                  color: Color(0xffFE9E87),
+                  color: const Color(0xffFE9E87),
                   width: MediaQuery.of(context).size.width / 3,
                   child: Column(
                     children: [
@@ -157,11 +138,11 @@ class _ManuFactureState extends State<ManuFacture> {
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           returns.toString(),
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
                         child: Text(
                           "Total Returns",
                           style: TextStyle(color: Colors.white),
@@ -172,7 +153,7 @@ class _ManuFactureState extends State<ManuFacture> {
                 ))
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(top: 10),
               child: Row(
@@ -181,12 +162,12 @@ class _ManuFactureState extends State<ManuFacture> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.23,
                     child: Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Color(0xff3472c0), //<-- SEE HERE
                       ),
                       child: DropdownButton(
                         underline: Container(),
-                        dropdownColor: Color(0xff3472c0),
+                        dropdownColor: const Color(0xff3472c0),
                         value: monthvalue,
                         icon: const Icon(Icons.keyboard_arrow_down),
                         iconEnabledColor: Colors.white,
@@ -196,7 +177,7 @@ class _ManuFactureState extends State<ManuFacture> {
                             value: items,
                             child: Center(
                               child: Text(items,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 12, color: Colors.white)),
                             ),
                           );
@@ -211,25 +192,24 @@ class _ManuFactureState extends State<ManuFacture> {
                   ),
                   ElevatedButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Color(0xff3472c0)),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color(0xff3472c0)),
                       ),
                       onPressed: () {
-                        print("jdf");
                         predData();
                       },
-                      child: Text('Go')),
+                      child: const Text('Go')),
                 ],
               ),
             ),
-            SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(left: 22.0),
+            const SizedBox(height: 10),
+            const Padding(
+              padding: EdgeInsets.only(left: 22.0),
               child: Text('Sold Product Analytics',
                   style: TextStyle(fontSize: 25)),
             ),
             Center(
-                child: Container(
+                child: SizedBox(
                     height: MediaQuery.of(context).size.height * 0.4,
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: SfCartesianChart(

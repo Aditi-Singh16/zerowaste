@@ -1,19 +1,15 @@
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
-import 'dart:convert';
-
 import 'package:image_picker/image_picker.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
-import 'package:zerowaste/frontend/manufacturer/view_requirements.dart';
+import 'package:zerowaste/frontend/manufacturer/dashboard.dart';
 
 class AddProduct extends StatefulWidget {
-  AddProduct({Key? key}) : super(key: key);
+  const AddProduct({Key? key}) : super(key: key);
 
   @override
   State<AddProduct> createState() => _AddProductState();
@@ -24,21 +20,6 @@ class _AddProductState extends State<AddProduct> {
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        // appBar: AppBar(
-        //   automaticallyImplyLeading: false,
-        //   title: Text("Add Product"),
-        //   backgroundColor: Color(0xff001427),
-        //   actions: [
-        //     IconButton(
-        //         onPressed: () {
-        //           Navigator.push(
-        //             context,
-        //             MaterialPageRoute(builder: (context) => ViewRequirements()),
-        //           );
-        //         },
-        //         icon: Icon(Icons.remove_red_eye_outlined))
-        //   ],
-        // ),
         body: Padding(padding: const EdgeInsets.all(20), child: PageForm()));
   }
 }
@@ -108,6 +89,7 @@ class _PageFormState extends State<PageForm> {
     if (_formKey.currentState!.validate() && image != null) {
       // print('${user.name}:${user.phone}:${user.email}');
       sendData();
+
       Scaffold.of(context).showSnackBar(const SnackBar(
           backgroundColor: Colors.green,
           content: Text('Product Added successfully!')));
@@ -120,6 +102,8 @@ class _PageFormState extends State<PageForm> {
         image = null;
         imgUrl = '';
       });
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => Dashboard()));
     } else {
       Scaffold.of(context).showSnackBar(const SnackBar(
           backgroundColor: Colors.redAccent,

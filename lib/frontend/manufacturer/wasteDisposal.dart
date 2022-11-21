@@ -1,8 +1,5 @@
-// import 'dart:html';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -12,21 +9,20 @@ import 'dart:ui';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'dart:math' show cos, sqrt, asin;
 import 'package:flutter_sms/flutter_sms.dart';
-import 'package:marker_icon/marker_icon.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 class WasteDisposal extends StatefulWidget {
   String category;
-  WasteDisposal({required this.category});
+  WasteDisposal({Key? key, required this.category}) : super(key: key);
   @override
-  _WasteDisposalState createState() => _WasteDisposalState(category);
+  State<WasteDisposal> createState() => _WasteDisposalState(category);
 }
 
 class _WasteDisposalState extends State<WasteDisposal> {
   String uid = FirebaseAuth.instance.currentUser!.uid;
   HelperFunctions _helperFunctions = HelperFunctions();
 
-  LatLng _initialcameraposition = LatLng(20.5937, 78.9629);
+  LatLng _initialcameraposition = const LatLng(20.5937, 78.9629);
   late GoogleMapController _controller;
   Location _location = Location();
   double userLng = 0;
@@ -59,7 +55,7 @@ class _WasteDisposalState extends State<WasteDisposal> {
   }
 
   void _onMapCreated(GoogleMapController _cntlr) async {
-    final int targetWidth = 150;
+    const int targetWidth = 150;
     final markerImageFile = (await DefaultCacheManager().getSingleFile(
         "https://freepngimg.com/save/66970-map-google-icons-house-maps-computer-marker/512x512"));
     final Uint8List markerImageBytes = await markerImageFile.readAsBytes();
@@ -87,14 +83,8 @@ class _WasteDisposalState extends State<WasteDisposal> {
         allMarkers.add(Marker(
           markerId: MarkerId('Home'),
           position: LatLng(l.latitude ?? 0.0, l.longitude ?? 0.0),
-          // icon: await MarkerIcon.downloadResizePictureCircle(
-          //   'https://thumbs.dreamstime.com/b/map-pin-home-156927170.jpg',
-          //   size: 50,
-          // )
-          // icon:
-          //     BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
           icon: BitmapDescriptor.fromBytes(resizedMarkerImageBytes),
-          infoWindow: InfoWindow(
+          infoWindow: const InfoWindow(
             title: "Me",
           ),
         ));
@@ -103,19 +93,8 @@ class _WasteDisposalState extends State<WasteDisposal> {
   }
 
   Widget loadMap() {
-    void sending_SMS(String msg, List<String> list_receipents) async {
-      String send_result =
-          await sendSMS(message: msg, recipients: list_receipents)
-              .catchError((err) {
-        print(err);
-      });
-      print(send_result);
-    }
-
     LatLng userCoords = LatLng(userLat, userLng);
     latlng.add(userCoords);
-    print(userLat);
-    print(userLng);
     return FutureBuilder<QuerySnapshot>(
         future: category != "All"
             ? FirebaseFirestore.instance
@@ -135,7 +114,6 @@ class _WasteDisposalState extends State<WasteDisposal> {
               if (dist < shortest) {
                 shortest = double.parse((dist).toStringAsFixed(2));
                 nearest = snapshot.data!.docs[i]['name'];
-                print(nearest);
                 LatLng _new = LatLng(snapshot.data!.docs[i]['coords'].latitude,
                     snapshot.data!.docs[i]['coords'].longitude);
                 if (latlng.length > 0) {
@@ -144,15 +122,10 @@ class _WasteDisposalState extends State<WasteDisposal> {
                   }
                 }
                 latlng.add(_new);
-              } else {
-                print("shortest=" +
-                    shortest.toString() +
-                    ", Dist=" +
-                    dist.toString());
               }
               allMarkers.add(Marker(
                 markerId: MarkerId(i.toString()),
-                position: new LatLng(snapshot.data!.docs[i]['coords'].latitude,
+                position: LatLng(snapshot.data!.docs[i]['coords'].latitude,
                     snapshot.data!.docs[i]['coords'].longitude), // LatLng
 
                 icon: BitmapDescriptor.defaultMarkerWithHue(
@@ -174,10 +147,11 @@ class _WasteDisposalState extends State<WasteDisposal> {
 
                       await FlutterEmailSender.send(email).then((val) {
                         Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: const Text(
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text(
                               'Email sent successfully, we will connect with you soon!'),
-                          duration: const Duration(seconds: 5),
+                          duration: Duration(seconds: 5),
                         ));
                       });
                     },
@@ -198,7 +172,7 @@ class _WasteDisposalState extends State<WasteDisposal> {
             points: latlng,
             color: Colors.blue,
           ));
-          return Container(
+          return SizedBox(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             child: Stack(
@@ -220,7 +194,7 @@ class _WasteDisposalState extends State<WasteDisposal> {
                         border: Border.all(width: 1),
                         color: Colors.white,
                       ),
-                      height: MediaQuery.of(context).size.height / 16,
+                      height: MediaQuery.of(context).size.height / 12,
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Text(
@@ -235,83 +209,6 @@ class _WasteDisposalState extends State<WasteDisposal> {
 
   @override
   Widget build(BuildContext context) {
-    // markers.add(Marker(
-    //   //add second marker
-    //   markerId: MarkerId(1.toString()),
-    //   position: LatLng(18.975, 72.805), //position of marker
-    //   infoWindow: InfoWindow(
-    //     //popup info
-    //     title: 'SMS Envoclean Pvt. Ltd.',
-    //   ),
-    //   icon: BitmapDescriptor.defaultMarkerWithHue(
-    //       BitmapDescriptor.hueGreen), //Icon for Marker
-    // ));
-    // markers.add(Marker(
-    //   //add second marker
-    //   markerId: MarkerId(2.toString()),
-    //   position: LatLng(19.12054, 72.95129), //position of marker
-    //   infoWindow: InfoWindow(
-    //     //popup info
-    //     title: 'Antony Lara Enviro Solutions Pvt Ltd',
-    //   ),
-    //   icon: BitmapDescriptor.defaultMarkerWithHue(
-    //       BitmapDescriptor.hueGreen), //Icon for Marker
-    // ));
-    // markers.add(Marker(
-    //   //add second marker
-    //   markerId: MarkerId(3.toString()),
-    //   position: LatLng(12.9699, 77.6446), //position of marker
-    //   infoWindow: InfoWindow(
-    //     //popup info
-    //     title: 'Daily Dump',
-    //   ),
-    //   icon: BitmapDescriptor.defaultMarkerWithHue(
-    //       BitmapDescriptor.hueGreen), //Icon for Marker
-    // ));
-    // markers.add(Marker(
-    //   //add second marker
-    //   markerId: MarkerId(4.toString()),
-    //   position: LatLng(19.0423, 72.8491), //position of marker
-    //   infoWindow: InfoWindow(
-    //     //popup info
-    //     title: 'Dharavi Sewage site',
-    //   ),
-    //   icon: BitmapDescriptor.defaultMarkerWithHue(
-    //       BitmapDescriptor.hueGreen), //Icon for Marker
-    // ));
-    // markers.add(Marker(
-    //   //add second marker
-    //   markerId: MarkerId(5.toString()),
-    //   position: LatLng(19.0898, 72.9081), //position of marker
-    //   infoWindow: InfoWindow(
-    //     //popup info
-    //     title: 'Garbage Dump',
-    //   ),
-    //   icon: BitmapDescriptor.defaultMarkerWithHue(
-    //       BitmapDescriptor.hueGreen), //Icon for Marker
-    // ));
-    // markers.add(Marker(
-    //   //add second marker
-    //   markerId: MarkerId(6.toString()),
-    //   position: LatLng(19.0853, 72.9041), //position of marker
-    //   infoWindow: InfoWindow(
-    //     //popup info
-    //     title: 'Trash collection site',
-    //   ),
-    //   icon: BitmapDescriptor.defaultMarkerWithHue(
-    //       BitmapDescriptor.hueGreen), //Icon for Marker
-    // ));
-    // markers.add(Marker(
-    //   //add second marker
-    //   markerId: MarkerId(7.toString()),
-    //   position: LatLng(19.0863, 72.9121), //position of marker
-    //   infoWindow: InfoWindow(
-    //     //popup info
-    //     title: 'Dump',
-    //   ),
-    //   icon: BitmapDescriptor.defaultMarkerWithHue(
-    //       BitmapDescriptor.hueGreen), //Icon for Marker
-    // ));
     return Scaffold(body: loadMap());
   }
 }

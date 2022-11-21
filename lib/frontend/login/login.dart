@@ -1,17 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
-import 'package:zerowaste/frontend/consumer/consumer_tabbar.dart';
-import 'package:zerowaste/frontend/consumerNavbar.dart';
-import 'package:zerowaste/frontend/login/profile_page.dart';
+import 'package:zerowaste/frontend/consumer/consumerNavbar.dart';
 import 'package:zerowaste/frontend/login/registration.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:zerowaste/frontend/manufacturer/Orders.dart';
-import 'package:zerowaste/frontend/manufacturerNavbar.dart';
-import 'package:zerowaste/frontend/ngoNavbar.dart';
+import 'package:zerowaste/frontend/manufacturer/manufacturerNavbar.dart';
+import 'package:zerowaste/frontend/ngo/ngoNavbar.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);

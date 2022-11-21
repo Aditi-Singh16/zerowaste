@@ -38,28 +38,6 @@ class _NgoAnalyticsState extends State<NgoAnalytics> {
   TooltipBehavior _tooltipAct = TooltipBehavior(enable: true);
   TooltipBehavior _tooltipPred = TooltipBehavior(enable: true);
 
-  // List<ChartData> actualChartData = [];
-
-  // Future<void> predData() async {
-  //   actualChartData = [];
-
-  //   var res = await getManufactureSoldCount();
-
-  //   print(res);
-
-  //   res.docs.forEach((element) {
-  //     totalReturnCount = totalReturnCount.toInt() + element['Quantity'].toInt();
-  //     var date = element['Date'];
-  //     var start = date.indexOf('/');
-  //     var end = date.lastIndexOf('/');
-  //     var month = date.substring(start + 1, end);
-  //     for (int i = 0; i < 8; i++) {
-  //       if (i + 1 == int.parse(month)) {
-  //         actualChartData.add(ChartData(months[i], element['Quantity']));
-  //       }
-  //     }
-  //   });
-
   // setState(() {});
   Future<void> fetch() async {
     var email = await HelperFunctions().readEmailPref();
@@ -100,21 +78,6 @@ class _NgoAnalyticsState extends State<NgoAnalytics> {
               child: Text('Donated Product Analytics',
                   style: TextStyle(fontSize: 25)),
             ),
-            // Center(
-            //     child: Container(
-            //         height: MediaQuery.of(context).size.height * 0.4,
-            //         width: MediaQuery.of(context).size.width * 0.9,
-            //         child: SfCartesianChart(
-            //             primaryXAxis: CategoryAxis(),
-            //             tooltipBehavior: _tooltipPred,
-            //             series: <ChartSeries<ChartData, String>>[
-            //               // Renders line chart
-            //               ColumnSeries<ChartData, String>(
-            //                 dataSource: actualChartData,
-            //                 xValueMapper: (ChartData data, _) => data.x,
-            //                 yValueMapper: (ChartData data, _) => data.y,
-            //               )
-            //             ]))),
             Padding(
               padding: const EdgeInsets.only(left: 22.0),
               child: Text('Total number of donors=' + '$count',

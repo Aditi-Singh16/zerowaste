@@ -52,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ])),
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Learning Module"),
+          title: Text("For D.I.Y Enthusiasts"),
           backgroundColor: AppColor.secondary,
         ),
         backgroundColor: Colors.transparent,
@@ -105,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: Text(
                             "Clothing",
                             style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
@@ -136,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: Text(
                             "Plastic",
                             style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
@@ -175,7 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text(
                               "Electronics",
                               style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
+                                  fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ],
@@ -205,7 +205,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text(
                               "Books",
                               style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
+                                  fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ],
@@ -243,7 +243,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: Text(
                             "Bags",
                             style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
@@ -274,7 +274,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text(
                               "Stationery",
                               style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
+                                  fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ],

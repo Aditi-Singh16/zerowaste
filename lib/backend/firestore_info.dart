@@ -256,10 +256,4 @@ class FirebaseData {
     });
     return quant;
   }
-
-  TotalUser() async {
-    var res =
-        await FirebaseFirestore.instance.collection('Users').snapshots().length;
-    return res;
-  }
 }

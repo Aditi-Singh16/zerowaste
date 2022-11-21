@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:zerowaste/frontend/wasteDisposal.dart';
+import 'package:zerowaste/frontend/manufacturer/wasteDisposal.dart';
 
 class InputCategory extends StatefulWidget {
   InputCategory({Key? key}) : super(key: key);
@@ -18,22 +18,21 @@ class _InputCategoryState extends State<InputCategory> {
             .collection('disposalCategories')
             .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData)
+          if (!snapshot.hasData) {
             return const Center(
-              child: const CupertinoActivityIndicator(),
+              child: CupertinoActivityIndicator(),
             );
-          var length = snapshot.data!.docs.length;
-          DocumentSnapshot ds = snapshot.data!.docs[length - 1];
+          }
 
           return Padding(
             padding: const EdgeInsets.only(left: 25.0, right: 25.0),
             child: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
+              physics: const BouncingScrollPhysics(),
               child: ListView(
                 shrinkWrap: true,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(25.0),
+                  const Padding(
+                    padding: EdgeInsets.all(25.0),
                     child: Text(
                         '"Take a step to save the environment and recycle products!"',
                         style: TextStyle(
@@ -46,22 +45,23 @@ class _InputCategoryState extends State<InputCategory> {
 
                   Image.network(
                       'https://static.vecteezy.com/system/resources/previews/003/207/736/original/waste-collection-segregation-and-recycling-illustration-garbage-vector.jpg'),
-                  SizedBox(height: 50),
+                  const SizedBox(height: 50),
                   Container(
                     decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey.shade400)),
-                    padding: EdgeInsets.only(bottom: 10.0, top: 10),
+                    padding: const EdgeInsets.only(bottom: 10.0, top: 10),
                     width: MediaQuery.of(context).size.width * 0.9,
-                    child: new Column(
+                    child: Column(
                       children: <Widget>[
-                        new Container(
-                          padding: EdgeInsets.fromLTRB(12.0, 10.0, 10.0, 10.0),
-                          child:
-                              new Text(" Select the Category of recycling unit",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  )),
+                        Container(
+                          padding:
+                              const EdgeInsets.fromLTRB(12.0, 10.0, 10.0, 10.0),
+                          child: const Text(
+                              " Select the Category of recycling unit",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              )),
                         ),
                         DropdownButton(
                           value: _category,
@@ -69,21 +69,19 @@ class _InputCategoryState extends State<InputCategory> {
                           onChanged: (newValue) {
                             setState(() {
                               _category = newValue;
-                              print(_category);
                             });
                           },
                           items: snapshot.data!.docs
                               .map((DocumentSnapshot document) {
-                            return new DropdownMenuItem<String>(
+                            return DropdownMenuItem<String>(
                                 value: document['category'],
-                                child: new Container(
-                                  decoration: new BoxDecoration(
-                                      borderRadius:
-                                          new BorderRadius.circular(5.0)),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5.0)),
                                   height: 100.0,
 
                                   //color: primaryColor,
-                                  child: new Text(
+                                  child: Text(
                                     document['category'],
                                   ),
                                 ));
@@ -109,9 +107,7 @@ class _InputCategoryState extends State<InputCategory> {
             input(),
             InkWell(
               onTap: () {
-                if (_category == null) {
-                  _category = "All";
-                }
+                _category ??= "All";
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -122,8 +118,8 @@ class _InputCategoryState extends State<InputCategory> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 30),
-                  Container(
+                  const SizedBox(height: 30),
+                  SizedBox(
                     height: 50,
                     width: MediaQuery.of(context).size.width / 2,
                     child: Center(
@@ -133,7 +129,7 @@ class _InputCategoryState extends State<InputCategory> {
                               padding: const EdgeInsets.all(15.0),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
+                                children: const [
                                   Text("View Map ",
                                       style: TextStyle(
                                           fontSize: 18,

@@ -8,7 +8,7 @@ import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_Product
 import 'package:zerowaste/frontend/consumer/color.dart';
 import 'package:zerowaste/frontend/consumer/learning_modules/learningMod.dart';
 import 'package:zerowaste/frontend/consumer/return.dart';
-import 'package:zerowaste/frontend/consumerNavbar.dart';
+import 'package:zerowaste/frontend/consumer/consumerNavbar.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 class YourOrders extends StatefulWidget {

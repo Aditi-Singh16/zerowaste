@@ -517,16 +517,17 @@ class _DashboardState extends State<Dashboard> {
                                             MaterialPageRoute(
                                                 builder: (context) =>
                                                     ManuFacture(
-                                                        ProdctId: snapshot
+                                                        prodctId: snapshot
                                                                 .data!.docs[i]
                                                             ['productId'])));
                                       },
                                       child: Card(
                                         child: ListTile(
-                                          leading: SvgPicture.asset(
-                                              'assets/icons/${snapshot.data!.docs[i]['categories']}.svg',
-                                              width: 70.0,
-                                              height: 70.0),
+                                          leading: CircleAvatar(
+                                              child: Image(
+                                            image: NetworkImage(snapshot
+                                                .data!.docs[i]['image']),
+                                          )),
                                           title: Text(
                                               '${snapshot.data!.docs[i]['name']}'),
                                           subtitle: Text(

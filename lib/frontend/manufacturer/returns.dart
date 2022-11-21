@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
-import '../consumer/Consumer_Home_SearchBar_Cart_ProductList/Cart/ShoppingCart.dart';
-
 late Razorpay razorpay;
 String currDoc = "";
 String curr_user = "";
@@ -39,7 +37,6 @@ class _ReturnsState extends State<Returns> {
   }
 
   void handlerPaymentSuccess(PaymentSuccessResponse response) async {
-    print("Payment success $response");
     CollectionReference pay = FirebaseFirestore.instance.collection('Users');
     //get phone number from pay collection
     pay.doc(usid).get().then((value) {
@@ -53,7 +50,6 @@ class _ReturnsState extends State<Returns> {
   }
 
   void handlerErrorFailure(PaymentFailureResponse response) {
-    print("Payment error $response");
     // Toast.show("Pament error", context);
     showDialog(
       context: context,
@@ -86,7 +82,6 @@ class _ReturnsState extends State<Returns> {
 
   void handlerExternalWallet() {
     print("External Wallet");
-    // Toast.show("External Wallet", context);
   }
 
   Future<void> openCheckout() async {
@@ -116,12 +111,6 @@ class _ReturnsState extends State<Returns> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // appBar: AppBar(
-        //   title: Text("Orders"),
-        //   automaticallyImplyLeading: false,
-        //   backgroundColor: Color(0xff265D80),
-        //   centerTitle: true,
-        // ),
         body: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('returns')

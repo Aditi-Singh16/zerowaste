@@ -52,16 +52,6 @@ class _ViewRequirementsState extends State<ViewRequirements> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // appBar: AppBar(
-        //   leading: IconButton(
-        //     icon: Icon(Icons.arrow_back, color: Colors.white),
-        //     onPressed: () {
-        //       Navigator.pop(context);
-        //     },
-        //   ),
-        //   title: Text("View Requirements"),
-        //   backgroundColor: Color(0xff001427),
-        // ),
         body: SingleChildScrollView(
       child: Column(
         children: [
@@ -151,39 +141,6 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                                       ),
                                       onPressed: () async {
                                         _showMyDialog(snapshot.data!.docs[i]);
-
-                                        //accepted_req field bane ga in NGo users
-                                        //requiremnt_Satisfy colln in requirements
-
-                                        // FirebaseFirestore.instance
-                                        //     .collection("requirements")
-                                        //     .doc(snapshot.data!.docs[i].id)
-                                        //     .update({
-                                        //   "requirement_satisfy":
-                                        //       FieldValue.arrayUnion([
-                                        //     {
-                                        //       "email": _helperFunctions
-                                        //           .readEmailPref(),
-                                        //       "uid": _helperFunctions
-                                        //           .readUserIdPref(),
-                                        //       "product_name": snapshot.data!
-                                        //           .docs[i]['product_name'],
-                                        //       "quantity": snapshot.data!.docs[i]
-                                        //           ['quantity'],
-                                        //     }
-                                        //   ])
-                                        // });
-
-                                        // randomindex =
-                                        //     Random().nextInt(coupon.length);
-                                        // showScratchCard(context);
-                                        // String couponn = "Coupon" +
-                                        //     (randomindex).toString();
-
-                                        // await FirebaseFirestore.instance
-                                        //     .collection('Users')
-                                        //     .doc(uid)
-                                        //     .update({couponn: true});
                                       },
                                     ),
                                   ),

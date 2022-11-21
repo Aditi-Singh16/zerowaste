@@ -1,32 +1,32 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import 'package:zerowaste/frontend/inputDisposalCategory.dart';
+import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/analytics.dart';
+import 'package:zerowaste/frontend/CompanyAnalysis.dart';
+import 'package:zerowaste/frontend/consumer/Orders.dart';
+import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
+import 'package:zerowaste/frontend/consumer/consumer_tabbar.dart';
+import 'package:zerowaste/frontend/consumer/learning_modules/moduleoptions.dart';
+import 'package:zerowaste/frontend/manufacturer/inputDisposalCategory.dart';
 import 'package:zerowaste/frontend/login/profile_page.dart';
-import 'package:zerowaste/frontend/manufacturer/Analytics.dart';
-import 'package:zerowaste/frontend/manufacturer/Orders.dart';
-import 'package:zerowaste/frontend/manufacturer/addProduct.dart';
-import 'package:zerowaste/frontend/manufacturer/dashboard.dart';
-import 'package:zerowaste/frontend/manufacturer/ordersTabbar.dart';
-import 'package:zerowaste/frontend/manufacturer/productsTabBar.dart';
+import 'package:zerowaste/frontend/requirements_sell/add_requirements.dart';
 
-class ManufacturerNavbar extends StatefulWidget {
-  const ManufacturerNavbar({Key? key}) : super(key: key);
+class ConsumerNavbar extends StatefulWidget {
+  const ConsumerNavbar({Key? key}) : super(key: key);
 
   @override
-  _ManufacturerNavbarState createState() => _ManufacturerNavbarState();
+  _ConsumerNavbarState createState() => _ConsumerNavbarState();
 }
 
-class _ManufacturerNavbarState extends State<ManufacturerNavbar> {
+class _ConsumerNavbarState extends State<ConsumerNavbar> {
   int pageIndex = 0;
 
   final pages = [
-    Dashboard(),
-    OrdersTabBar(),
-    ProductsTabBar(),
-    InputCategory(),
-    // ManufactureAnalytics(),
-    ProfilePage(),
+    UserHome(),
+    const MyApp(),
+    ConsumerTabBar(),
+    const Company(),
+    YourOrders(),
+    const ProfilePage()
   ];
 
   @override
@@ -55,12 +55,12 @@ class _ManufacturerNavbarState extends State<ManufacturerNavbar> {
             },
             icon: pageIndex == 0
                 ? Icon(
-                    Icons.widgets,
+                    Icons.home,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   )
                 : Icon(
-                    Icons.widgets_outlined,
+                    Icons.home_outlined,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   ),
@@ -74,12 +74,12 @@ class _ManufacturerNavbarState extends State<ManufacturerNavbar> {
             },
             icon: pageIndex == 1
                 ? Icon(
-                    CupertinoIcons.arrow_down_doc_fill,
+                    CupertinoIcons.arrow_2_circlepath_circle_fill,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   )
                 : Icon(
-                    CupertinoIcons.arrow_down_doc,
+                    CupertinoIcons.arrow_2_circlepath_circle,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   ),
@@ -93,12 +93,12 @@ class _ManufacturerNavbarState extends State<ManufacturerNavbar> {
             },
             icon: pageIndex == 2
                 ? Icon(
-                    CupertinoIcons.add_circled_solid,
+                    Icons.live_help_rounded,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   )
                 : Icon(
-                    CupertinoIcons.add_circled,
+                    Icons.live_help_outlined,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   ),
@@ -122,25 +122,6 @@ class _ManufacturerNavbarState extends State<ManufacturerNavbar> {
                     size: MediaQuery.of(context).size.height / 24,
                   ),
           ),
-          // IconButton(
-          //   enableFeedback: false,
-          //   onPressed: () {
-          //     setState(() {
-          //       pageIndex = 4;
-          //     });
-          //   },
-          //   icon: pageIndex == 4
-          //       ? Icon(
-          //           Icons.analytics,
-          //           color: Colors.black,
-          //           size: MediaQuery.of(context).size.height / 24,
-          //         )
-          //       : Icon(
-          //           Icons.analytics_outlined,
-          //           color: Colors.black,
-          //           size: MediaQuery.of(context).size.height / 24,
-          //         ),
-          // ),
           IconButton(
             enableFeedback: false,
             onPressed: () {
@@ -149,6 +130,25 @@ class _ManufacturerNavbarState extends State<ManufacturerNavbar> {
               });
             },
             icon: pageIndex == 4
+                ? Icon(
+                    CupertinoIcons.cube_box_fill,
+                    color: Colors.black,
+                    size: MediaQuery.of(context).size.height / 24,
+                  )
+                : Icon(
+                    CupertinoIcons.cube_box,
+                    color: Colors.black,
+                    size: MediaQuery.of(context).size.height / 24,
+                  ),
+          ),
+          IconButton(
+            enableFeedback: false,
+            onPressed: () {
+              setState(() {
+                pageIndex = 5;
+              });
+            },
+            icon: pageIndex == 5
                 ? Icon(
                     Icons.person,
                     color: Colors.black,

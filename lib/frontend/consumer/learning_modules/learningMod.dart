@@ -87,7 +87,7 @@ class _MyHomePagerState extends State<MyHomePager> {
             ])),
         child: Scaffold(
             appBar: AppBar(
-              title: Text("Learning Module"),
+              title: Text("For D.I.Y Enthusiasts"),
               backgroundColor: AppColor.secondary,
             ),
             backgroundColor: Colors.transparent,

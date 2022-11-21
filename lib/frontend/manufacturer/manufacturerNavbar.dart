@@ -1,32 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/analytics.dart';
-import 'package:zerowaste/frontend/CompanyAnalysis.dart';
-import 'package:zerowaste/frontend/consumer/Orders.dart';
-import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
-import 'package:zerowaste/frontend/consumer/consumer_tabbar.dart';
-import 'package:zerowaste/frontend/consumer/learning_modules/moduleoptions.dart';
-import 'package:zerowaste/frontend/inputDisposalCategory.dart';
+import 'package:zerowaste/frontend/manufacturer/inputDisposalCategory.dart';
 import 'package:zerowaste/frontend/login/profile_page.dart';
-import 'package:zerowaste/frontend/requirements_sell/add_requirements.dart';
+import 'package:zerowaste/frontend/manufacturer/dashboard.dart';
+import 'package:zerowaste/frontend/manufacturer/ordersTabbar.dart';
+import 'package:zerowaste/frontend/manufacturer/productsTabBar.dart';
 
-class ConsumerNavbar extends StatefulWidget {
-  const ConsumerNavbar({Key? key}) : super(key: key);
+class ManufacturerNavbar extends StatefulWidget {
+  const ManufacturerNavbar({Key? key}) : super(key: key);
 
   @override
-  _ConsumerNavbarState createState() => _ConsumerNavbarState();
+  _ManufacturerNavbarState createState() => _ManufacturerNavbarState();
 }
 
-class _ConsumerNavbarState extends State<ConsumerNavbar> {
+class _ManufacturerNavbarState extends State<ManufacturerNavbar> {
   int pageIndex = 0;
 
   final pages = [
-    UserHome(),
-    const MyApp(),
-    ConsumerTabBar(),
-    const Company(),
-    YourOrders(),
-    const ProfilePage()
+    Dashboard(),
+    OrdersTabBar(),
+    ProductsTabBar(),
+    InputCategory(),
+    // ManufactureAnalytics(),
+    ProfilePage(),
   ];
 
   @override
@@ -55,12 +51,12 @@ class _ConsumerNavbarState extends State<ConsumerNavbar> {
             },
             icon: pageIndex == 0
                 ? Icon(
-                    Icons.home,
+                    Icons.widgets,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   )
                 : Icon(
-                    Icons.home_outlined,
+                    Icons.widgets_outlined,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   ),
@@ -74,12 +70,12 @@ class _ConsumerNavbarState extends State<ConsumerNavbar> {
             },
             icon: pageIndex == 1
                 ? Icon(
-                    CupertinoIcons.arrow_2_circlepath_circle_fill,
+                    CupertinoIcons.arrow_down_doc_fill,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   )
                 : Icon(
-                    CupertinoIcons.arrow_2_circlepath_circle,
+                    CupertinoIcons.arrow_down_doc,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   ),
@@ -93,12 +89,12 @@ class _ConsumerNavbarState extends State<ConsumerNavbar> {
             },
             icon: pageIndex == 2
                 ? Icon(
-                    Icons.live_help_rounded,
+                    CupertinoIcons.add_circled_solid,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   )
                 : Icon(
-                    Icons.live_help_outlined,
+                    CupertinoIcons.add_circled,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   ),
@@ -130,25 +126,6 @@ class _ConsumerNavbarState extends State<ConsumerNavbar> {
               });
             },
             icon: pageIndex == 4
-                ? Icon(
-                    CupertinoIcons.cube_box_fill,
-                    color: Colors.black,
-                    size: MediaQuery.of(context).size.height / 24,
-                  )
-                : Icon(
-                    CupertinoIcons.cube_box,
-                    color: Colors.black,
-                    size: MediaQuery.of(context).size.height / 24,
-                  ),
-          ),
-          IconButton(
-            enableFeedback: false,
-            onPressed: () {
-              setState(() {
-                pageIndex = 5;
-              });
-            },
-            icon: pageIndex == 5
                 ? Icon(
                     Icons.person,
                     color: Colors.black,

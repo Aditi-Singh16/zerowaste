@@ -85,6 +85,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.6"
+  countup:
+    dependency: "direct main"
+    description:
+      name: countup
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.4"
   cross_file:
     dependency: transitive
     description:

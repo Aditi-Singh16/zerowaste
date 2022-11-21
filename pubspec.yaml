@@ -47,7 +47,7 @@ dependencies:
   firebase_auth: ^1.1.0
   scratcher:
   google_maps_flutter:
-  # geolocator:
+  countup: ^0.1.4
   google_maps_webservice:
   flutter_email_sender: ^5.1.0
   location:

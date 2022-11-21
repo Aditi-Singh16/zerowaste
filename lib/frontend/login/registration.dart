@@ -5,13 +5,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:zerowaste/backend/local_data.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
-import 'package:zerowaste/frontend/consumerNavbar.dart';
+import 'package:zerowaste/frontend/consumer/consumerNavbar.dart';
 import 'package:zerowaste/frontend/login/profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:zerowaste/frontend/manufacturerNavbar.dart';
-import 'package:zerowaste/frontend/ngoNavbar.dart';
+import 'package:zerowaste/frontend/manufacturer/manufacturerNavbar.dart';
+import 'package:zerowaste/frontend/ngo/ngoNavbar.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 import 'package:gst_verification/gst_verification.dart';
 

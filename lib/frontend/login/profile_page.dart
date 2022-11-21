@@ -1,19 +1,19 @@
-import 'dart:io';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:scratcher/scratcher.dart';
 import 'package:zerowaste/backend/local_data.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
+import 'package:zerowaste/frontend/Helpers/profile_helpers/details_tab.dart';
+import 'package:zerowaste/frontend/Helpers/profile_helpers/esv_tab.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/analytics.dart';
 import 'package:zerowaste/frontend/consumer/color.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
-import 'package:zerowaste/frontend/consumer/style.dart';
+
 import 'package:zerowaste/frontend/login/login.dart';
-import 'package:zerowaste/frontend/ngo/analytics_ngo.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -108,10 +108,6 @@ class _ProfilePageState extends State<ProfilePage> {
           rewards.add('OFF20');
         }
       });
-      print('HIIII');
-      print(count);
-      print(accepted_requests);
-      print(rewards);
     }
     if (docSnapshot1.exists) {
       Map<String, dynamic> data1 = docSnapshot1.data()!;
@@ -119,7 +115,6 @@ class _ProfilePageState extends State<ProfilePage> {
       air = data1['air'];
       tree = data1['tree'];
       co2 = data1['co2'];
-      print('EV');
     }
   }
 
@@ -141,8 +136,6 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     String? uid = loggedInUser.uid;
-    print(uid);
-    print(_helperFunctions.readNamePref());
 
     return FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
@@ -156,7 +149,7 @@ class _ProfilePageState extends State<ProfilePage> {
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
                 appBar: AppBar(
-                  title: Text("Profile"),
+                  title: const Text("Profile"),
                   backgroundColor: AppColor.secondary,
                   actions: [
                     IconButton(
@@ -280,211 +273,21 @@ class _ProfilePageState extends State<ProfilePage> {
                       : Visibility(visible: false, child: Text(' ')),
                   const Spacing(),
                   (type == 'Consumer')
-                      ? Container(
-                          margin: EdgeInsets.all(40),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      'ESV (Environment Saving Values)  ',
-                                      style: AppStyle.text.copyWith(
-                                          color: Colors.black,
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.033),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.03),
-
-                                  // i icon button with alert dialogue
-                                  IconButton(
-                                    icon: Icon(Icons.info_outline),
-                                    color: Colors.black,
-                                    iconSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.05,
-                                    alignment: Alignment.bottomRight,
-                                    onPressed: () {
-                                      //alert dialogue box pop up
-                                      showDialog(
-                                        context: context,
-                                        builder: (ctx) => AlertDialog(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                          title: Center(
-                                              child: RichText(
-                                            text: TextSpan(
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.033),
-                                                children: [
-                                                  TextSpan(
-                                                      text:
-                                                          "Approximate values per product\n\n",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height *
-                                                              0.02)),
-                                                  TextSpan(
-                                                      text:
-                                                          "Air Pollution - numbers here shows the amount of air saved from making the product\n"
-                                                          "Trees Saved - numbers here shows the amount of trees saved from cutting in making this product\n"
-                                                          "CO2 - numbers here show the amount of CO2 saved while making this product",
-                                                      style: TextStyle(
-                                                          fontSize: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height *
-                                                              0.015)),
-                                                ]),
-                                          )),
-                                          actions: <Widget>[
-                                            Center(
-                                              child: TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(ctx).pop();
-                                                },
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    color: Colors.black,
-                                                  ),
-                                                  padding:
-                                                      const EdgeInsets.all(14),
-                                                  child: const Text(
-                                                    "OK",
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                              const Spacing(),
-                              Row(
-                                children: [
-                                  const Spacing(),
-                                  const Spacing(),
-                                  Column(
-                                    children: [
-                                      ClipOval(
-                                        child: SizedBox.fromSize(
-                                          size: Size.fromRadius(
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.1), // Image radius
-                                          child: Image.network(
-                                              'https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/esv%20img%2F11zon_cropped.png?alt=media&token=72d9009f-c528-4fd5-a638-e933dffee8f9',
-                                              fit: BoxFit.cover),
-                                        ),
-                                      ),
-                                      Text("Air Pollution"),
-                                      Text(
-                                        '$air' + " aqi of Air",
-                                        style: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.035,
-                                            color: Colors.black),
-                                      ),
-                                    ],
-                                  ),
-                                  Spacer(),
-                                  Column(
-                                    children: [
-                                      ClipOval(
-                                        child: SizedBox.fromSize(
-                                          size: Size.fromRadius(
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.1), // Image radius
-                                          child: Image.network(
-                                              'https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/esv%20img%2FPicsart_22-08-19_12-36-20-414.png?alt=media&token=cc0c00fb-a68a-4b69-84cd-2e60fd910215',
-                                              fit: BoxFit.cover),
-                                        ),
-                                      ),
-                                      Text("Tree"),
-                                      Text(tree.toString() + "Tree saved",
-                                          style: TextStyle(
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.035,
-                                              color: Colors.black))
-                                    ],
-                                  ),
-                                  Spacer(),
-                                  Column(
-                                    children: [
-                                      ClipOval(
-                                        child: SizedBox.fromSize(
-                                          size: Size.fromRadius(
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.1), // Image radius
-                                          child: Image.network(
-                                              'https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/esv%20img%2FPicsart_22-08-19_12-43-19-549.png?alt=media&token=b05f3d35-67ee-451e-8737-08e14c13c5d5',
-                                              fit: BoxFit.cover),
-                                        ),
-                                      ),
-                                      Text("Co2"),
-                                      Text(
-                                          (co2.toString()).substring(0, 3) +
-                                              " ppm of Co2",
-                                          style: TextStyle(
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.035,
-                                              color: Colors.black))
-                                    ],
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                        )
-                      : Text(''),
-                  SizedBox(
+                      ? ESVTab(air: air, co2: co2, tree: tree)
+                      : Container(),
+                  const SizedBox(
                     height: 10,
                   ),
-                  Text(
+                  const Text(
                     'Details',
                     style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 16,
                         color: Colors.black,
                         fontWeight: FontWeight.w500),
                   ),
                   Container(
-                    padding: EdgeInsets.only(bottom: 5, left: 5, right: 5),
+                    padding:
+                        const EdgeInsets.only(bottom: 5, left: 5, right: 5),
                     child: Column(
                       children: [
                         Padding(
@@ -494,189 +297,27 @@ class _ProfilePageState extends State<ProfilePage> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                             ),
-                            padding: EdgeInsets.all(20),
+                            padding: const EdgeInsets.all(20),
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Name: ",
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      "${loggedInUser.name}",
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Email: ",
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Flexible(
-                                      child: Text(
-                                        '${loggedInUser.email}',
-                                        maxLines: 2,
-                                        softWrap: true,
-                                        overflow: TextOverflow.fade,
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 15),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Role: ",
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      "${loggedInUser.type}",
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 10),
-                                Row(children: [
-                                  Text(
-                                    "Address: ",
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                  Expanded(
-                                      child: !isEditable
-                                          ? Text(
-                                              title,
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w500),
-                                            )
-                                          : TextFormField(
-                                              initialValue: title,
-                                              textInputAction:
-                                                  TextInputAction.done,
-                                              onFieldSubmitted: (value) async {
-                                                await HelperFunctions()
-                                                    .setAddrPref(value);
-                                                setState(
-                                                  () => {
-                                                    isEditable = false,
-                                                    title = value,
-                                                    FirebaseFirestore.instance
-                                                        .collection("Users")
-                                                        .doc(loggedInUser.uid)
-                                                        .update({"addr": value})
-                                                  },
-                                                );
-
-                                                //print(_helperFunctions.readNamePref());
-                                              })),
-                                  IconButton(
-                                    icon: Icon(Icons.edit),
-                                    onPressed: () {
-                                      setState(() => {
-                                            isEditable = true,
-                                          });
-                                    },
-                                  )
-                                ]),
-                                // SizedBox(height: 10),
-                                Row(children: [
-                                  Text(
-                                    "Phone: ",
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                  Expanded(
-                                      child: !isEditablePhone
-                                          ? Text(
-                                              phone,
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w500),
-                                            )
-                                          : TextFormField(
-                                              initialValue: phone,
-                                              textInputAction:
-                                                  TextInputAction.done,
-                                              onFieldSubmitted: (value) async {
-                                                await HelperFunctions()
-                                                    .setPhonePref(value);
-                                                setState(
-                                                  () => {
-                                                    isEditablePhone = false,
-                                                    phone = value,
-                                                    FirebaseFirestore.instance
-                                                        .collection("Users")
-                                                        .doc(loggedInUser.uid)
-                                                        .update(
-                                                            {"phone": value})
-                                                  },
-                                                );
-
-                                                //print(_helperFunctions.readNamePref());
-                                              })),
-                                  IconButton(
-                                    icon: Icon(Icons.edit),
-                                    onPressed: () {
-                                      setState(() => {
-                                            isEditablePhone = true,
-                                          });
-                                    },
-                                  )
-                                ]),
-                                SizedBox(height: 10),
+                                DetailsFieldTab(
+                                    field: "Name: ", name: loggedInUser.name!),
+                                DetailsFieldTab(
+                                    field: "Email: ",
+                                    name: loggedInUser.email!),
+                                DetailsFieldTab(
+                                    field: "Role: ", name: loggedInUser.type!),
+                                DetailsFieldTab(
+                                    field: "Address: ",
+                                    name: loggedInUser.addr!),
+                                DetailsFieldTab(
+                                    field: "Phone: ",
+                                    name: loggedInUser.phone!),
                               ],
                             ),
                           ),
                         ),
-                        (type == 'Consumer')
-                            ? Text(
-                                'Get Rewards',
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500),
-                              )
-                            : Visibility(visible: false, child: Text('')),
-                        const Spacing(),
                         (type == 'Consumer')
                             ? InkWell(
                                 child: Container(
@@ -721,11 +362,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                         await showScratchCard(context);
                                         couponn =
                                             "Coupon" + (randomindex).toString();
-                                        print('COUPON');
+
                                         setState(() {
                                           if (rewards
                                               .contains(coupon[randomindex])) {
-                                            print('NO');
                                           } else {
                                             rewards.add(coupon[randomindex]);
 
@@ -745,22 +385,18 @@ class _ProfilePageState extends State<ProfilePage> {
                                       }
                                     : null,
                               )
-                            : Text(''),
-                        const Spacing(),
-                        (type == 'Consumer')
-                            ? Text(
-                                'Your Rewards',
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500),
-                              )
-                            : Text(''),
-                        const Spacing(),
-                        (rewards.length == 0 && type == 'Consumner')
+                            : Container(),
+                        (rewards.isEmpty && type == 'Consumner')
                             ? Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
+                                  const Text(
+                                    'Your Rewards',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500),
+                                  ),
                                   Image.asset(
                                     'assets/images/donate.jpg',
                                     width:
@@ -771,7 +407,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   Text(
                                     'Donate to NGO to earn rewards',
                                     style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 16,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w400),
                                   ),
@@ -793,7 +429,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               Text(
                                                 '${data}',
                                                 style: TextStyle(
-                                                    fontSize: 20,
+                                                    fontSize: 16,
                                                     color: Colors.black,
                                                     fontWeight:
                                                         FontWeight.w500),
@@ -813,7 +449,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       );
                                     }).toList(),
                                   )
-                                : Visibility(visible: false, child: Text(' ')),
+                                : Container(),
                       ],
                     ),
                   ),
@@ -827,19 +463,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       logout();
                     },
                     child: Icon(Icons.logout_rounded),
-                    backgroundColor: Color(0xff3472c0),
+                    backgroundColor: AppColor.secondary,
                   ),
                   SizedBox(
                     height: 10,
                   )
                 ])));
           }
-          return Scaffold(
-              body: Center(
-                  child: SpinKitChasingDots(
-            color: Colors.blue,
-            size: 50.0,
-          )));
+          return Loader();
         });
   }
 
@@ -847,7 +478,6 @@ class _ProfilePageState extends State<ProfilePage> {
   logout() async {
     var userId = await HelperFunctions().readUserIdPref();
     await FirebaseAuth.instance.signOut();
-    print(userId);
     await DataBaseHelper.instance.deleteUser(userId);
     Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => LoginScreen()));
@@ -910,7 +540,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       description[randomindex],
                       style: TextStyle(
                           fontWeight: FontWeight.w500,
-                          fontSize: 20,
+                          fontSize: 16,
                           color: Colors.blue),
                     ),
                     Spacing(),
