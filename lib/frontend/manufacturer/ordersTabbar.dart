@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/manufacturer/Orders.dart';
-import 'package:zerowaste/frontend/manufacturer/addProduct.dart';
 import 'package:zerowaste/frontend/manufacturer/returns.dart';
-import 'package:zerowaste/frontend/requirements_sell/view_requirements.dart';
 
 class OrdersTabBar extends StatelessWidget {
   const OrdersTabBar({Key? key}) : super(key: key);
@@ -16,12 +14,12 @@ class OrdersTabBar extends StatelessWidget {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
-            backgroundColor: Color(0xff001427),
-            title: Text(
+            backgroundColor: const Color(0xff001427),
+            title: const Text(
               'Orders and returns',
               style: TextStyle(fontWeight: FontWeight.normal),
             ),
-            bottom: TabBar(
+            bottom: const TabBar(
               tabs: [
                 Tab(
                   text: "Orders",

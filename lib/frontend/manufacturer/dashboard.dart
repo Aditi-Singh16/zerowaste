@@ -5,15 +5,14 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:zerowaste/backend/firestore_info.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
+import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
 import 'package:zerowaste/frontend/manufacturer/Analytics.dart';
-import 'package:zerowaste/frontend/manufacturer/CustomerAnalytics.dart';
+import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -59,8 +58,7 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
-  User? user = FirebaseAuth.instance.currentUser;
-  UserModel loggedInUser = UserModel();
+  HelperFunctions _helperFunctions = HelperFunctions();
   String itemvalue = 'Cotton Clothes';
   String monthvalue = 'January';
   String cityvalue = 'Silchar';
@@ -101,7 +99,7 @@ class _DashboardState extends State<Dashboard> {
 
   TooltipBehavior _tooltipAct = TooltipBehavior(enable: true);
   TooltipBehavior _tooltipPred = TooltipBehavior(enable: true);
-  bool isInventoryEmpty = false;
+
   List<ChartData> predictionChartData = [];
   List<ChartData> actualChartData = [];
   var quantAvail = 0;
@@ -125,12 +123,6 @@ class _DashboardState extends State<Dashboard> {
         } else {
           actualChartData.add(ChartData(monthsAct[i], 0));
         }
-      }
-
-      if (actualChartData.every((ele) => ele.y == 0)) {
-        isInventoryEmpty = true;
-      } else {
-        isInventoryEmpty = false;
       }
     });
 
@@ -162,16 +154,6 @@ class _DashboardState extends State<Dashboard> {
     monthsAct = months.sublist(0, start - 1);
     monthsPred = months;
     months = months.sublist(start - 1);
-
-    FirebaseFirestore.instance
-        .collection("Users")
-        .doc(user!.uid)
-        .get()
-        .then((value) {
-      this.loggedInUser = UserModel.fromMap(value.data());
-      setState(() {});
-    });
-//
     super.initState();
   }
 
@@ -398,7 +380,8 @@ class _DashboardState extends State<Dashboard> {
             StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection('products')
-                    .where("manufacturerId", isEqualTo: loggedInUser.uid)
+                    .where("manufacturerId",
+                        isEqualTo: _helperFunctions.readUserIdPref())
                     .snapshots(),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.hasError) {
@@ -420,10 +403,7 @@ class _DashboardState extends State<Dashboard> {
                           ],
                         );
                       case ConnectionState.waiting:
-                        return const SpinKitChasingDots(
-                          color: Colors.blue,
-                          size: 50.0,
-                        );
+                        return Loader();
 
                       case ConnectionState.active:
                         return Center(
@@ -436,13 +416,13 @@ class _DashboardState extends State<Dashboard> {
                                   itemBuilder: (context, i) {
                                     return InkWell(
                                       onTap: () {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ManuFacture(
-                                                        prodctId: snapshot
-                                                                .data!.docs[i]
-                                                            ['productId'])));
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) =>
+                                                ManuFacture(
+                                                    context: context,
+                                                    prodctId: snapshot.data!
+                                                        .docs[i]['productId']));
                                       },
                                       child: Card(
                                         child: ListTile(

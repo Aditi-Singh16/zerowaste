@@ -61,11 +61,11 @@ class _PageFormState extends State<PageForm> {
     }
   }
 
-  TextEditingController _nameController = new TextEditingController();
-  TextEditingController _descController = new TextEditingController();
-  TextEditingController _quantityController = new TextEditingController();
-  TextEditingController _priceController = new TextEditingController();
-  TextEditingController _weightController = new TextEditingController();
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _descController = TextEditingController();
+  TextEditingController _quantityController = TextEditingController();
+  TextEditingController _priceController = TextEditingController();
+  TextEditingController _weightController = TextEditingController();
 
   final FocusNode _nameFocus = FocusNode();
   final FocusNode _descFocus = FocusNode();
@@ -78,16 +78,15 @@ class _PageFormState extends State<PageForm> {
   var _quantity = "";
   var _price = "";
   var _weight = "";
-  var _category = null;
+  var _category;
 
   var manufacturerId = '';
 
   var image;
   String imgUrl = '';
 
-  void ButtonValidate() {
+  void buttonValidate() {
     if (_formKey.currentState!.validate() && image != null) {
-      // print('${user.name}:${user.phone}:${user.email}');
       sendData();
 
       Scaffold.of(context).showSnackBar(const SnackBar(
@@ -258,13 +257,11 @@ class _PageFormState extends State<PageForm> {
                     .collection('categories')
                     .snapshots(),
                 builder: (context, snapshot) {
-                  if (!snapshot.hasData)
+                  if (!snapshot.hasData) {
                     return const Center(
-                      child: const CupertinoActivityIndicator(),
+                      child: CupertinoActivityIndicator(),
                     );
-                  var length = snapshot.data!.docs.length;
-                  DocumentSnapshot ds = snapshot.data!.docs[length - 1];
-
+                  }
                   return Container(
                     decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey.shade400)),
@@ -288,7 +285,7 @@ class _PageFormState extends State<PageForm> {
                                           : _defaultColor,
                                     ),
                                   ),
-                                  new Text(
+                                  const Text(
                                     "Category",
                                   ),
                                 ],
@@ -302,7 +299,6 @@ class _PageFormState extends State<PageForm> {
                             onChanged: (newValue) {
                               setState(() {
                                 _category = newValue;
-                                print(_category);
                               });
                             },
                             items: snapshot.data!.docs
@@ -312,11 +308,11 @@ class _PageFormState extends State<PageForm> {
                                   child: Container(
                                     decoration: BoxDecoration(
                                         borderRadius:
-                                            new BorderRadius.circular(5.0)),
+                                            BorderRadius.circular(5.0)),
                                     height: 100.0,
 
                                     //color: primaryColor,
-                                    child: new Text(
+                                    child: Text(
                                       document['name'],
                                     ),
                                   ));
@@ -361,7 +357,7 @@ class _PageFormState extends State<PageForm> {
                 },
                 validator: (value) {
                   String patttern = r'^[+-]?((\d+(\.\d*)?)|(\.\d+))$';
-                  RegExp regExp = new RegExp(patttern);
+                  RegExp regExp = RegExp(patttern);
                   if (value!.isEmpty) {
                     return 'Please enter weight of the product';
                   }
@@ -407,7 +403,7 @@ class _PageFormState extends State<PageForm> {
                 },
                 validator: (value) {
                   String patttern = r'^[0-9]+$';
-                  RegExp regExp = new RegExp(patttern);
+                  RegExp regExp = RegExp(patttern);
                   if (value!.isEmpty) {
                     return 'Please enter quantity available';
                   }
@@ -453,7 +449,7 @@ class _PageFormState extends State<PageForm> {
                 },
                 validator: (value) {
                   String patttern = r'^[0-9]+$';
-                  RegExp regExp = new RegExp(patttern);
+                  RegExp regExp = RegExp(patttern);
                   if (value!.isEmpty) {
                     return 'Please enter price per product';
                   }
@@ -468,12 +464,12 @@ class _PageFormState extends State<PageForm> {
                 child: RaisedButton(
                     color: (color) ? Colors.black : Colors.grey,
                     child: const Text('Add Product',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         )),
                     onPressed: () => {
-                          color ? ButtonValidate() : null,
+                          color ? buttonValidate() : null,
                         }))
           ])),
     );
