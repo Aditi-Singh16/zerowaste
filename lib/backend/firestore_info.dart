@@ -64,12 +64,14 @@ class FirebaseData {
   }
 
   Future<int> getManufactureDonationCount() async {
-    var email = await HelperFunctions().readEmailPref();
     var uid = await HelperFunctions().readUserIdPref();
     var res =
         await FirebaseFirestore.instance.collection('Users').doc(uid).get();
-    int count = 0;
-    if (res['accepted_requests'].length > 0) {
+    // res.data()!.forEach((key, value) {
+    //   print(key);
+    //   print(value);
+    // });
+    if (res.data()!.containsKey("accepted_requests")) {
       return res['accepted_requests'].length;
     } else {
       return 0;

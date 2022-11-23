@@ -237,9 +237,9 @@ class _DetailsState extends State<Details> {
         .collection("environment")
         .doc(widget.uid)
         .set({
-      "air": FieldValue.increment(esv_ls![0] * w!),
-      "co2": FieldValue.increment(esv_ls![2] * w!),
-      "tree": FieldValue.increment(esv_ls![1] + w!)
+      "air": FieldValue.increment(esv_ls![0] * w),
+      "co2": FieldValue.increment(esv_ls![2] * w),
+      "tree": FieldValue.increment(esv_ls![1] + w)
     });
 
     await FirebaseFirestore.instance
@@ -691,7 +691,7 @@ class _DetailsState extends State<Details> {
                                     ),
                                     Text("Air Pollution"),
                                     Text(
-                                      (esv_ls![0] * w!).toString() +
+                                      (esv_ls![0] * w).toString() +
                                           " aqi of Air",
                                       style: TextStyle(
                                           fontSize: width * 0.035,
@@ -714,7 +714,7 @@ class _DetailsState extends State<Details> {
                                     ),
                                     Text("Tree"),
                                     Text(
-                                        (((esv_ls![1] + w!)).toString())
+                                        (((esv_ls![1] + w)).toString())
                                                 .substring(0, 1) +
                                             " Tree saved",
                                         style: TextStyle(
@@ -737,7 +737,7 @@ class _DetailsState extends State<Details> {
                                     ),
                                     Text("Co2"),
                                     Text(
-                                        ((esv_ls![2] * w!).toString())
+                                        ((esv_ls![2] * w).toString())
                                                 .substring(0, 3) +
                                             " ppm of Co2",
                                         style: TextStyle(

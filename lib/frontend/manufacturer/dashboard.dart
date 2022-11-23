@@ -27,39 +27,35 @@ class _DashboardState extends State<Dashboard> {
   num? customers;
   num? returns;
   num? donations;
-  getSales() async {
-    print("hii");
-    var val = await FirebaseData().getManufactureSoldCount();
-    print(val);
+  List<int> gridData = [];
+  List<String> gridLabel = [
+    "Total Sales",
+    "Total Returns",
+    "Total Customers",
+    "Total Donations"
+  ];
+  List<List<Color>> gridColor = [
+    [Colors.blue[100]!, Colors.blue],
+    [Colors.red[100]!, Colors.red],
+    [Colors.green[100]!, Colors.green],
+    [Colors.yellow[100]!, Colors.yellow]
+  ];
+  getManufacturerAnalytics() async {
+    var sales = await FirebaseData().getManufactureSoldCount();
+    var customers = await FirebaseData().getManufactureCustomerCount();
+    var returns = await FirebaseData().getManufacureReturnCount();
+    var donations = await FirebaseData().getManufactureDonationCount();
     setState(() {
-      sales = val;
-    });
-  }
-
-  getCustomers() async {
-    print("hii");
-    var val = await FirebaseData().getManufactureCustomerCount();
-    print(val);
-    setState(() {
-      customers = val;
-    });
-  }
-
-  getReturns() async {
-    print("hii");
-    var val = await FirebaseData().getManufacureReturnCount();
-    print(val);
-    setState(() {
-      returns = val;
-    });
-  }
-
-  getDonations() async {
-    print("hii");
-    var val = await FirebaseData().getManufactureDonationCount();
-    print(val);
-    setState(() {
-      donations = val;
+      sales = sales;
+      customers = customers;
+      returns = returns;
+      donations = donations;
+      gridData = [
+        sales.toInt(),
+        returns.toInt(),
+        customers.toInt(),
+        donations.toInt()
+      ];
     });
   }
 
@@ -105,7 +101,7 @@ class _DashboardState extends State<Dashboard> {
 
   TooltipBehavior _tooltipAct = TooltipBehavior(enable: true);
   TooltipBehavior _tooltipPred = TooltipBehavior(enable: true);
-  //bool isInventoryEmpty = false;
+  bool isInventoryEmpty = false;
   List<ChartData> predictionChartData = [];
   List<ChartData> actualChartData = [];
   var quantAvail = 0;
@@ -131,11 +127,11 @@ class _DashboardState extends State<Dashboard> {
         }
       }
 
-      // if (actualChartData.every((ele) => ele.y == 0)) {
-      //   isInventoryEmpty = true;
-      // } else {
-      //   isInventoryEmpty = false;
-      // }
+      if (actualChartData.every((ele) => ele.y == 0)) {
+        isInventoryEmpty = true;
+      } else {
+        isInventoryEmpty = false;
+      }
     });
 
     var monthval = monthsPred.indexOf(monthvalue);
@@ -160,10 +156,7 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   void initState() {
-    getSales();
-    getCustomers();
-    getReturns();
-    getDonations();
+    getManufacturerAnalytics();
     var start = int.parse(DateFormat.M().format(DateTime.now()));
     monthvalue = months[start - 1];
     monthsAct = months.sublist(0, start - 1);
@@ -196,118 +189,44 @@ class _DashboardState extends State<Dashboard> {
             SizedBox(
               height: 30,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Column(
-                  children: [
-                    Card(
-                        child: Container(
-                      color: Color(0xff3698F3),
-                      width: MediaQuery.of(context).size.width / 3,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              sales.toString(),
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "Total Sales",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: GridView.count(
+                  shrinkWrap: true,
+                  crossAxisCount: 2,
+                  childAspectRatio: (1 / .8),
+                  crossAxisSpacing: 10.0,
+                  mainAxisSpacing: 10.0,
+                  children: List.generate(4, (index) {
+                    return Card(
+                      //elevation: 10,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
                       ),
-                    )),
-                    SizedBox(height: 20),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => CustomerAnalytics()));
-                      },
-                      child: Card(
-                          child: Container(
-                        color: Color(0xffE05A71),
-                        width: MediaQuery.of(context).size.width / 3,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                                colors: gridColor[index])),
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                customers.toString(),
-                                style: TextStyle(color: Colors.white),
-                              ),
+                            Text(
+                              gridData[index].toString(),
+                              style: TextStyle(color: Colors.white),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                "Total Customers",
-                                style: TextStyle(color: Colors.white),
-                              ),
+                            SizedBox(height: 10),
+                            Text(
+                              gridLabel[index],
+                              style: TextStyle(color: Colors.white),
                             ),
                           ],
                         ),
-                      )),
-                    )
-                  ],
-                ),
-                Column(
-                  children: [
-                    Card(
-                        child: Container(
-                      color: Color(0xffC87FFC),
-                      width: MediaQuery.of(context).size.width / 3,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              returns.toString(),
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "Total Returns",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
                       ),
-                    )),
-                    SizedBox(height: 20),
-                    Card(
-                        child: Container(
-                      color: Color(0xffFE9E87),
-                      width: MediaQuery.of(context).size.width / 3,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              donations.toString(),
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "Total Donations",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ))
-                  ],
-                ),
-              ],
+                    );
+                  })),
             ),
             Divider(
               thickness: 5,
@@ -449,25 +368,29 @@ class _DashboardState extends State<Dashboard> {
                             yValueMapper: (ChartData data, _) => data.y,
                           )
                         ]))),
-            Padding(
-              padding: const EdgeInsets.only(left: 22.0),
-              child: Text('My Inventory', style: TextStyle(fontSize: 25)),
-            ),
-            Center(
-                child: Container(
-                    height: MediaQuery.of(context).size.height * 0.4,
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    child: SfCartesianChart(
-                        primaryXAxis: CategoryAxis(),
-                        tooltipBehavior: _tooltipAct,
-                        series: <ChartSeries<ChartData, String>>[
-                          // Renders line chart
-                          ColumnSeries<ChartData, String>(
-                            dataSource: actualChartData,
-                            xValueMapper: (ChartData data, _) => data.x,
-                            yValueMapper: (ChartData data, _) => data.y,
-                          )
-                        ]))),
+            actualChartData.isNotEmpty
+                ? Padding(
+                    padding: const EdgeInsets.only(left: 22.0),
+                    child: Text('My Inventory', style: TextStyle(fontSize: 25)),
+                  )
+                : Container(),
+            actualChartData.isNotEmpty
+                ? Center(
+                    child: Container(
+                        height: MediaQuery.of(context).size.height * 0.4,
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: SfCartesianChart(
+                            primaryXAxis: CategoryAxis(),
+                            tooltipBehavior: _tooltipAct,
+                            series: <ChartSeries<ChartData, String>>[
+                              // Renders line chart
+                              ColumnSeries<ChartData, String>(
+                                dataSource: actualChartData,
+                                xValueMapper: (ChartData data, _) => data.x,
+                                yValueMapper: (ChartData data, _) => data.y,
+                              )
+                            ])))
+                : Container(),
             Padding(
               padding: const EdgeInsets.only(left: 22.0),
               child: Text('My Products', style: TextStyle(fontSize: 25)),
@@ -524,10 +447,12 @@ class _DashboardState extends State<Dashboard> {
                                       child: Card(
                                         child: ListTile(
                                           leading: CircleAvatar(
+                                              backgroundColor:
+                                                  Colors.transparent,
                                               child: Image(
-                                            image: NetworkImage(snapshot
-                                                .data!.docs[i]['image']),
-                                          )),
+                                                image: NetworkImage(snapshot
+                                                    .data!.docs[i]['image']),
+                                              )),
                                           title: Text(
                                               '${snapshot.data!.docs[i]['name']}'),
                                           subtitle: Text(
