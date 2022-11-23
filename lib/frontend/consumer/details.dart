@@ -114,9 +114,6 @@ class _DetailsState extends State<Details> {
     //fetch weight from firebase product collection of current product id
 
     getweight();
-
-    print("weighttt");
-    print(w);
     //multiple weight with esv list with index 0
   }
 
@@ -197,7 +194,6 @@ class _DetailsState extends State<Details> {
   }
 
   void handlerPaymentSuccess(PaymentSuccessResponse response) async {
-    print("Payment success $response");
     String time = DateFormat("hh:mm:ss a").format(DateTime.now());
     String date =
         "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
@@ -301,7 +297,6 @@ class _DetailsState extends State<Details> {
   }
 
   void handlerErrorFailure(PaymentFailureResponse response) {
-    print("Payment error $response");
     // Toast.show("Pament error", context);
     showDialog(
       context: context,
@@ -380,8 +375,6 @@ class _DetailsState extends State<Details> {
         address = data['addr'];
         wallet = data['wallet'];
       });
-
-      print(validity);
     }
     var docSnapshot1 = await FirebaseFirestore.instance
         .collection('Users')
@@ -424,7 +417,7 @@ class _DetailsState extends State<Details> {
                 bottom: 0,
                 child: Container(
                   width: size.width,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       color: AppColor.secondary,
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(34),
@@ -1063,7 +1056,6 @@ class _DetailsState extends State<Details> {
                                     if (previousquantity != -1) {
                                       finalquantity = previousquantity! +
                                           int.parse(quantity);
-                                      print('yesssssss');
                                       if (finalquantity > widget.q) {
                                         finalquantity = widget.q;
                                       }
@@ -1236,9 +1228,6 @@ class _DetailsState extends State<Details> {
                                                                 'Continue to Payment...'),
                                                             onPressed:
                                                                 () async {
-                                                              print(widget
-                                                                  .isResell);
-
                                                               if (phone_number !=
                                                                       null &&
                                                                   regExp.hasMatch(
@@ -1465,9 +1454,6 @@ class _DetailsState extends State<Details> {
                                   child: ListView(
                                     scrollDirection: Axis.horizontal,
                                     children: snapshot.data!.docs.map((doc) {
-                                      print(doc['productId']);
-                                      print(widget.productid);
-
                                       return doc['productId'] ==
                                               widget.productid
                                           ? Container()
