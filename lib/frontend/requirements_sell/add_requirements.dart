@@ -43,7 +43,6 @@ class _AddRequirementState extends State<AddRequirement> {
   @override
   void dispose() {
     _nameFocus.dispose();
-    super.dispose();
     _quantityFocus.dispose();
     super.dispose();
   }

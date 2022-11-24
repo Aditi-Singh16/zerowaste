@@ -13,6 +13,8 @@ import 'package:zerowaste/frontend/consumer/color.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
 
 import 'package:zerowaste/frontend/login/login.dart';
+import 'package:zerowaste/frontend/ngo/my_requirements.dart';
+import 'package:zerowaste/frontend/ngo/all_ngo_requirements.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -265,7 +267,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   const Text(
                     'Details',
                     style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 20,
                         color: Colors.black,
                         fontWeight: FontWeight.w500),
                   ),
@@ -304,6 +306,21 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                         ),
+                        (type == 'NGO')
+                            ? Text(
+                                'My Requirements',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500),
+                              )
+                            : Container(),
+                        (type == 'NGO')
+                            ? MyRequirements(
+                                uid: loggedInUser.uid!,
+                              )
+                            : Container(),
+                        (type == 'NGO') ? AllRequirements() : Container(),
                         (type == 'Consumer')
                             ? InkWell(
                                 child: Container(

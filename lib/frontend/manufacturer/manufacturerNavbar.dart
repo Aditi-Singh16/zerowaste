@@ -50,12 +50,12 @@ class _ManufacturerNavbarState extends State<ManufacturerNavbar> {
             },
             icon: pageIndex == 0
                 ? Icon(
-                    Icons.widgets,
+                    CupertinoIcons.graph_circle_fill,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   )
                 : Icon(
-                    Icons.widgets_outlined,
+                    CupertinoIcons.graph_circle,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   ),
@@ -69,12 +69,12 @@ class _ManufacturerNavbarState extends State<ManufacturerNavbar> {
             },
             icon: pageIndex == 1
                 ? Icon(
-                    CupertinoIcons.arrow_down_doc_fill,
+                    Icons.task,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   )
                 : Icon(
-                    CupertinoIcons.arrow_down_doc,
+                    Icons.task_outlined,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   ),

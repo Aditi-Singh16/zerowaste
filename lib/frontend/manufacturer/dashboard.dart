@@ -77,18 +77,18 @@ class _DashboardState extends State<Dashboard> {
       'Electronics'
     ],
     [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
+      'January',
+      'February',
+      'March',
+      'April',
       'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sept',
-      'Oct',
-      'Nov',
-      'Dec'
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
     ],
     ['Mumbai', 'Guwahati', 'Silchar']
   ];
@@ -116,13 +116,19 @@ class _DashboardState extends State<Dashboard> {
     unitPrice = 15 + rnd.nextInt(10000 - 15);
     taxPrice = 1 + rnd.nextInt(20 - 1);
     List res = await FirebaseData().getProducts(itemvalue);
+    print(res[0]);
+    print("jkghkfgksssdf");
     res.forEach((element) {
       var convertedDateTime = element.data()['timestamp'].toDate();
       String monthName = DateFormat.LLLL().format(convertedDateTime).toString();
+      print(monthName);
+      print("jshfksdg");
+      print(monthsAct);
       for (int i = 0; i < monthsAct.length; i++) {
         if (monthsAct[i] == monthName) {
           actualChartData.add(ChartData(monthName, element.data()['quantity']));
         } else {
+          print("yo");
           actualChartData.add(ChartData(monthsAct[i], 0));
         }
       }
@@ -243,7 +249,11 @@ class _DashboardState extends State<Dashboard> {
                       ),
                       child: DropdownButton(
                         underline: Container(),
-                        value: dropdownValues[index][0],
+                        value: index == 0
+                            ? itemvalue
+                            : index == 1
+                                ? monthvalue
+                                : cityvalue,
                         icon: const Icon(Icons.keyboard_arrow_down),
                         iconEnabledColor: Colors.white,
                         items: dropdownValues[index].map((String items) {
@@ -258,7 +268,13 @@ class _DashboardState extends State<Dashboard> {
                         dropdownColor: Color(0xff3472c0),
                         onChanged: (String? newValue) {
                           setState(() {
-                            itemvalue = newValue!;
+                            if (index == 0) {
+                              itemvalue = newValue!;
+                            } else if (index == 1) {
+                              monthvalue = newValue!;
+                            } else {
+                              cityvalue = newValue!;
+                            }
                           });
                         },
                       ),

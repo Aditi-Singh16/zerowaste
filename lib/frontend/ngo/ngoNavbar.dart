@@ -2,11 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
 import 'package:zerowaste/frontend/consumer/learning_modules/moduleoptions.dart';
-import 'package:zerowaste/frontend/ngo/view_requirements.dart';
 import 'package:zerowaste/frontend/login/profile_page.dart';
-import 'package:zerowaste/frontend/manufacturer/dashboard.dart';
-import 'package:zerowaste/frontend/ngo/add_requirements.dart';
-import 'package:zerowaste/frontend/ngo/view_requirements.dart';
+import 'package:zerowaste/frontend/requirements_sell/add_requirements.dart';
 
 class NgoNavbar extends StatefulWidget {
   const NgoNavbar({Key? key}) : super(key: key);
@@ -19,10 +16,19 @@ class _NgoNavbarState extends State<NgoNavbar> {
   int pageIndex = 0;
 
   final pages = [
-    AddRequirement(),
+    UserHome(),
     const LearningModules(),
-    ViewRequirements(),
-    ProfilePage(),
+    Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+            backgroundColor: const Color(0xff001427),
+            leading: Image.asset(
+              'assets/images/logo1.png',
+              fit: BoxFit.contain,
+            ),
+            title: Text("Add Requirements")),
+        body: const AddRequirement()),
+    const ProfilePage(),
   ];
 
   @override
@@ -89,12 +95,12 @@ class _NgoNavbarState extends State<NgoNavbar> {
             },
             icon: pageIndex == 2
                 ? Icon(
-                    Icons.task_alt_rounded,
+                    CupertinoIcons.add_circled_solid,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   )
                 : Icon(
-                    Icons.task_alt_outlined,
+                    CupertinoIcons.add_circled,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
                   ),
