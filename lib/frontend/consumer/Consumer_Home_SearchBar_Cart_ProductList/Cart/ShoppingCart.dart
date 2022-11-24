@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
+import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
 import 'package:zerowaste/frontend/consumer/Orders.dart';
 import 'package:zerowaste/frontend/consumer/color.dart';
@@ -389,20 +390,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
               .collection('Cart');
 
           if (!snapshot.hasData) {
-            return Center(
-                child: Scaffold(
-                    appBar: AppBar(
-                      leading: IconButton(
-                        icon: Icon(Icons.arrow_back, color: Colors.white),
-                        onPressed: () => {},
-                      ),
-                      title: Text("Failed to load"),
-                      backgroundColor: Colors.white,
-                    ),
-                    body: Center(
-                        child: CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.black)))));
+            return Scaffold(body: Loader());
           }
           if (snapshot.hasData) {
             // get length of douments firebas

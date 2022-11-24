@@ -54,7 +54,8 @@ class _PageFormState extends State<PageForm> {
           'manufacturerId': loggedInUser.uid,
           'timestamp': DateTime.now(),
           'productId': docId,
-          'is_plant': 'true',
+          'is_plant': true,
+          'is_resell': false,
           'weight': double.parse(_weight),
         });
       });

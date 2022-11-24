@@ -2,18 +2,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ProductList.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/SearchBar/search.dart';
-String query='';
-String cat='';
-class MySearchBarScreen extends StatelessWidget {
 
-  CollectionReference collectionReference = FirebaseFirestore.instance
-      .collection('products');
+String query = '';
+String cat = '';
+
+class MySearchBarScreen extends StatelessWidget {
+  CollectionReference collectionReference =
+      FirebaseFirestore.instance.collection('products');
 
   @override
   String category;
 
   MySearchBarScreen({required this.category});
-
 
   // get list of document fields from firebase
   @override
@@ -25,20 +25,15 @@ class MySearchBarScreen extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              showSearch(
-                  context: context, delegate: ProductSearch());
+              showSearch(context: context, delegate: ProductSearch());
             },
             icon: Icon(Icons.search),
           )
         ],
-        centerTitle: true,
-
       ),
       body: Center(
-
         child: IndividualCategoryProductList(category: category),
       ),
     );
   }
-
 }

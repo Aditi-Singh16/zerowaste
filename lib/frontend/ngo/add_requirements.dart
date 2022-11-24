@@ -3,8 +3,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
-
 import 'package:zerowaste/backend/firestore_info.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 
@@ -20,21 +18,12 @@ class _AddRequirementState extends State<AddRequirement> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          toolbarHeight: 70,
-          title: Text(
-            "Add Requirements",
-            // style: TextStyle(color: Colors.black),
+          backgroundColor: const Color(0xff001427),
+          leading: Image.asset(
+            'assets/images/logo1.png',
+            fit: BoxFit.contain,
           ),
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: CircleAvatar(
-                foregroundColor: Colors.blueAccent,
-                child: Padding(
-                  padding: const EdgeInsets.all(6.0),
-                  child: Image.asset('assets/images/logo1.png'),
-                )),
-          ),
-          // backgroundColor: Colors.blue.shade50,
+          title: Text("Add Requirements"),
         ),
         body: Padding(padding: const EdgeInsets.all(20), child: PageForm()));
   }
@@ -60,8 +49,6 @@ class _PageFormState extends State<PageForm> {
   var _description = "";
 
   void ButtonValidate() {
-    // print('${user.name}:${user.phone}:${user.email}');
-
     Scaffold.of(context).showSnackBar(SnackBar(
         backgroundColor: Colors.green,
         content: Text('Requirement Added successfully!')));

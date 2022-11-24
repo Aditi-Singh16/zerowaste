@@ -13,12 +13,14 @@ class ConsumerTabBar extends StatelessWidget {
       home: DefaultTabController(
         length: 2,
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           appBar: AppBar(
-            backgroundColor: Color(0xff001427),
-            title: Text(
-              'Consumer',
-              style: TextStyle(fontWeight: FontWeight.normal),
+            backgroundColor: const Color(0xff001427),
+            leading: Image.asset(
+              'assets/images/logo1.png',
+              fit: BoxFit.contain,
             ),
+            title: Text("Requirements"),
             bottom: TabBar(
               tabs: [
                 Tab(

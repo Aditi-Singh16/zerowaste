@@ -6,9 +6,11 @@ class Loader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(
+    return Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+        ),
+        child: const Center(
             child: SpinKitChasingDots(
           color: Colors.blue,
           size: 50.0,

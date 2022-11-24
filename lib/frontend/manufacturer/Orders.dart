@@ -134,6 +134,9 @@ class _ManuFactureOrdersState extends State<ManuFactureOrders> {
                                                     element.data()!['Quantity'];
                                               });
                                               var rate = numer / deno;
+                                              if (deno == 0) {
+                                                rate = 0;
+                                              }
 
                                               _showMyDialog(rate);
                                             },

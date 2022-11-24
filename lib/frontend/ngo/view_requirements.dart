@@ -1,17 +1,12 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:scratcher/widgets.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
-
 import 'package:zerowaste/frontend/consumer/style.dart';
-
-import 'package:zerowaste/frontend/requirements_sell/send_notif.dart';
 
 class ViewRequirements extends StatefulWidget {
   const ViewRequirements({Key? key}) : super(key: key);
@@ -54,8 +49,12 @@ class _ViewRequirementsState extends State<ViewRequirements> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: Text("View Requirements"),
-          backgroundColor: Color(0xff001427),
+          backgroundColor: const Color(0xff001427),
+          leading: Image.asset(
+            'assets/images/logo1.png',
+            fit: BoxFit.contain,
+          ),
+          title: Text("Orders and Returns"),
         ),
         body: SingleChildScrollView(
           child: Column(

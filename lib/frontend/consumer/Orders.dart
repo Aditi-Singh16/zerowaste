@@ -4,9 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
-import 'package:zerowaste/frontend/consumer/color.dart';
-import 'package:zerowaste/frontend/consumer/learning_modules/learningMod.dart';
 import 'package:zerowaste/frontend/consumer/return.dart';
 import 'package:zerowaste/frontend/consumer/consumerNavbar.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
@@ -107,11 +104,11 @@ class _YourOrdersState extends State<YourOrders> {
                   return Scaffold(
                     resizeToAvoidBottomInset: false,
                     appBar: AppBar(
-                      title: Text("Your Orders"),
-                      automaticallyImplyLeading: false,
-                      backgroundColor: AppColor.secondary,
-                      centerTitle: true,
-                    ),
+                        leading: Image.asset(
+                          'assets/images/logo1.png',
+                          fit: BoxFit.contain,
+                        ),
+                        title: Text("My Orders")),
                     body: ListView.builder(
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
@@ -133,330 +130,206 @@ class _YourOrdersState extends State<YourOrders> {
                               child: InkWell(
                                 onTap: () {},
                                 child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
                                   children: [
-                                    Container(
-                                      child: Container(
-                                        margin: EdgeInsets.only(left: 5.0),
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(7),
-                                          child: Image.network(
-                                            doc['image'],
-                                            fit: BoxFit.fitHeight,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height /
-                                                3.6,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                3.6,
-                                            //color: Colors.red,
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(7),
+                                      child: Image.network(doc['image'],
+                                          fit: BoxFit.fitHeight,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.15,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.3
+                                          //color: Colors.red,
                                           ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width /
-                                          30,
                                     ),
                                     Expanded(
                                       flex: 2,
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
-                                        ////////////////////////////////////////////
                                         children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                top: MediaQuery.of(context)
-                                                        .size
-                                                        .height /
-                                                    30),
-                                            child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    right:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height /
-                                                            180),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      doc['ProductName'],
-                                                      maxLines: 2,
-                                                      style: TextStyle(
-                                                        fontSize: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height /
-                                                            50,
-                                                        color: Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      doc['Date'],
-                                                      style: TextStyle(
-                                                        fontSize: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height /
-                                                            55,
-                                                        color: Colors.black,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                )),
-                                          ),
-                                          SizedBox(
-                                              height: MediaQuery.of(context)
+                                          SizedBox(height: 20),
+                                          Text(
+                                            doc['ProductName'],
+                                            maxLines: 2,
+                                            style: TextStyle(
+                                              fontSize: MediaQuery.of(context)
                                                       .size
                                                       .height /
-                                                  90),
-                                          Container(
-                                            child: Row(
-                                              children: [
-                                                Column(
-                                                  children: [
-                                                    Text(
-                                                      "Quantity: " +
-                                                          doc['Quantity']
-                                                              .toString(),
-                                                      style: TextStyle(
-                                                        fontSize: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height /
-                                                            50,
-                                                        color: Colors.blueGrey,
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 4,
-                                                    ),
-                                                    Text(
-                                                      "\u{20B9}" +
-                                                          doc['price']
-                                                              .toString(),
-                                                      style: TextStyle(
-                                                        fontSize: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height /
-                                                            40,
-                                                        color: Colors.blue,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  width: 60,
-                                                ),
-                                                Column(
-                                                  children: [
-                                                    doc['is_resell']
-                                                        ? ElevatedButton(
-                                                            onPressed:
-                                                                () async {
-                                                              String docId =
-                                                                  FirebaseFirestore
-                                                                      .instance
-                                                                      .collection(
-                                                                          'products')
-                                                                      .doc()
-                                                                      .id;
-
-                                                              await FirebaseFirestore
-                                                                  .instance
-                                                                  .collection(
-                                                                      'products')
-                                                                  .doc(docId)
-                                                                  .set(
-                                                                      {
-                                                                    'name': doc[
-                                                                        'ProductName'],
-                                                                    'Desc': doc[
-                                                                        'Desc'],
-                                                                    'image': doc[
-                                                                        'image'],
-                                                                    'categories':
-                                                                        doc['category'],
-                                                                    'quantity':
-                                                                        doc['Quantity'],
-                                                                    'pricePerProduct':
-                                                                        doc['price']
-                                                                            .toString(),
-                                                                    'timestamp':
-                                                                        DateTime
-                                                                            .now(),
-                                                                    'is_plant':
-                                                                        "true",
-                                                                    'weight': doc[
-                                                                        'weight'],
-                                                                    "is_resell":
-                                                                        true,
-                                                                    "productId":
-                                                                        docId,
-                                                                    "manufacturerId":
-                                                                        await HelperFunctions()
-                                                                            .readUserIdPref()
-                                                                  },
-                                                                      SetOptions(
-                                                                          merge:
-                                                                              true));
-                                                              await FirebaseFirestore
-                                                                  .instance
-                                                                  .collection(
-                                                                      'Users')
-                                                                  .doc(uid)
-                                                                  .collection(
-                                                                      'Orders')
-                                                                  .doc(doc.id)
-                                                                  .set(
-                                                                      {
-                                                                    'is_resell':
-                                                                        false
-                                                                  },
-                                                                      SetOptions(
-                                                                          merge:
-                                                                              true)).then(
-                                                                      (value) {
-                                                                Scaffold.of(
-                                                                        context)
-                                                                    .showSnackBar(SnackBar(
-                                                                        content:
-                                                                            Text('Initiated Resell')));
-                                                              });
-                                                            },
-                                                            child: Text(
-                                                              "Resell",
-                                                            ))
-                                                        : ElevatedButton(
-                                                            onPressed: () {
-                                                              Scaffold.of(context).showSnackBar(SnackBar(
-                                                                  content: Text(
-                                                                      "Can be reselled once only"),
-                                                                  backgroundColor:
-                                                                      Colors
-                                                                          .red));
-                                                            },
-                                                            child:
-                                                                Text("Resell"),
-                                                            style: ElevatedButton
-                                                                .styleFrom(
-                                                                    primary: Colors
-                                                                        .grey),
-                                                          ),
-                                                    !doc['is_return']
-                                                        ? ElevatedButton(
-                                                            onPressed: () {
-                                                              Navigator.of(context).push(MaterialPageRoute(
-                                                                  builder: (context) => ReturnOrder(
-                                                                      productName:
-                                                                          doc[
-                                                                              'ProductName'],
-                                                                      manufacturerId:
-                                                                          doc[
-                                                                              'manufacturerId'],
-                                                                      price: doc[
-                                                                              'price']
-                                                                          .toDouble(),
-                                                                      address: doc[
-                                                                          'address'],
-                                                                      orderedQuantity:
-                                                                          doc['Quantity']
-                                                                              .toInt(),
-                                                                      orderId: doc[
-                                                                          'orderId'],
-                                                                      image: doc[
-                                                                          'image'])));
-                                                            },
-                                                            child: Text(
-                                                              "Return",
-                                                            ))
-                                                        : ElevatedButton(
-                                                            onPressed: () {
-                                                              Scaffold.of(context).showSnackBar(SnackBar(
-                                                                  content: Text(
-                                                                      "Can only be returned once"),
-                                                                  backgroundColor:
-                                                                      Colors
-                                                                          .red));
-                                                            },
-                                                            child:
-                                                                Text("Return"),
-                                                            style: ElevatedButton
-                                                                .styleFrom(
-                                                                    primary: Colors
-                                                                        .grey),
-                                                          )
-                                                  ],
-                                                )
-                                              ],
+                                                  50,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                          // SizedBox(
-                                          //     height: MediaQuery.of(context)
-                                          //             .size
-                                          //             .height /
-                                          //         70),
-                                          // Row(
-                                          //   children: [
-                                          //     Padding(
-                                          //         padding: EdgeInsets.only(),
-                                          //         child: Column(
-                                          //           children: [
-                                          //             Text(
-                                          //               "Order Date: ",
-                                          //               style: TextStyle(
-                                          //                 fontSize: MediaQuery.of(
-                                          //                             context)
-                                          //                         .size
-                                          //                         .height /
-                                          //                     55,
-                                          //                 color: Colors.grey,
-                                          //               ),
-                                          //             ),
-                                          //             Text(
-                                          //               doc['Date'],
-                                          //               style: TextStyle(
-                                          //                 fontSize: MediaQuery.of(
-                                          //                             context)
-                                          //                         .size
-                                          //                         .height /
-                                          //                     55,
-                                          //                 color: Colors.black,
-                                          //               ),
-                                          //             ),
-                                          //           ],
-                                          //         )),
-                                          //     SizedBox(width: 70),
-                                          //     Text(
-                                          //       "Details >",
-                                          //       style: TextStyle(
-                                          //           fontWeight: FontWeight.bold,
-                                          //           background: Paint()
-                                          //             ..color = Colors.black
-                                          //             ..strokeWidth = 0.8
-                                          //             ..style =
-                                          //                 PaintingStyle.stroke,
-                                          //           fontSize:
-                                          //               MediaQuery.of(context)
-                                          //                       .size
-                                          //                       .height /
-                                          //                   50,
-                                          //           color: Colors.black),
-                                          //       textAlign: TextAlign.center,
-                                          //     ),
-                                          //   ],
-                                          // )
+                                          Text(
+                                            doc['Date'],
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                "Quantity: " +
+                                                    doc['Quantity'].toString(),
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: Colors.blueGrey,
+                                                ),
+                                              ),
+                                              SizedBox(width: 10),
+                                              Text(
+                                                "\u{20B9}" +
+                                                    doc['price'].toString(),
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: Colors.blueGrey,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              doc['is_resell']
+                                                  ? ElevatedButton(
+                                                      onPressed: () async {
+                                                        String docId =
+                                                            FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'products')
+                                                                .doc()
+                                                                .id;
+
+                                                        await FirebaseFirestore
+                                                            .instance
+                                                            .collection(
+                                                                'products')
+                                                            .doc(docId)
+                                                            .set(
+                                                                {
+                                                              'name': doc[
+                                                                  'ProductName'],
+                                                              'Desc':
+                                                                  doc['Desc'],
+                                                              'image':
+                                                                  doc['image'],
+                                                              'categories': doc[
+                                                                  'category'],
+                                                              'quantity': doc[
+                                                                  'Quantity'],
+                                                              'pricePerProduct':
+                                                                  doc['price']
+                                                                      .toString(),
+                                                              'timestamp':
+                                                                  DateTime
+                                                                      .now(),
+                                                              'is_plant':
+                                                                  "true",
+                                                              'weight':
+                                                                  doc['weight'],
+                                                              "is_resell": true,
+                                                              "productId":
+                                                                  docId,
+                                                              "manufacturerId":
+                                                                  await HelperFunctions()
+                                                                      .readUserIdPref()
+                                                            },
+                                                                SetOptions(
+                                                                    merge:
+                                                                        true));
+                                                        await FirebaseFirestore
+                                                            .instance
+                                                            .collection('Users')
+                                                            .doc(uid)
+                                                            .collection(
+                                                                'Orders')
+                                                            .doc(doc.id)
+                                                            .set(
+                                                                {
+                                                              'is_resell': false
+                                                            },
+                                                                SetOptions(
+                                                                    merge:
+                                                                        true)).then(
+                                                                (value) {
+                                                          Scaffold.of(context)
+                                                              .showSnackBar(SnackBar(
+                                                                  content: Text(
+                                                                      'Initiated Resell')));
+                                                        });
+                                                      },
+                                                      child: Text(
+                                                        "Resell",
+                                                      ))
+                                                  : ElevatedButton(
+                                                      onPressed: () {
+                                                        Scaffold.of(context)
+                                                            .showSnackBar(SnackBar(
+                                                                content: Text(
+                                                                    "Can be reselled once only"),
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .red));
+                                                      },
+                                                      child: Text("Resell"),
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                              primary:
+                                                                  Colors.grey),
+                                                    ),
+                                              SizedBox(width: 15),
+                                              !doc['is_return']
+                                                  ? ElevatedButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context).push(MaterialPageRoute(
+                                                            builder: (context) => ReturnOrder(
+                                                                productName: doc[
+                                                                    'ProductName'],
+                                                                manufacturerId: doc[
+                                                                    'manufacturerId'],
+                                                                price: doc[
+                                                                        'price']
+                                                                    .toDouble(),
+                                                                address: doc[
+                                                                    'address'],
+                                                                orderedQuantity:
+                                                                    doc['Quantity']
+                                                                        .toInt(),
+                                                                orderId: doc[
+                                                                    'orderId'],
+                                                                image: doc[
+                                                                    'image'])));
+                                                      },
+                                                      child: Text(
+                                                        "Return",
+                                                      ))
+                                                  : ElevatedButton(
+                                                      onPressed: () {
+                                                        Scaffold.of(context)
+                                                            .showSnackBar(SnackBar(
+                                                                content: Text(
+                                                                    "Can only be returned once"),
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .red));
+                                                      },
+                                                      child: Text("Return"),
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                              primary:
+                                                                  Colors.grey),
+                                                    ),
+                                            ],
+                                          ),
                                         ],
-                                        //////////////////////////////////////////////////////////////////////////
                                       ),
                                     ),
                                   ],

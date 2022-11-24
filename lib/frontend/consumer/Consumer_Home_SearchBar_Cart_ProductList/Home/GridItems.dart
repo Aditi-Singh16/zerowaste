@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ProductList.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
 
@@ -30,8 +31,6 @@ class _GridItemsState extends State<GridItems> {
             .get(),
         builder:
             ((BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          debugPrint("length is " + snapshot.data!.docs.length.toString());
-
           if (snapshot.hasData) {
             if (snapshot.data != null) {
               return Scrollbar(
@@ -84,7 +83,7 @@ class _GridItemsState extends State<GridItems> {
                                                           ['manufacturerId'],
                                                       image: snapshot.data!
                                                           .docs[index]['image'],
-                                                      is_plant: snapshot
+                                                      isPlant: snapshot
                                                               .data!.docs[index]
                                                           ['is_plant'],
                                                       q: snapshot
@@ -108,13 +107,6 @@ class _GridItemsState extends State<GridItems> {
                                       ),
                                     ),
                                   ),
-                                  // Positioned(
-                                  //     right:20,
-                                  //     top:15,
-                                  //     child: Container(
-                                  //         child: Icon(Icons.shopping_cart, color: Color(0xFF5CAD81),
-                                  //         size:height/40),
-                                  //     )),
                                 ],
                               ),
                               Text(snapshot.data!.docs[index]['name'],
@@ -139,7 +131,7 @@ class _GridItemsState extends State<GridItems> {
               );
             }
           }
-          return new Text('Error in receiving photos: ${snapshot.error}');
+          return Loader();
         }));
   }
 }

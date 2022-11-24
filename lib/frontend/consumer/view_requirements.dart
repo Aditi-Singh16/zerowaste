@@ -49,16 +49,6 @@ class _ViewRequirementsState extends State<ViewRequirements> {
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        // appBar: AppBar(
-        //   leading: IconButton(
-        //     icon: Icon(Icons.arrow_back, color: Colors.white),
-        //     onPressed: () {
-        //       Navigator.pop(context);
-        //     },
-        //   ),
-        //   title: Text("View Requirements"),
-        //   backgroundColor: Color(0xff001427),
-        // ),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -201,75 +191,78 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                               );
 
                             case ConnectionState.active:
-                              return ListView.builder(
-                                  scrollDirection: Axis.vertical,
-                                  shrinkWrap: true,
-                                  itemCount: snapshot.data!.docs.length,
-                                  itemBuilder: (context, index) {
-                                    //print(snapshot.data!.docs.length);
-                                    DocumentSnapshot doc =
-                                        snapshot.data!.docs[index];
-                                    // print("Doc ID");
-                                    // print(doc.id);
-                                    // print("Doc length");
+                              return SingleChildScrollView(
+                                physics: BouncingScrollPhysics(),
+                                child: ListView.builder(
+                                    controller: ScrollController(),
+                                    scrollDirection: Axis.vertical,
+                                    shrinkWrap: true,
+                                    itemCount: snapshot.data!.docs.length,
+                                    itemBuilder: (context, index) {
+                                      //print(snapshot.data!.docs.length);
+                                      DocumentSnapshot doc =
+                                          snapshot.data!.docs[index];
 
-                                    return Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 15.0, right: 15, top: 15),
-                                      child: Card(
-                                          color: Color(0xffD5EAEF),
-                                          child: ListTile(
-                                            leading: Icon(
-                                                Icons.shopping_bag_rounded,
-                                                size: 30,
-                                                color: Color(0xff265D80)),
-                                            title: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                  "Product: " +
-                                                      doc.data()![
-                                                          'product_name'],
-                                                  style: TextStyle(
-                                                      // color: Color(0xff265D80),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 18)),
-                                            ),
-                                            subtitle: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    "Quantity: " +
-                                                        doc
-                                                            .data()!['quantity']
-                                                            .toString(),
-                                                  ),
-                                                  SizedBox(height: 10),
-                                                  Text(
-                                                    "Category: \u{20B9}" +
-                                                        doc
-                                                            .data()!['category']
-                                                            .toString() +
-                                                        "/product",
-                                                  ),
-                                                  SizedBox(height: 10),
-                                                  Text("Description: " +
-                                                      doc.data()![
-                                                          'description']),
-                                                  // SizedBox(height: 10),
-                                                  // Text("Phone Number: " +
-                                                  //     doc.data()!['phone_number']),
-                                                ],
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 15.0, right: 15, top: 15),
+                                        child: Card(
+                                            color: Color(0xffD5EAEF),
+                                            child: ListTile(
+                                              leading: Icon(
+                                                  Icons.shopping_bag_rounded,
+                                                  size: 30,
+                                                  color: Color(0xff265D80)),
+                                              title: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                    "Product: " +
+                                                        doc.data()![
+                                                            'product_name'],
+                                                    style: TextStyle(
+                                                        // color: Color(0xff265D80),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 18)),
                                               ),
-                                            ),
-                                          )),
-                                    );
-                                  });
+                                              subtitle: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "Quantity: " +
+                                                          doc
+                                                              .data()![
+                                                                  'quantity']
+                                                              .toString(),
+                                                    ),
+                                                    SizedBox(height: 10),
+                                                    Text(
+                                                      "Category: " +
+                                                          doc
+                                                              .data()![
+                                                                  'category']
+                                                              .toString() +
+                                                          " product",
+                                                    ),
+                                                    SizedBox(height: 10),
+                                                    Text("Description: " +
+                                                        doc.data()![
+                                                            'description']),
+                                                    // SizedBox(height: 10),
+                                                    // Text("Phone Number: " +
+                                                    //     doc.data()!['phone_number']),
+                                                  ],
+                                                ),
+                                              ),
+                                            )),
+                                      );
+                                    }),
+                              );
 
                             case ConnectionState.done:
                               return Container();

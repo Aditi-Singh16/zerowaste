@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/SearchBar/search.dart';
 
 import '../../details.dart';
@@ -187,8 +185,12 @@ class _IndividualCategoryProductListState
                 }
                 return Scaffold(
                   appBar: AppBar(
-                    title: Text('Products'),
-                    backgroundColor: Color(0xFF001427),
+                    backgroundColor: const Color(0xff001427),
+                    leading: Image.asset(
+                      'assets/images/logo1.png',
+                      fit: BoxFit.contain,
+                    ),
+                    title: Text("Orders and Returns"),
                     actions: [
                       IconButton(
                         onPressed: () {
@@ -213,7 +215,7 @@ class _IndividualCategoryProductListState
                         String description = doc['Desc'];
                         String image = doc['image'];
                         String category = doc['categories'];
-                        String is_plant = doc['is_plant'];
+                        bool is_plant = doc['is_plant'];
                         int quantity = doc['quantity'];
                         bool isResell = doc['is_resell'];
                         if (name.length > 10) {
@@ -244,7 +246,7 @@ class _IndividualCategoryProductListState
                                           uid: userauthid,
                                           manufacturerid: manufacturerid,
                                           image: image,
-                                          is_plant: is_plant,
+                                          isPlant: is_plant,
                                           q: quantity,
                                           isResell: isResell,
                                         )));
@@ -297,7 +299,7 @@ class _IndividualCategoryProductListState
                                                           manufacturerid:
                                                               manufacturerid,
                                                           image: image,
-                                                          is_plant: is_plant,
+                                                          isPlant: is_plant,
                                                           q: quantity,
                                                           isResell: isResell,
                                                         )));

@@ -1,7 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zerowaste/backend/firestore_info.dart';
-import 'package:zerowaste/backend/userModal/user.dart';
+import 'package:zerowaste/frontend/consumer/color.dart';
 
 class ManuFacture extends StatefulWidget {
   final BuildContext context;
@@ -19,13 +18,17 @@ class ManuFacture extends StatefulWidget {
 class _ManuFactureState extends State<ManuFacture> {
   num? returns;
   num? sold;
+  List<int> gridData = [];
+  List<String> gridLabel = [
+    "Total Sales",
+    "Total Returns",
+  ];
   getDetails() async {
     var val1 = await FirebaseData().getProductReturnCount();
     var val2 = await FirebaseData().getProductSoldCount();
-    setState(() {
-      returns = val1;
-      sold = val2;
-    });
+    gridData.add(val2);
+    gridData.add(val1);
+    setState(() {});
   }
 
   @override
@@ -34,89 +37,58 @@ class _ManuFactureState extends State<ManuFacture> {
     super.initState();
   }
 
-  User? user = FirebaseAuth.instance.currentUser;
-  UserModel loggedInUser = UserModel();
-
-  String monthvalue = 'January';
-  num totalReturnCount = 0;
-  num totalSoldCount = 0;
-
-  // List of items in our dropdown menu
-
-  var months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August'
-  ];
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Product Analytics'),
       content: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Row(
-            children: [
-              Card(
+        physics: const BouncingScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: GridView.count(
+              shrinkWrap: true,
+              crossAxisCount: 2,
+              childAspectRatio: (1 / .8),
+              crossAxisSpacing: 10.0,
+              mainAxisSpacing: 10.0,
+              children: List.generate(2, (index) {
+                return Card(
+                  //elevation: 10,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
                   child: Container(
-                color: const Color(0xffC87FFC),
-                width: MediaQuery.of(context).size.width / 3,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        sold.toString(),
-                        style: const TextStyle(color: Colors.white),
-                      ),
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: AppColor.popupGridColor[index])),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          gridData[index].toString(),
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          gridLabel[index],
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ],
                     ),
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        "Total Sales",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              )),
-              const SizedBox(height: 20),
-              Card(
-                  child: Container(
-                color: const Color(0xffFE9E87),
-                width: MediaQuery.of(context).size.width / 3,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        returns.toString(),
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        "Total Returns",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              ))
-            ],
-          )),
+                  ),
+                );
+              })),
+        ),
+      ),
       actions: <Widget>[
-        ElevatedButton(
+        TextButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: const Text('Close'),
+          child: const Text('OK'),
         ),
       ],
     );

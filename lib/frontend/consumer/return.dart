@@ -1,9 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
 
 class ReturnOrder extends StatefulWidget {
   ReturnOrder(
@@ -105,7 +102,12 @@ class _ReturnOrderState extends State<ReturnOrder> {
     return Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: Text("Return Details"),
+          backgroundColor: const Color(0xff001427),
+          leading: Image.asset(
+            'assets/images/logo1.png',
+            fit: BoxFit.contain,
+          ),
+          title: Text("Returns"),
         ),
         body: SingleChildScrollView(
           child: Form(

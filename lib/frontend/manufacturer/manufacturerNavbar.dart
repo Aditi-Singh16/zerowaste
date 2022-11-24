@@ -17,12 +17,11 @@ class _ManufacturerNavbarState extends State<ManufacturerNavbar> {
   int pageIndex = 0;
 
   final pages = [
-    Dashboard(),
-    OrdersTabBar(),
-    ProductsTabBar(),
+    const Dashboard(),
+    const OrdersTabBar(),
+    const ProductsTabBar(),
     InputCategory(),
-    // ManufactureAnalytics(),
-    ProfilePage(),
+    const ProfilePage(),
   ];
 
   @override

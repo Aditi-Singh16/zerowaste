@@ -20,7 +20,7 @@ class _NgoNavbarState extends State<NgoNavbar> {
 
   final pages = [
     AddRequirement(),
-    const MyApp(),
+    const LearningModules(),
     ViewRequirements(),
     ProfilePage(),
   ];

@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
 import 'package:zerowaste/frontend/Helpers/profile_helpers/details_tab.dart';
 import 'package:zerowaste/frontend/Helpers/profile_helpers/esv_tab.dart';
-import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/analytics.dart';
 import 'package:zerowaste/frontend/consumer/color.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
 
@@ -71,14 +70,9 @@ class _ProfilePageState extends State<ProfilePage> {
         .collection('Users')
         .doc(user!.uid)
         .get();
-    var docSnapshot1 = await FirebaseFirestore.instance
-        .collection("environment")
-        .doc(await HelperFunctions().readUserIdPref())
-        .get();
 
     if (docSnapshot.exists) {
       Map<String, dynamic> data = docSnapshot.data()!;
-      print(data);
 
       // You can then retrieve the value from the Map like this:
       setState(() {
@@ -87,7 +81,6 @@ class _ProfilePageState extends State<ProfilePage> {
           for (int i = 0; i < count; i++) {
             accepted_requests.add(data['accepted_requests'][i]);
           }
-          print('heyy');
         }
         if (data['wallet'] != null) {
           wallet = data['wallet'];
@@ -109,13 +102,6 @@ class _ProfilePageState extends State<ProfilePage> {
         }
       });
     }
-    if (docSnapshot1.exists) {
-      Map<String, dynamic> data1 = docSnapshot1.data()!;
-
-      air = data1['air'];
-      tree = data1['tree'];
-      co2 = data1['co2'];
-    }
   }
 
   void initState() {
@@ -126,7 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
         .doc(user!.uid)
         .get()
         .then((value) {
-      this.loggedInUser = UserModel.fromMap(value.data());
+      loggedInUser = UserModel.fromMap(value.data());
       title = '${loggedInUser.addr}';
       phone = '${loggedInUser.phone}';
       type = loggedInUser.type!;
@@ -135,12 +121,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    String? uid = loggedInUser.uid;
-
     return FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
             .collection('requirements')
-            .where('uid', isEqualTo: uid)
+            .where('uid', isEqualTo: loggedInUser.uid)
             .get(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasError) {
@@ -149,19 +133,11 @@ class _ProfilePageState extends State<ProfilePage> {
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
                 appBar: AppBar(
-                  title: const Text("Profile"),
-                  backgroundColor: AppColor.secondary,
-                  actions: [
-                    IconButton(
-                        onPressed: () {
-                          (type == 'Consumer')
-                              ? Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => ConsumerAnalytics()))
-                              : null;
-                        },
-                        icon: Icon(Icons.auto_graph_rounded))
-                  ],
-                ),
+                    leading: Image.asset(
+                      'assets/images/logo1.png',
+                      fit: BoxFit.contain,
+                    ),
+                    title: Text("Profile")),
                 body: SingleChildScrollView(
                     child: Column(children: [
                   (type == 'Consumer')
@@ -273,7 +249,15 @@ class _ProfilePageState extends State<ProfilePage> {
                       : Visibility(visible: false, child: Text(' ')),
                   const Spacing(),
                   (type == 'Consumer')
-                      ? ESVTab(air: air, co2: co2, tree: tree)
+                      ? Container(
+                          margin: const EdgeInsets.all(40),
+                          child: ESVTab(
+                            air: air,
+                            co2: co2,
+                            tree: tree,
+                            textColor: AppColor.text,
+                          ),
+                        )
                       : Container(),
                   const SizedBox(
                     height: 10,
@@ -286,8 +270,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         fontWeight: FontWeight.w500),
                   ),
                   Container(
-                    padding:
-                        const EdgeInsets.only(bottom: 5, left: 5, right: 5),
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
                     child: Column(
                       children: [
                         Padding(

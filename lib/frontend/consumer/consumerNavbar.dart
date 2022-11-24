@@ -1,14 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/analytics.dart';
-import 'package:zerowaste/frontend/CompanyAnalysis.dart';
 import 'package:zerowaste/frontend/consumer/Orders.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
 import 'package:zerowaste/frontend/consumer/consumer_tabbar.dart';
 import 'package:zerowaste/frontend/consumer/learning_modules/moduleoptions.dart';
-import 'package:zerowaste/frontend/manufacturer/inputDisposalCategory.dart';
 import 'package:zerowaste/frontend/login/profile_page.dart';
-import 'package:zerowaste/frontend/requirements_sell/add_requirements.dart';
 
 class ConsumerNavbar extends StatefulWidget {
   const ConsumerNavbar({Key? key}) : super(key: key);
@@ -22,10 +18,9 @@ class _ConsumerNavbarState extends State<ConsumerNavbar> {
 
   final pages = [
     UserHome(),
-    const MyApp(),
-    ConsumerTabBar(),
-    const Company(),
-    YourOrders(),
+    const LearningModules(),
+    const ConsumerTabBar(),
+    const YourOrders(),
     const ProfilePage()
   ];
 
@@ -112,25 +107,6 @@ class _ConsumerNavbarState extends State<ConsumerNavbar> {
             },
             icon: pageIndex == 3
                 ? Icon(
-                    CupertinoIcons.map_fill,
-                    color: Colors.black,
-                    size: MediaQuery.of(context).size.height / 24,
-                  )
-                : Icon(
-                    CupertinoIcons.map,
-                    color: Colors.black,
-                    size: MediaQuery.of(context).size.height / 24,
-                  ),
-          ),
-          IconButton(
-            enableFeedback: false,
-            onPressed: () {
-              setState(() {
-                pageIndex = 4;
-              });
-            },
-            icon: pageIndex == 4
-                ? Icon(
                     CupertinoIcons.cube_box_fill,
                     color: Colors.black,
                     size: MediaQuery.of(context).size.height / 24,
@@ -145,10 +121,10 @@ class _ConsumerNavbarState extends State<ConsumerNavbar> {
             enableFeedback: false,
             onPressed: () {
               setState(() {
-                pageIndex = 5;
+                pageIndex = 4;
               });
             },
-            icon: pageIndex == 5
+            icon: pageIndex == 4
                 ? Icon(
                     Icons.person,
                     color: Colors.black,

@@ -56,7 +56,7 @@ class ProductSearch extends SearchDelegate {
                   final String manufacturerid = document.get('manufacturerId');
                   final String price = document.get('pricePerProduct');
                   final String category = document.get('categories');
-                  final String is_plant = document.get('is_plant');
+                  final bool isPlant = document.get('is_plant');
                   final int quantity = document.get('quantity');
                   final bool isResell = document.get('is_resell');
                   return ListTile(
@@ -76,7 +76,7 @@ class ProductSearch extends SearchDelegate {
                                   uid: userauthid,
                                   manufacturerid: manufacturerid,
                                   image: image,
-                                  is_plant: is_plant,
+                                  isPlant: isPlant,
                                   q: quantity,
                                   isResell: isResell,
                                 )));

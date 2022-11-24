@@ -54,16 +54,16 @@ class _Company extends State<Company> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text("All Users", style: const TextStyle(fontSize: 16)),
+              const Text("All Users", style: TextStyle(fontSize: 16)),
               CustomContainer(
                   subtype: const ["Consumers", "Manufacturer", "NGOs"],
                   subtypeVal: [totConsumer, totManu, totalNGO]),
-              Text("Total Transactions", style: const TextStyle(fontSize: 16)),
+              const Text("Total Transactions", style: TextStyle(fontSize: 16)),
               CustomContainer(
                   subtype: const ["Products Sold", "Products Resold"],
                   subtypeVal: [prodSold, resell]),
-              Text("Environment Saving Values",
-                  style: const TextStyle(fontSize: 16)),
+              const Text("Environment Saving Values",
+                  style: TextStyle(fontSize: 16)),
               CustomContainer(
                   subtype: const ["Air", "Co2", "Trees"],
                   subtypeVal: [air.toInt(), co2.toInt(), tree.toInt()])

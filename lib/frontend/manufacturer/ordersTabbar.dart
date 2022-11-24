@@ -15,10 +15,11 @@ class OrdersTabBar extends StatelessWidget {
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
             backgroundColor: const Color(0xff001427),
-            title: const Text(
-              'Orders and returns',
-              style: TextStyle(fontWeight: FontWeight.normal),
+            leading: Image.asset(
+              'assets/images/logo1.png',
+              fit: BoxFit.contain,
             ),
+            title: Text("Orders and Returns"),
             bottom: const TabBar(
               tabs: [
                 Tab(

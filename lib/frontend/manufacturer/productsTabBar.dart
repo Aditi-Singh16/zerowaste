@@ -15,10 +15,11 @@ class ProductsTabBar extends StatelessWidget {
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
             backgroundColor: Color(0xff001427),
-            title: Text(
-              'Products',
-              style: TextStyle(fontWeight: FontWeight.normal),
+            leading: Image.asset(
+              'assets/images/logo1.png',
+              fit: BoxFit.contain,
             ),
+            title: Text("Products"),
             bottom: TabBar(
               tabs: [
                 Tab(

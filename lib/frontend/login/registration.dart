@@ -314,7 +314,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     userModel.Coupon4 = false;
     userModel.addr = '';
     userModel.phone = '';
-    userModel.wallet = 0.0;
+    userModel.wallet = 0;
 
     DataBaseHelper dataBaseHelper = DataBaseHelper.instance;
 

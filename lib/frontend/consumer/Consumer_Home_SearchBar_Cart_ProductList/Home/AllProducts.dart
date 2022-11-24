@@ -27,10 +27,7 @@ class AllProducts extends StatelessWidget {
 
     return FutureBuilder<QuerySnapshot>(
         //get products with quantity greater than 0
-        future: FirebaseFirestore.instance
-            .collection('products')
-            .where('quantity', isGreaterThan: 0)
-            .get(),
+        future: FirebaseFirestore.instance.collection('products').get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(
@@ -44,7 +41,13 @@ class AllProducts extends StatelessWidget {
               snapshot.hasData) {
             return Scaffold(
               appBar: AppBar(
-                title: Text('Products'),
+                leading: IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                title: Text('All Products'),
                 backgroundColor: Color(0xFF001427),
                 actions: [
                   IconButton(
@@ -54,7 +57,6 @@ class AllProducts extends StatelessWidget {
                     icon: Icon(Icons.search),
                   )
                 ],
-                centerTitle: true,
               ),
               body: ListView.builder(
                   scrollDirection: Axis.vertical,
@@ -64,13 +66,13 @@ class AllProducts extends StatelessWidget {
                     DocumentSnapshot doc = snapshot.data!.docs[index];
                     String name = doc['name'];
 
-                    String prod_id = doc['productId'];
+                    String prodId = doc['productId'];
                     String manufacturerid = doc['manufacturerId'];
                     String price = doc['pricePerProduct'];
                     String description = doc['Desc'];
                     String image = doc['image'];
                     String category = doc['categories'];
-                    String is_plant = doc['is_plant'];
+                    bool isPlant = doc['is_plant'];
                     int quantity = doc['quantity'];
                     bool isResell = doc['is_resell'];
                     if (name.length > 10) {
@@ -97,11 +99,11 @@ class AllProducts extends StatelessWidget {
                                       description: description,
                                       price: double.parse(price),
                                       category: category,
-                                      productid: prod_id,
+                                      productid: prodId,
                                       uid: userauthid,
                                       manufacturerid: manufacturerid,
                                       image: image,
-                                      is_plant: is_plant,
+                                      isPlant: isPlant,
                                       q: quantity,
                                       isResell: isResell,
                                     )));

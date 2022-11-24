@@ -3,14 +3,13 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:zerowaste/backend/firestore_info.dart';
-import 'package:zerowaste/backend/userModal/user.dart';
 import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
+import 'package:zerowaste/frontend/consumer/color.dart';
 import 'package:zerowaste/frontend/manufacturer/Analytics.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 
@@ -39,12 +38,16 @@ class _DashboardState extends State<Dashboard> {
     [Colors.green[100]!, Colors.green],
     [Colors.yellow[100]!, Colors.yellow]
   ];
+  var userId;
+
   getManufacturerAnalytics() async {
+    var uid = await _helperFunctions.readUserIdPref();
     var sales = await FirebaseData().getManufactureSoldCount();
     var customers = await FirebaseData().getManufactureCustomerCount();
     var returns = await FirebaseData().getManufacureReturnCount();
     var donations = await FirebaseData().getManufactureDonationCount();
     setState(() {
+      userId = uid;
       sales = sales;
       customers = customers;
       returns = returns;
@@ -64,34 +67,33 @@ class _DashboardState extends State<Dashboard> {
   String cityvalue = 'Silchar';
 
   // List of items in our dropdown menu
-  var items = [
-    'Cotton Clothes',
-    'Silk Clothes',
-    'Nylon Clothes',
-    'Books',
-    'Bags',
-    'Electronics'
+  List<List<String>> dropdownValues = [
+    [
+      'Cotton Clothes',
+      'Silk Clothes',
+      'Nylon Clothes',
+      'Books',
+      'Bags',
+      'Electronics'
+    ],
+    [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sept',
+      'Oct',
+      'Nov',
+      'Dec'
+    ],
+    ['Mumbai', 'Guwahati', 'Silchar']
   ];
-
-  var months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-  ];
-
   var monthsPred = [];
   var monthsAct = [];
-
-  var city = ['Mumbai', 'Guwahati', 'Silchar'];
 
   Random rnd = new Random();
   var unitPrice = 10;
@@ -134,9 +136,9 @@ class _DashboardState extends State<Dashboard> {
         [
           (unitPrice).toDouble(),
           (taxPrice).toDouble(),
-          (months.indexOf(monthSlice[i])).toDouble(),
-          (city.indexOf(cityvalue)).toDouble(),
-          (items.indexOf(itemvalue)).toDouble()
+          (dropdownValues[1].indexOf(monthSlice[i])).toDouble(),
+          (dropdownValues[2].indexOf(cityvalue)).toDouble(),
+          (dropdownValues[0].indexOf(itemvalue)).toDouble()
         ]
       ];
       var output = List.filled(1, 0).reshape([1, 1]);
@@ -150,27 +152,30 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     getManufacturerAnalytics();
     var start = int.parse(DateFormat.M().format(DateTime.now()));
-    monthvalue = months[start - 1];
-    monthsAct = months.sublist(0, start - 1);
-    monthsPred = months;
-    months = months.sublist(start - 1);
+    monthvalue = dropdownValues[1][start - 1];
+    monthsAct = dropdownValues[1].sublist(0, start - 1);
+    monthsPred = dropdownValues[1];
+    dropdownValues[1] = dropdownValues[1].sublist(start - 1);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          AppBar(title: Text('Dashboard'), automaticallyImplyLeading: false),
+      appBar: AppBar(
+        backgroundColor: const Color(0xff001427),
+        leading: Image.asset(
+          'assets/images/logo1.png',
+          fit: BoxFit.contain,
+        ),
+        title: Text("Dashboard"),
+      ),
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(
-              height: 30,
-            ),
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: GridView.count(
@@ -181,12 +186,14 @@ class _DashboardState extends State<Dashboard> {
                   mainAxisSpacing: 10.0,
                   children: List.generate(4, (index) {
                     return Card(
-                      //elevation: 10,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0),
+                        borderRadius: BorderRadius.circular(5.0),
                       ),
                       child: Container(
                         decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(5.0),
+                            ),
                             gradient: LinearGradient(
                                 begin: Alignment.centerLeft,
                                 end: Alignment.centerRight,
@@ -197,12 +204,12 @@ class _DashboardState extends State<Dashboard> {
                           children: [
                             Text(
                               gridData[index].toString(),
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(color: AppColor.text),
                             ),
                             SizedBox(height: 10),
                             Text(
                               gridLabel[index],
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(color: Colors.black),
                             ),
                           ],
                         ),
@@ -210,28 +217,36 @@ class _DashboardState extends State<Dashboard> {
                     );
                   })),
             ),
-            Divider(
-              thickness: 5,
-            ),
             Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Row(
-                children: [
-                  Spacer(),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.37,
-                    height: MediaQuery.of(context).size.height * 0.067,
-                    child: Container(
-                      padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(10.0),
+              child: Divider(
+                thickness: 5,
+              ),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.05,
+              child: ListView.separated(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: dropdownValues.length,
+                  separatorBuilder: (context, index) {
+                    return SizedBox(
+                      width: 20,
+                    );
+                  },
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      padding: EdgeInsets.only(left: 5),
                       decoration: BoxDecoration(
-                        color: Color(0xff3472c0), //<-- SEE HERE
+                        color: AppColor.dropdown,
+                        borderRadius: BorderRadius.circular(5),
                       ),
                       child: DropdownButton(
                         underline: Container(),
-                        value: itemvalue,
+                        value: dropdownValues[index][0],
                         icon: const Icon(Icons.keyboard_arrow_down),
                         iconEnabledColor: Colors.white,
-                        items: items.map((String items) {
+                        items: dropdownValues[index].map((String items) {
                           return DropdownMenuItem(
                             alignment: Alignment.center,
                             value: items,
@@ -247,76 +262,8 @@ class _DashboardState extends State<Dashboard> {
                           });
                         },
                       ),
-                    ),
-                  ),
-                  Spacer(),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.23,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Color(0xff3472c0), //<-- SEE HERE
-                      ),
-                      child: DropdownButton(
-                        underline: Container(),
-                        dropdownColor: Color(0xff3472c0),
-                        value: monthvalue,
-                        icon: const Icon(Icons.keyboard_arrow_down),
-                        iconEnabledColor: Colors.white,
-                        isExpanded: true,
-                        items: months.map((String items) {
-                          return DropdownMenuItem(
-                            value: items,
-                            child: Center(
-                              child: Text(items,
-                                  style: TextStyle(
-                                      fontSize: 12, color: Colors.white)),
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            monthvalue = newValue!;
-                            monthsAct = monthsPred.sublist(
-                                0, monthsPred.indexOf(monthvalue));
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                  Spacer(),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.26,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Color(0xff3472c0), //<-- SEE HERE
-                      ),
-                      child: DropdownButton(
-                        underline: Container(),
-                        iconEnabledColor: Colors.white,
-                        dropdownColor: Color(0xff3472c0),
-                        isExpanded: true,
-                        value: cityvalue,
-                        icon: const Icon(Icons.keyboard_arrow_down),
-                        items: city.map((String items) {
-                          return DropdownMenuItem(
-                            value: items,
-                            child: Center(
-                                child: Text(items,
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.white))),
-                          );
-                        }).toList(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            cityvalue = newValue!;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                  Spacer(),
-                ],
-              ),
+                    );
+                  }),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 20.0),
@@ -380,8 +327,7 @@ class _DashboardState extends State<Dashboard> {
             StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection('products')
-                    .where("manufacturerId",
-                        isEqualTo: _helperFunctions.readUserIdPref())
+                    .where("manufacturerId", isEqualTo: userId)
                     .snapshots(),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.hasError) {
