@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
-import 'package:zerowaste/frontend/consumer/color.dart';
+import 'package:zerowaste/frontend/Helpers/color.dart';
 
 abstract class AppStyle {
   static const h1Light = TextStyle(

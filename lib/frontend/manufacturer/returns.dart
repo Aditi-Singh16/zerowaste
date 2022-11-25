@@ -1,15 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-
-late Razorpay razorpay;
-String currDoc = "";
-String curr_user = "";
-num total = 0;
-var productName1;
-var contact1;
+import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
 
 class Returns extends StatefulWidget {
   @override
@@ -17,8 +10,12 @@ class Returns extends StatefulWidget {
 }
 
 class _ReturnsState extends State<Returns> {
-//get price field from return collection in firebase
-  //get user id from firebase auth
+  late Razorpay razorpay;
+  String currDoc = "";
+  String curr_user = "";
+  num total = 0;
+  var productName1;
+  var contact1;
   String usid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
@@ -50,7 +47,6 @@ class _ReturnsState extends State<Returns> {
   }
 
   void handlerErrorFailure(PaymentFailureResponse response) {
-    // Toast.show("Pament error", context);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -148,24 +144,22 @@ class _ReturnsState extends State<Returns> {
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
                                       children: [
                                         Text(
                                           "Return Quantity: " +
                                               doc['return_quantity'].toString(),
                                         ),
-                                        SizedBox(height: 10),
                                         Text(
                                           "Price: \u{20B9}" +
                                               doc['price'].toString() +
                                               "/product",
                                         ),
-                                        SizedBox(height: 10),
                                         Text("pickup Address: " +
                                             doc['address']),
-                                        SizedBox(height: 10),
                                         Text("Amount to be paid: \u{20B9}" +
                                             amount.toString()),
-                                        SizedBox(height: 10),
                                         ElevatedButton(
                                             onPressed: () async {
                                               curr_user = doc['userId'];
@@ -173,8 +167,6 @@ class _ReturnsState extends State<Returns> {
                                               total = doc['price'] *
                                                   doc['return_quantity'] *
                                                   0.65;
-                                              print("toattttttttttal");
-                                              print(total);
 
                                               await openCheckout();
                                               //delete returns document from return collection
@@ -188,10 +180,7 @@ class _ReturnsState extends State<Returns> {
                         }).toList(),
                       ),
                     )
-                  : const SpinKitChasingDots(
-                      color: Colors.blue,
-                      size: 50.0,
-                    );
+                  : const Loader();
             }));
   }
 

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/SearchBar/search.dart';
+import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 import '../../details.dart';
 
@@ -66,8 +67,6 @@ class _IndividualCategoryProductListState
       children: [
         Row(
           children: [
-            const Spacing(),
-            const Spacing(),
             Text('Environment Saving Values(per 100gm)'),
             ClipOval(
               child: SizedBox.fromSize(
@@ -236,20 +235,22 @@ class _IndividualCategoryProductListState
                             //margin: EdgeInsets.only(left: 12.0),
                             child: InkWell(
                               onTap: () {
+                                double wallet =
+                                    HelperFunctions().readWalletPref();
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => Details(
-                                          name: name,
-                                          description: description,
-                                          price: double.parse(price),
-                                          category: category,
-                                          productid: prod_id,
-                                          uid: userauthid,
-                                          manufacturerid: manufacturerid,
-                                          image: image,
-                                          isPlant: is_plant,
-                                          q: quantity,
-                                          isResell: isResell,
-                                        )));
+                                        name: name,
+                                        description: description,
+                                        price: double.parse(price),
+                                        category: category,
+                                        productid: prod_id,
+                                        uid: userauthid,
+                                        manufacturerid: manufacturerid,
+                                        image: image,
+                                        isPlant: is_plant,
+                                        q: quantity,
+                                        isResell: isResell,
+                                        wallet: wallet)));
                               },
                               child: Row(
                                 children: [
@@ -283,26 +284,29 @@ class _IndividualCategoryProductListState
                                           CrossAxisAlignment.start,
                                       children: [
                                         InkWell(
-                                          onTap: () {
+                                          onTap: () async {
+                                            double wallet =
+                                                await HelperFunctions()
+                                                    .readWalletPref();
                                             Navigator.of(context).push(
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         Details(
-                                                          name: name,
-                                                          description:
-                                                              description,
-                                                          price: double.parse(
-                                                              price),
-                                                          category: category,
-                                                          productid: prod_id,
-                                                          uid: userauthid,
-                                                          manufacturerid:
-                                                              manufacturerid,
-                                                          image: image,
-                                                          isPlant: is_plant,
-                                                          q: quantity,
-                                                          isResell: isResell,
-                                                        )));
+                                                            name: name,
+                                                            description:
+                                                                description,
+                                                            price: double.parse(
+                                                                price),
+                                                            category: category,
+                                                            productid: prod_id,
+                                                            uid: userauthid,
+                                                            manufacturerid:
+                                                                manufacturerid,
+                                                            image: image,
+                                                            isPlant: is_plant,
+                                                            q: quantity,
+                                                            isResell: isResell,
+                                                            wallet: wallet)));
                                           },
                                           child: Padding(
                                             padding: EdgeInsets.only(

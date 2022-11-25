@@ -1,11 +1,16 @@
+// ignore_for_file: unnecessary_new
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:zerowaste/frontend/Helpers/consumer/plant_gif.dart';
+import 'package:zerowaste/frontend/Helpers/consumer/product_display.dart';
+import 'package:zerowaste/frontend/Helpers/consumer/tab_display.dart';
 import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
 import 'package:zerowaste/frontend/Helpers/profile_helpers/esv_tab.dart';
-import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Cart/ShoppingCart.dart';
-import 'package:zerowaste/frontend/consumer/color.dart';
-import 'package:zerowaste/frontend/consumer/style.dart';
+import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/ShoppingCart.dart';
+import 'package:zerowaste/frontend/Helpers/color.dart';
+import 'package:zerowaste/frontend/Helpers/style.dart';
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:zerowaste/frontend/consumer/Orders.dart';
@@ -26,6 +31,7 @@ class Details extends StatefulWidget {
   String image;
   bool isPlant;
   bool isResell;
+  double wallet;
 
   Details(
       {required this.name,
@@ -38,6 +44,7 @@ class Details extends StatefulWidget {
       required this.image,
       required this.isPlant,
       required this.q,
+      required this.wallet,
       required this.isResell});
 
   @override
@@ -47,16 +54,15 @@ class Details extends StatefulWidget {
 class _DetailsState extends State<Details> {
   String eneteredcoupon = '';
   List validity = [false, false, false, false, false];
-  List couponn = ['OFF05', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
+  List allCoupons = ['OFF05', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
   List Value = [5, 10, 15, 20, 2];
   int wallet = 0;
-  double amount = 1;
-  double amountd = 0;
-  double amountw = 0;
+  double totalAmount = 0;
+  double totalDelivery = 0;
+  double totalAmountw = 0;
   bool coupon = false;
   bool plant = false;
   bool couponused = false;
-  bool walletm = false;
 
   int indx = 0;
   late Razorpay razorpay;
@@ -135,56 +141,37 @@ class _DetailsState extends State<Details> {
     razorpay.clear();
   }
 
-  Widget _plantgif(BuildContext context) {
-    return new AlertDialog(
-      title: const Text('Congratulations!!!'),
-      content: new Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Image.asset("assets/images/plantatree.gif"),
-        ],
-      ),
-      actions: <Widget>[
-        FlatButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          textColor: Theme.of(context).primaryColor,
-          child: const Text('Close'),
-        ),
-      ],
-    );
-  }
-
   Widget _buildPopupDialog(BuildContext context) {
     return new AlertDialog(
       title: const Text('Meet Your Plant'),
       content: new Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Text("Plant a Tree just at " +
+        children: const <Widget>[
+          Text("Plant a Tree just at " +
               '\u{20B9}' +
               "5 and take a step towards Green India"),
         ],
       ),
       actions: <Widget>[
-        FlatButton(
+        TextButton(
             onPressed: () {
               Navigator.of(context).pop();
               setState(() {
                 plant = true;
-                amountd = amount + 20 + 5;
+                totalDelivery = totalAmount + 20 + 5;
               });
               showDialog(
                 context: context,
-                builder: (BuildContext context) => _plantgif(context),
+                builder: (BuildContext context) => PlantGIF(),
               );
             },
-            textColor: Theme.of(context).primaryColor,
+            style: ButtonStyle(
+              foregroundColor:
+                  MaterialStateProperty.all<Color>(AppColor.dropdown),
+            ),
             child: const Text("Yes")),
-        FlatButton(
+        TextButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -214,7 +201,7 @@ class _DetailsState extends State<Details> {
       "ProductId": widget.productid,
       "Quantity": int.parse(quantity),
       "Time": time,
-      "Amount": (walletm) ? amountw : amountd,
+      "Amount": (walletm) ? totalAmountw : totalDelivery,
       "Date": date,
       "manufacturerId": widget.manufacturerid,
       "phone_number": phone_number,
@@ -251,20 +238,22 @@ class _DetailsState extends State<Details> {
       await FirebaseFirestore.instance
           .collection('Users')
           .doc(widget.uid)
-          .update({'wallet': (wallet - amountd) > 0 ? wallet - amountd : 0});
+          .update({
+        'wallet': (wallet - totalDelivery) > 0 ? wallet - totalDelivery : 0
+      });
     }
     if (beforediscount != afterdiscount) {
-      String couponname = 'Coupon' + indx.toString();
+      String allCouponsame = 'Coupon' + indx.toString();
       await FirebaseFirestore.instance
           .collection('Users')
           .doc(widget.uid)
-          .update({couponname: false});
+          .update({allCouponsame: false});
     }
     if (widget.isResell == true) {
       await FirebaseFirestore.instance
           .collection('Users')
           .doc(widget.manufacturerid)
-          .update({'wallet': amountw == 0 ? amountd : amountw});
+          .update({'wallet': totalAmountw == 0 ? totalDelivery : totalAmountw});
     }
     // Toast.show("Pament success", context);
     showDialog(
@@ -336,8 +325,9 @@ class _DetailsState extends State<Details> {
   Future<void> openCheckout() async {
     var options = {
       "key": "rzp_test_Ienn2nz5hJfAS1",
-      "amount":
-          (walletm) ? (amountw * 100).toString() : (amountd * 100).toString(),
+      "totalAmount": wallet > 0
+          ? (totalAmountw * 100).toString()
+          : (totalDelivery * 100).toString(),
       "name": "Sample App",
       "description": "Payment for the some random product",
       'timeout': 300,
@@ -454,7 +444,9 @@ class _DetailsState extends State<Details> {
                         style: AppStyle.text.copyWith(color: Colors.white))
                   ],
                 ),
-                const Spacing(),
+                const SizedBox(
+                  height: 16,
+                ),
                 Form(
                   key: _formkey,
                   child: SizedBox(
@@ -464,9 +456,8 @@ class _DetailsState extends State<Details> {
                       onChanged: (val) {
                         setState(() {
                           quantity = val;
-                          amount = widget.price *
-                              int.parse(val); //displaying the total amount
-                          amountd = amount + 20;
+                          totalAmount = widget.price *
+                              int.parse(val); //displaying the total totalAmount
                         });
                       },
                       validator: (val) {
@@ -490,19 +481,25 @@ class _DetailsState extends State<Details> {
                     ),
                   ),
                 ),
-                const Spacing(),
+                const SizedBox(
+                  height: 16,
+                ),
                 Row(
                   children: const [
                     TabTitle(label: 'Details', selected: true),
                     SizedBox(width: 8),
                   ],
                 ),
-                const Spacing(),
+                const SizedBox(
+                  height: 16,
+                ),
                 Text(
                   widget.description,
                   style: AppStyle.bodyText.copyWith(color: Colors.white),
                 ),
-                const Spacing(),
+                const SizedBox(
+                  height: 16,
+                ),
 
                 //plant a tree
                 (widget.isPlant == true)
@@ -524,13 +521,17 @@ class _DetailsState extends State<Details> {
                               ),
                             ],
                           ),
-                          const Spacing(),
+                          const SizedBox(
+                            height: 16,
+                          ),
                           Text(
                             "Once an order is placed on our app, we initiate the process of planting and linking your order with your sapling. Within a few days, along with the delivery of your products, we will also share the details of your plant by email.",
                             style:
                                 AppStyle.bodyText.copyWith(color: Colors.white),
                           ),
-                          const Spacing(),
+                          const SizedBox(
+                            height: 16,
+                          ),
                         ]),
                         onTap: () {
                           showDialog(
@@ -539,7 +540,7 @@ class _DetailsState extends State<Details> {
                                 _buildPopupDialog(context),
                           );
                         })
-                    : const Spacing(),
+                    : Container(),
 
                 ESVTab(
                   air: esv_ls![0] * w,
@@ -547,7 +548,9 @@ class _DetailsState extends State<Details> {
                   tree: esv_ls![1] + w,
                   textColor: Colors.white,
                 ),
-                const Spacing(),
+                const SizedBox(
+                  height: 16,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -569,19 +572,20 @@ class _DetailsState extends State<Details> {
                                     AppStyle.text.copyWith(color: Colors.red)),
                             onTap: () {
                               setState(() {
-                                if (amount !=
+                                coupon = false;
+                                if (totalAmount !=
                                     (widget.price * int.parse(quantity))) {
-                                  amount = widget.price * int.parse(quantity);
-
-                                  amountd =
-                                      (plant) ? amount + 20 + 5 : amount + 20;
+                                  totalAmount =
+                                      widget.price * int.parse(quantity);
                                 }
                               });
                             })
                         : Container(),
                   ],
                 ),
-                const Spacing(),
+                const SizedBox(
+                  height: 16,
+                ),
 
                 coupon
                     ? Container(
@@ -624,23 +628,18 @@ class _DetailsState extends State<Details> {
                                 error = '';
                               });
                               if (_formkey.currentState!.validate()) {
-                                if (couponn.contains(eneteredcoupon)) {
-                                  print('entered coupon is in coupon');
-                                  indx = couponn.indexOf(eneteredcoupon);
+                                if (allCoupons.contains(eneteredcoupon)) {
+                                  indx = allCoupons.indexOf(eneteredcoupon);
                                   if (validity[indx] == true) {
-                                    print(' entered coupon is valid coupon');
                                     setState(() {
-                                      //applied coupon amount
-                                      amount =
+                                      //applied coupon totalAmount
+                                      totalAmount =
                                           widget.price * int.parse(quantity);
-                                      beforediscount = amount;
+                                      beforediscount = totalAmount;
 
-                                      amount = amount -
-                                          (amount * (Value[indx]) / 100);
-                                      afterdiscount = amount;
-                                      plant
-                                          ? (amountd = amount + 5 + 20)
-                                          : (amountd = amount + 20);
+                                      totalAmount = totalAmount -
+                                          (totalAmount * (Value[indx]) / 100);
+                                      afterdiscount = totalAmount;
                                     });
                                   } else {
                                     setState(() {
@@ -659,26 +658,9 @@ class _DetailsState extends State<Details> {
                                     AppStyle.h3.copyWith(color: Colors.white))),
                       )
                     : const Visibility(visible: false, child: const Text('')),
-                const Spacing(),
-                (amount == 1)
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Total:',
-                              style: AppStyle.h3.copyWith(color: Colors.white)),
-                          Text('0',
-                              style: AppStyle.h3.copyWith(color: Colors.white)),
-                        ],
-                      )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Total:',
-                              style: AppStyle.h3.copyWith(color: Colors.white)),
-                          Text('$amount',
-                              style: AppStyle.h3.copyWith(color: Colors.white)),
-                        ],
-                      ),
+                const SizedBox(
+                  height: 16,
+                ),
 
                 plant
                     ? Row(
@@ -692,116 +674,55 @@ class _DetailsState extends State<Details> {
                                 onPressed: () {
                                   setState(() {
                                     plant = false;
-                                    amountd = amountd - 5;
+                                    totalDelivery = totalDelivery - 5;
                                   });
                                 },
                                 child: Text("Remove",
                                     style: AppStyle.h3
                                         .copyWith(color: Colors.red))),
-                            const Spacing(),
+                            const SizedBox(
+                              height: 16,
+                            ),
                             Text(
                               "5",
                               style: AppStyle.h3.copyWith(color: Colors.white),
                             ),
                           ])
-                    : const Spacing(),
-
-                // const Spacing(),
+                    : const SizedBox(
+                        height: 16,
+                      ),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('Delivery Charges:',
                         style: AppStyle.h3.copyWith(color: Colors.white)),
-                    const Spacing(),
+                    const SizedBox(
+                      height: 16,
+                    ),
                     Text('20',
                         style: AppStyle.h3.copyWith(color: Colors.white)),
                   ],
                 ),
-                const Spacing(),
-                (amount == 1)
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Grand Total:',
-                              style: AppStyle.h3.copyWith(color: Colors.white)),
-                          Text('0',
-                              style: AppStyle.h3.copyWith(color: Colors.white)),
-                        ],
-                      )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Grand Total:',
-                              style: AppStyle.h3.copyWith(color: Colors.white)),
-                          Text('$amountd',
-                              style: AppStyle.h3.copyWith(color: Colors.white)),
-                        ],
-                      ),
-                const Spacing(),
-                (wallet > 0)
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          InkWell(
-                              child: Container(
-                                child: Text(
-                                    'Use wallet money     Rs.' + '$wallet',
-                                    style: AppStyle.text
-                                        .copyWith(color: Colors.blue)),
-                              ),
-                              onTap: () {
-                                setState(() {
-                                  walletm = true;
+                const SizedBox(
+                  height: 16,
+                ),
 
-                                  if (wallet > amountd) {
-                                    amountw = 0;
-                                  } else {
-                                    amountw = amountd - wallet;
-                                  }
-                                });
-                              }),
-                          walletm
-                              ? InkWell(
-                                  child: Container(
-                                    child: Text('Remove',
-                                        style: AppStyle.text
-                                            .copyWith(color: Colors.red)),
-                                  ),
-                                  onTap: () {
-                                    setState(() {
-                                      walletm = false;
-                                    });
-                                  })
-                              : const Visibility(
-                                  visible: false, child: Text('')),
-                        ],
-                      )
-                    : const Visibility(visible: false, child: const Text('')),
-
-                const Spacing(),
-                (walletm)
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Final Total:',
-                              style: AppStyle.h3.copyWith(color: Colors.white)),
-                          Text('$amountw',
-                              style: AppStyle.h3.copyWith(color: Colors.white)),
-                        ],
-                      )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Final Total:',
-                              style: AppStyle.h3.copyWith(color: Colors.white)),
-                          Text('$amountd',
-                              style: AppStyle.h3.copyWith(color: Colors.white)),
-                        ],
-                      ),
-
-                const Spacing(),
-
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Grand Total:',
+                        style: AppStyle.h3.copyWith(color: Colors.white)),
+                    Text(
+                        plant
+                            ? (totalAmount + 5 + 20 + wallet).toString()
+                            : (totalAmount + wallet + 20).toString(),
+                        style: AppStyle.h3.copyWith(color: Colors.white)),
+                  ],
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -988,22 +909,22 @@ class _DetailsState extends State<Details> {
                                                         setState(() {
                                                           if (beforediscount ==
                                                               afterdiscount) {
-                                                            amount = widget
+                                                            totalAmount = widget
                                                                     .price *
                                                                 int.parse(
                                                                     quantity);
                                                             plant
-                                                                ? (amountd =
-                                                                    amount +
+                                                                ? (totalDelivery =
+                                                                    totalAmount +
                                                                         5 +
                                                                         20)
-                                                                : (amountd =
-                                                                    amount +
+                                                                : (totalDelivery =
+                                                                    totalAmount +
                                                                         20);
                                                           }
                                                         });
                                                         if (walletm == true &&
-                                                            amountw == 0) {
+                                                            totalAmountw == 0) {
                                                           String time = DateFormat(
                                                                   "hh:mm:ss a")
                                                               .format(DateTime
@@ -1028,8 +949,8 @@ class _DetailsState extends State<Details> {
                                                                 quantity,
                                                             "Time": time,
                                                             "Amount": (walletm)
-                                                                ? amountw
-                                                                : amountd,
+                                                                ? totalAmountw
+                                                                : totalDelivery,
                                                             "Date": date,
                                                             "manufacturerId": widget
                                                                 .manufacturerid,
@@ -1052,10 +973,10 @@ class _DetailsState extends State<Details> {
                                                               .doc(widget.uid)
                                                               .update({
                                                             'wallet': (wallet -
-                                                                        amountd) >
+                                                                        totalDelivery) >
                                                                     0
                                                                 ? wallet -
-                                                                    amountd
+                                                                    totalDelivery
                                                                 : 0
                                                           });
 
@@ -1243,105 +1164,6 @@ class _DetailsState extends State<Details> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class TabTitle extends StatelessWidget {
-  final String label;
-  final bool selected;
-  const TabTitle({
-    Key? key,
-    required this.label,
-    required this.selected,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
-            label,
-            style: AppStyle.text.copyWith(color: Colors.white),
-          ),
-          const SizedBox(
-            height: 4,
-          ),
-          if (selected)
-            Container(
-              width: 21,
-              height: 2,
-              decoration: const BoxDecoration(color: AppColor.primary),
-            )
-        ])
-      ],
-    );
-  }
-}
-
-class Spacing extends StatelessWidget {
-  const Spacing({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const SizedBox(
-      height: 16,
-    );
-  }
-}
-
-class RectButtonSelected extends StatelessWidget {
-  final String label;
-  const RectButtonSelected({
-    Key? key,
-    required this.label,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(right: 14),
-      height: 32,
-      width: 32,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(9), gradient: AppColor.gradient),
-      child: Center(
-          child: Text(
-        label,
-        style: AppStyle.text,
-      )),
-    );
-  }
-}
-
-class ProductNameAndPrice extends StatelessWidget {
-  String name;
-  double amount;
-  String category;
-  ProductNameAndPrice(
-      {required this.amount, required this.name, required this.category});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          name,
-          style: AppStyle.h1Light.copyWith(fontSize: 20),
-        ),
-        Text(
-          ' $amount',
-          style: AppStyle.h1Light
-              .copyWith(color: Colors.white, fontWeight: FontWeight.w400),
-        ),
-      ],
     );
   }
 }

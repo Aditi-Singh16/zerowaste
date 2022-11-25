@@ -6,12 +6,13 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
+import 'package:zerowaste/frontend/Helpers/consumer/tab_display.dart';
 import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
 import 'package:zerowaste/frontend/consumer/Orders.dart';
-import 'package:zerowaste/frontend/consumer/color.dart';
+import 'package:zerowaste/frontend/Helpers/color.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
-import 'package:zerowaste/frontend/consumer/style.dart';
+import 'package:zerowaste/frontend/Helpers/style.dart';
 
 String? name;
 String phone_number = '';
@@ -835,7 +836,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(25))),
                                   child: Column(children: [
-                                    const Spacing(),
+                                    const SizedBox(
+                                      height: 16,
+                                    ),
                                     InkWell(
                                         child: Column(children: [
                                           Row(
@@ -855,13 +858,17 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                               ),
                                             ],
                                           ),
-                                          const Spacing(),
+                                          const SizedBox(
+                                            height: 16,
+                                          ),
                                           Text(
                                             "Once an order is placed on our app, we initiate the process of planting and linking your order with your sapling. Within a few days, along with the delivery of your products, we will also share the details of your plant by email.",
                                             style: AppStyle.bodyText
                                                 .copyWith(color: Colors.white),
                                           ),
-                                          const Spacing(),
+                                          const SizedBox(
+                                            height: 16,
+                                          ),
                                         ]),
                                         onTap: () {
                                           showDialog(
@@ -917,7 +924,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                 child: Text('')),
                                       ],
                                     ),
-                                    const Spacing(),
+                                    const SizedBox(
+                                      height: 16,
+                                    ),
                                     coupon
                                         ? Container(
                                             width: MediaQuery.of(context)
@@ -1035,7 +1044,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                           )
                                         : Visibility(
                                             visible: false, child: Text('')),
-                                    const Spacing(),
+                                    const SizedBox(
+                                      height: 16,
+                                    ),
                                     (wallet > 0)
                                         ? Row(
                                             mainAxisAlignment:
@@ -1085,10 +1096,14 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                           )
                                         : Visibility(
                                             visible: false, child: Text('')),
-                                    const Spacing(),
+                                    const SizedBox(
+                                      height: 16,
+                                    ),
                                   ])),
                             ),
-                            const Spacing(),
+                            const SizedBox(
+                              height: 16,
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -1182,7 +1197,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                               .width /
                                                           25,
                                                 ))),
-                                        const Spacing(),
+                                        const SizedBox(
+                                          height: 16,
+                                        ),
                                         Container(
                                           padding: EdgeInsets.only(right: 40),
                                           child: Text("5",
@@ -1196,7 +1213,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                               )),
                                         ),
                                       ])
-                                : const Spacing(),
+                                : const SizedBox(
+                                    height: 16,
+                                  ),
                             Divider(),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1299,7 +1318,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                       ),
                                     ],
                                   ),
-                            const Spacing(),
+                            const SizedBox(
+                              height: 16,
+                            ),
                             Container(
                                 margin: EdgeInsets.only(
                                     top: MediaQuery.of(context).size.height /

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zerowaste/backend/firestore_info.dart';
-import 'package:zerowaste/frontend/consumer/color.dart';
+import 'package:zerowaste/frontend/Helpers/color.dart';
 
 class ManuFacture extends StatefulWidget {
   final BuildContext context;

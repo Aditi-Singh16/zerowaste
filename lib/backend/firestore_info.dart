@@ -67,10 +67,6 @@ class FirebaseData {
     var uid = await HelperFunctions().readUserIdPref();
     var res =
         await FirebaseFirestore.instance.collection('Users').doc(uid).get();
-    // res.data()!.forEach((key, value) {
-    //   print(key);
-    //   print(value);
-    // });
     if (res.data()!.containsKey("accepted_requests")) {
       return res['accepted_requests'].length;
     } else {
@@ -96,6 +92,23 @@ class FirebaseData {
         .get();
 
     return res.docs.length;
+  }
+
+  Future<void> addCouponToDonors(var acceptedUid,
+      Map<String, dynamic> acceptedMap, var documentId, var uid) async {
+    FirebaseFirestore.instance.collection("Users").doc(acceptedUid).update({
+      "Count": FieldValue.increment(1),
+      "accepted_requests": FieldValue.arrayUnion([acceptedMap])
+    });
+
+    FirebaseFirestore.instance
+        .collection("requirements")
+        .doc(documentId)
+        .delete();
+
+    await FirebaseFirestore.instance.collection("Users").doc(uid).set({
+      "donor": FieldValue.increment(1),
+    }, SetOptions(merge: true));
   }
 
   Future<int> getUserOrdersCount(customer) async {

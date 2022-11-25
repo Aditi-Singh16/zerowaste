@@ -9,7 +9,7 @@ import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:zerowaste/backend/firestore_info.dart';
 import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
-import 'package:zerowaste/frontend/consumer/color.dart';
+import 'package:zerowaste/frontend/Helpers/color.dart';
 import 'package:zerowaste/frontend/manufacturer/Analytics.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 
@@ -116,19 +116,13 @@ class _DashboardState extends State<Dashboard> {
     unitPrice = 15 + rnd.nextInt(10000 - 15);
     taxPrice = 1 + rnd.nextInt(20 - 1);
     List res = await FirebaseData().getProducts(itemvalue);
-    print(res[0]);
-    print("jkghkfgksssdf");
     res.forEach((element) {
       var convertedDateTime = element.data()['timestamp'].toDate();
       String monthName = DateFormat.LLLL().format(convertedDateTime).toString();
-      print(monthName);
-      print("jshfksdg");
-      print(monthsAct);
       for (int i = 0; i < monthsAct.length; i++) {
         if (monthsAct[i] == monthName) {
           actualChartData.add(ChartData(monthName, element.data()['quantity']));
         } else {
-          print("yo");
           actualChartData.add(ChartData(monthsAct[i], 0));
         }
       }

@@ -40,7 +40,7 @@ class UserModel {
         Coupon4: map['Coupon4'],
         addr: map['addr'],
         phone: map['phone'],
-        wallet: map['wallet']);
+        wallet: double.parse(map['wallet'].toString()));
   }
 
   // sending data to our server

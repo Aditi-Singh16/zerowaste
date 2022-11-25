@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zerowaste/frontend/consumer/style.dart';
+import 'package:zerowaste/frontend/Helpers/style.dart';
 
 class ESVTab extends StatefulWidget {
   Color textColor;
@@ -112,7 +112,8 @@ class _ESVTabState extends State<ESVTab> {
                         fit: BoxFit.cover),
                   ),
                 ),
-                const Text("Air Pollution"),
+                Text("Air Pollution",
+                    style: TextStyle(color: widget.textColor)),
                 Text(
                   "${widget.air} aqi of Air",
                   style: TextStyle(
@@ -133,7 +134,7 @@ class _ESVTabState extends State<ESVTab> {
                         fit: BoxFit.cover),
                   ),
                 ),
-                const Text("Tree"),
+                Text("Tree", style: TextStyle(color: widget.textColor)),
                 Text(widget.tree.toString() + "Tree saved",
                     style: TextStyle(
                         fontSize: MediaQuery.of(context).size.width * 0.030,
@@ -152,7 +153,7 @@ class _ESVTabState extends State<ESVTab> {
                         fit: BoxFit.cover),
                   ),
                 ),
-                const Text("Co2"),
+                Text("Co2", style: TextStyle(color: widget.textColor)),
                 Text((widget.co2.toString()).substring(0, 3) + " ppm of Co2",
                     style: TextStyle(
                         fontSize: MediaQuery.of(context).size.width * 0.030,

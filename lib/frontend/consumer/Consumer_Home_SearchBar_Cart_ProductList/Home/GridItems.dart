@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ProductList.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
+import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 class GridItems extends StatefulWidget {
   @override
@@ -59,7 +60,9 @@ class _GridItemsState extends State<GridItems> {
                                 children: [
                                   Container(
                                     child: InkWell(
-                                      onTap: () {
+                                      onTap: () async {
+                                        double wallet = await HelperFunctions()
+                                            .readWalletPref();
                                         Navigator.of(context)
                                             .push(MaterialPageRoute(
                                                 builder: (context) => Details(
@@ -92,6 +95,7 @@ class _GridItemsState extends State<GridItems> {
                                                       isResell: snapshot
                                                               .data!.docs[index]
                                                           ['is_resell'],
+                                                      wallet: wallet,
                                                     )));
                                       },
                                     ),

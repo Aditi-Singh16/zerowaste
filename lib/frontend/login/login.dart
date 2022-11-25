@@ -203,7 +203,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           .setAddrPref(loggedInUser.toMap()['addr']);
                       _helperFunctions
                           .setPhonePref(loggedInUser.toMap()['phone']);
-                      print(_helperFunctions.readNamePref());
+                      _helperFunctions
+                          .setWallet(loggedInUser.toMap()['wallet']);
+
                       if (loggedInUser.toMap()['type'] == 'Consumer') {
                         _helperFunctions.setType("Consumer");
                         Navigator.of(context).push(MaterialPageRoute(

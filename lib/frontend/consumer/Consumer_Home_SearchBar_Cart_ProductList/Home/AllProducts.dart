@@ -7,6 +7,7 @@ import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_Product
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/SearchBar/search.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
+import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 String userauthid = FirebaseAuth.instance.currentUser!.uid;
 num quant = 0;
@@ -92,7 +93,9 @@ class AllProducts extends StatelessWidget {
 
                         //margin: EdgeInsets.only(left: 12.0),
                         child: InkWell(
-                          onTap: () {
+                          onTap: () async {
+                            double wallet =
+                                await HelperFunctions().readWalletPref();
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => Details(
                                       name: name,
@@ -106,6 +109,7 @@ class AllProducts extends StatelessWidget {
                                       isPlant: isPlant,
                                       q: quantity,
                                       isResell: isResell,
+                                      wallet: wallet,
                                     )));
                           },
                           child: Row(

@@ -4,11 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/SearchBar/search.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
+import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 class ProductSearch extends SearchDelegate {
   String userauthid = FirebaseAuth.instance.currentUser!.uid;
-  CollectionReference _collectionReference =
-      FirebaseFirestore.instance.collection('products');
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -49,36 +48,31 @@ class ProductSearch extends SearchDelegate {
                         .toLowerCase()
                         .contains(query.toLowerCase()))
                     .map((document) {
-                  final String name = document.get('name');
-                  final String image = document.get('image');
-                  final String description = document.get('Desc');
-                  final String prod_id = document.get('productId');
-                  final String manufacturerid = document.get('manufacturerId');
-                  final String price = document.get('pricePerProduct');
-                  final String category = document.get('categories');
-                  final bool isPlant = document.get('is_plant');
-                  final int quantity = document.get('quantity');
-                  final bool isResell = document.get('is_resell');
                   return ListTile(
-                      title: Text(name),
+                      title: Text(document.get('name')),
                       subtitle: Text(document['Desc']),
                       leading: CircleAvatar(
-                        backgroundImage: NetworkImage(image),
+                        backgroundImage: NetworkImage(document.get('image')),
                       ),
-                      onTap: () {
+                      onTap: () async {
+                        double wallet =
+                            await HelperFunctions().readWalletPref();
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => Details(
-                                  name: name,
-                                  description: description,
-                                  price: double.parse(price),
-                                  category: category,
-                                  productid: prod_id,
+                                  name: document.get('name'),
+                                  description: document.get('Desc'),
+                                  price: double.parse(
+                                      document.get('pricePerProduct')),
+                                  category: document.get('categories'),
+                                  productid: document.get('productId'),
                                   uid: userauthid,
-                                  manufacturerid: manufacturerid,
-                                  image: image,
-                                  isPlant: isPlant,
-                                  q: quantity,
-                                  isResell: isResell,
+                                  manufacturerid:
+                                      document.get('manufacturerId'),
+                                  image: document.get('image'),
+                                  isPlant: document.get('is_plant'),
+                                  q: document.get('quantity'),
+                                  isResell: document.get('is_resell'),
+                                  wallet: wallet,
                                 )));
                       });
                 }).toList(),

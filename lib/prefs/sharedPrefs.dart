@@ -12,6 +12,7 @@ class HelperFunctions {
   final coupon4 = 'this_coupon4';
   final addrkey = 'this_addr';
   final phonekey = 'this_phone';
+  final walletkey = 'this_wallet';
 
   Future<void> setUserIdPref(String? id) async {
     final prefs = await SharedPreferences.getInstance();
@@ -78,6 +79,15 @@ class HelperFunctions {
     prefs.setBool(coupon4, couponE!);
   }
 
+  Future<void> setWallet(double? wallet) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (wallet == null) {
+      prefs.setDouble(walletkey, 0.0);
+    }
+    prefs.setDouble(walletkey, wallet!);
+  }
+
   readUserIdPref() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('this_user_id') ?? '0';
@@ -131,5 +141,10 @@ class HelperFunctions {
   readCoupon4Pref() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('this_coupon4') ?? false;
+  }
+
+  readWalletPref() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('this_wallet') ?? 0.0;
   }
 }

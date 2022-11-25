@@ -48,7 +48,8 @@ class _MyRequirementsState extends State<MyRequirements> {
                       itemBuilder: (context, i) {
                         return Card(
                           child: ListTile(
-                            leading: Icon(Icons.plagiarism_rounded, size: 40),
+                            leading: Icon(Icons.plagiarism_rounded,
+                                size: 40, color: Colors.redAccent),
                             title: Text(
                                 '${snapshot.data!.docs[i]['product_name']}'),
                             subtitle: Text(

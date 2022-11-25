@@ -28,7 +28,6 @@ class _SendNotificationState extends State<SendNotification> {
           children: <Widget>[
             ElevatedButton(
                 onPressed: () async {
-                  print(widget.user.id);
                   await FirebaseFirestore.instance
                       .collection("requirements")
                       .doc(widget.user.id)
@@ -41,9 +40,7 @@ class _SendNotificationState extends State<SendNotification> {
                         'product_name': widget.user.data()['product_name']
                       }
                     ])
-                  }, SetOptions(merge: true)).then((_) {
-                    print("success!");
-                  });
+                  }, SetOptions(merge: true));
 
                   final Email email = Email(
                     body:
@@ -97,9 +94,7 @@ class _SendNotificationState extends State<SendNotification> {
                     'product_name': widget.user.data()['product_name']
                   }
                 ])
-              }, SetOptions(merge: true)).then((_) {
-                print("success!");
-              });
+              }, SetOptions(merge: true));
 
               final Email email = Email(
                 body:

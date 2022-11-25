@@ -7,9 +7,10 @@ import 'package:zerowaste/backend/userModal/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
+import 'package:zerowaste/frontend/Helpers/manufacturer/scratchcard.dart';
 import 'package:zerowaste/frontend/Helpers/profile_helpers/details_tab.dart';
 import 'package:zerowaste/frontend/Helpers/profile_helpers/esv_tab.dart';
-import 'package:zerowaste/frontend/consumer/color.dart';
+import 'package:zerowaste/frontend/Helpers/color.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
 
 import 'package:zerowaste/frontend/login/login.dart';
@@ -60,7 +61,6 @@ class _ProfilePageState extends State<ProfilePage> {
   };
   List<Map<String, dynamic>> accepted_requests = [];
 
-  List Value = [2, 5, 10, 15, 20];
   bool isEditablePhone = false;
   bool reward = true;
 
@@ -249,7 +249,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           ],
                         )
                       : Visibility(visible: false, child: Text(' ')),
-                  const Spacing(),
+                  const SizedBox(
+                    height: 16,
+                  ),
                   (type == 'Consumer')
                       ? Container(
                           margin: const EdgeInsets.all(40),
@@ -320,7 +322,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                 uid: loggedInUser.uid!,
                               )
                             : Container(),
-                        (type == 'NGO') ? AllRequirements() : Container(),
+                        SizedBox(height: 20),
+                        (type == 'NGO')
+                            ? AllRequirements(uid: loggedInUser.uid!)
+                            : Container(),
                         (type == 'Consumer')
                             ? InkWell(
                                 child: Container(
@@ -456,8 +461,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       ],
                     ),
                   ),
-
-                  // const Spacing(),
                   SizedBox(
                     height: 10,
                   ),
@@ -497,73 +500,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            content: Scratcher(
-              brushSize: 100,
-              threshold: 50,
-              color: Colors.blue,
-              onChange: (value) => print("Scratch progress: $value%"),
-              onThreshold: () => print("Threshold reached"),
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.6,
-                width: MediaQuery.of(context).size.width * 0.5,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.18,
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      child: Image.asset(
-                        "assets/images/cele.png",
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "You\'ve won",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 24,
-                            letterSpacing: 1,
-                            color: Colors.blue),
-                      ),
-                    ),
-                    Spacing(),
-                    Text(
-                      coupon[randomindex],
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 24,
-                          color: Colors.blue),
-                    ),
-                    Spacing(),
-                    Text(
-                      description[randomindex],
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                          color: Colors.blue),
-                    ),
-                    Spacing(),
-                    IconButton(
-                      icon: const Icon(Icons.copy),
-                      onPressed: () async {
-                        await _copyToClipboard(coupon[randomindex]);
-                      },
-                    ),
-                    ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text('OK')),
-                    Spacing(),
-                  ],
-                ),
-              ),
-            ),
-          );
+          return ScratchCard();
         });
   }
 }
