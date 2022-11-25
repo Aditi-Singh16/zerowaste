@@ -40,4 +40,10 @@ This application was developed by the team TechItUp, which won the First runner-
 
 
 ### App Preview
+| Manufacturer module   | Consumer Module | NGO module | 
+| :-------------: | :-------------: | :-------------: | 
+| <video src="https://user-images.githubusercontent.com/74586135/204028444-07c5bf1b-7f0e-432e-819a-35624b71a142.mp4" > | <video src="https://user-images.githubusercontent.com/74586135/204028539-4bb13f9a-81ca-4391-bfcb-80748ed9dff9.mp4"> | <video src="https://user-images.githubusercontent.com/74586135/204033219-c9247c36-f828-482f-8694-11e2ad708ef1.mp4"> |
+
+
+
 
