@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:scratcher/widgets.dart';
 
 class ScratchCard extends StatefulWidget {
-  const ScratchCard({Key? key}) : super(key: key);
+  int randomindex;
+  ScratchCard({required this.randomindex, Key? key}) : super(key: key);
 
   @override
   State<ScratchCard> createState() => _ScratchCardState();
@@ -17,8 +18,6 @@ class _ScratchCardState extends State<ScratchCard> {
     'Get 20% off on next purchase',
     'Get 2% off on next purchase'
   ];
-  List Value = [5, 10, 15, 20, 2];
-  late int randomindex;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +57,7 @@ class _ScratchCardState extends State<ScratchCard> {
                 height: 16,
               ),
               Text(
-                coupon[randomindex],
+                coupon[widget.randomindex],
                 style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 24,
@@ -68,7 +67,7 @@ class _ScratchCardState extends State<ScratchCard> {
                 height: 16,
               ),
               Text(
-                description[randomindex],
+                description[widget.randomindex],
                 style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 20,

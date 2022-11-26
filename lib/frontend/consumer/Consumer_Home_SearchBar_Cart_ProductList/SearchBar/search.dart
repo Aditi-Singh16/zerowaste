@@ -73,6 +73,7 @@ class ProductSearch extends SearchDelegate {
                                   q: document.get('quantity'),
                                   isResell: document.get('is_resell'),
                                   wallet: wallet,
+                                  weight: document.get('weight'),
                                 )));
                       });
                 }).toList(),

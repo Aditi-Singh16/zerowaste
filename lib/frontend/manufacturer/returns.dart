@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
 
@@ -82,7 +83,7 @@ class _ReturnsState extends State<Returns> {
 
   Future<void> openCheckout() async {
     var options = {
-      "key": "rzp_test_Ienn2nz5hJfAS1",
+      "key": dotenv.env['RAZORPAY_KEY'],
       "amount": total * 100,
       "name": productName1,
       "description": "Payment for return of product",

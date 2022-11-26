@@ -6,6 +6,7 @@ import 'package:zerowaste/backend/firestore_info.dart';
 import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
 import 'package:zerowaste/frontend/Helpers/color.dart';
 import 'package:zerowaste/frontend/Helpers/style.dart';
+import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 class AllRequirements extends StatefulWidget {
   String uid;
@@ -72,24 +73,25 @@ class _ViewRequirementsState extends State<AllRequirements> {
                                                   AppColor.appcolor1),
                                         ),
                                         onPressed: () async {
-                                          setState(() {
-                                            var acceptedUid =
-                                                doc['requirement_satisfy']
-                                                    [index]['uid'];
-                                            Map<String, dynamic> acceptedMap = {
-                                              "category": doc['category'],
-                                              "quantity":
-                                                  doc['quantity'].toString(),
-                                              "email":
-                                                  doc['requirement_satisfy']
-                                                      [index]['email']
-                                            };
-                                            FirebaseData().addCouponToDonors(
-                                                acceptedUid,
-                                                acceptedMap,
-                                                doc.id,
-                                                widget.uid);
-                                          });
+                                          var acceptedUid =
+                                              doc['requirement_satisfy'][index]
+                                                  ['uid'];
+                                          Map<String, dynamic> acceptedMap = {
+                                            "category": doc['category'],
+                                            "quantity":
+                                                doc['quantity'].toString(),
+                                            "email": doc['requirement_satisfy']
+                                                [index]['email']
+                                          };
+                                          var type = await HelperFunctions()
+                                              .readTypePref();
+                                          await FirebaseData()
+                                              .addCouponToDonors(
+                                                  acceptedUid,
+                                                  doc.id,
+                                                  widget.uid,
+                                                  index,
+                                                  type);
                                         },
                                         child: Text(
                                           "Order",

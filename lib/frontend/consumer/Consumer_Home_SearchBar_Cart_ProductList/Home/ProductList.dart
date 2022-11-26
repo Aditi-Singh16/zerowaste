@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/SearchBar/search.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 
@@ -58,68 +59,9 @@ class _IndividualCategoryProductListState
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(statusBarColor: Colors.grey.shade100));
-    var size, height, width;
-    size = MediaQuery.of(context).size;
-    height = size.height;
-    width = size.width;
 
     return Column(
       children: [
-        Row(
-          children: [
-            Text('Environment Saving Values(per 100gm)'),
-            ClipOval(
-              child: SizedBox.fromSize(
-                size: Size.fromRadius(
-                    MediaQuery.of(context).size.width * 0.1), // Image radius
-                child: Image.network(
-                    'https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/esv%20img%2F11zon_cropped.png?alt=media&token=72d9009f-c528-4fd5-a638-e933dffee8f9',
-                    fit: BoxFit.cover),
-              ),
-            ),
-            Text("Air Pollution"),
-            Text(
-              (esv_ls[0]).toString() + " aqi of Air",
-              style: TextStyle(fontSize: width * 0.035, color: Colors.white),
-            ),
-            Spacer(),
-            Column(
-              children: [
-                ClipOval(
-                  child: SizedBox.fromSize(
-                    size: Size.fromRadius(MediaQuery.of(context).size.width *
-                        0.1), // Image radius
-                    child: Image.network(
-                        'https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/esv%20img%2FPicsart_22-08-19_12-36-20-414.png?alt=media&token=cc0c00fb-a68a-4b69-84cd-2e60fd910215',
-                        fit: BoxFit.cover),
-                  ),
-                ),
-                Text("Tree"),
-                Text((esv_ls[1]).toString().substring(0, 1) + " Tree saved",
-                    style:
-                        TextStyle(fontSize: width * 0.035, color: Colors.white))
-              ],
-            ),
-            Spacer(),
-            Column(
-              children: [
-                ClipOval(
-                  child: SizedBox.fromSize(
-                    size: Size.fromRadius(MediaQuery.of(context).size.width *
-                        0.1), // Image radius
-                    child: Image.network(
-                        'https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/esv%20img%2FPicsart_22-08-19_12-43-19-549.png?alt=media&token=b05f3d35-67ee-451e-8737-08e14c13c5d5',
-                        fit: BoxFit.cover),
-                  ),
-                ),
-                Text("Co2"),
-                Text(((esv_ls[2]).toString()).substring(0, 3) + " ppm of Co2",
-                    style:
-                        TextStyle(fontSize: width * 0.035, color: Colors.white))
-              ],
-            ),
-          ],
-        ),
         FutureBuilder<QuerySnapshot>(
             future: FirebaseFirestore.instance
                 .collection('products')
@@ -128,12 +70,7 @@ class _IndividualCategoryProductListState
                 .get(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return Center(
-                    child: Scaffold(
-                        body: Center(
-                            child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.black)))));
+                return const Center(child: Scaffold(body: Loader()));
               }
               if (snapshot.connectionState == ConnectionState.done &&
                   snapshot.hasData) {
@@ -142,14 +79,14 @@ class _IndividualCategoryProductListState
                     body: Column(
                       children: [
                         Container(
-                          padding: EdgeInsets.only(top: 100, bottom: 20),
+                          padding: const EdgeInsets.only(top: 100, bottom: 20),
                           child: CircleAvatar(
                             radius: height / 7, // Image radius
-                            backgroundImage: NetworkImage(
+                            backgroundImage: const NetworkImage(
                                 'https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/categories%2Fcart.gif?alt=media&token=6ef4fdc0-b651-49a6-8f23-e09a67b86d54'),
                           ),
                         ),
-                        Center(
+                        const Center(
                           child: Text(
                             "No Products in these category!",
                             style: TextStyle(
@@ -159,7 +96,7 @@ class _IndividualCategoryProductListState
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.only(top: 20),
+                          padding: const EdgeInsets.only(top: 20),
                           child: ElevatedButton(
                             onPressed: () {},
                             child: InkWell(
@@ -167,7 +104,7 @@ class _IndividualCategoryProductListState
                                   // go back page
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('Continue Shopping...')),
+                                child: const Text('Continue Shopping...')),
                             style: ElevatedButton.styleFrom(
                               primary: Colors.black, // background
                               onPrimary: Colors.white,
@@ -189,14 +126,14 @@ class _IndividualCategoryProductListState
                       'assets/images/logo1.png',
                       fit: BoxFit.contain,
                     ),
-                    title: Text("Orders and Returns"),
+                    title: const Text("Orders and Returns"),
                     actions: [
                       IconButton(
                         onPressed: () {
                           showSearch(
                               context: context, delegate: ProductSearch());
                         },
-                        icon: Icon(Icons.search),
+                        icon: const Icon(Icons.search),
                       )
                     ],
                     centerTitle: true,
@@ -207,19 +144,6 @@ class _IndividualCategoryProductListState
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (context, index) {
                         DocumentSnapshot doc = snapshot.data!.docs[index];
-                        String name = doc['name'];
-                        String prod_id = doc['productId'];
-                        String manufacturerid = doc['manufacturerId'];
-                        String price = doc['pricePerProduct'];
-                        String description = doc['Desc'];
-                        String image = doc['image'];
-                        String category = doc['categories'];
-                        bool is_plant = doc['is_plant'];
-                        int quantity = doc['quantity'];
-                        bool isResell = doc['is_resell'];
-                        if (name.length > 10) {
-                          name = name.substring(0, 10) + "...";
-                        }
                         return Container(
                           width: MediaQuery.of(context).size.width / 1.1,
                           height: MediaQuery.of(context).size.height / 4,
@@ -239,18 +163,21 @@ class _IndividualCategoryProductListState
                                     HelperFunctions().readWalletPref();
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => Details(
-                                        name: name,
-                                        description: description,
-                                        price: double.parse(price),
-                                        category: category,
-                                        productid: prod_id,
-                                        uid: userauthid,
-                                        manufacturerid: manufacturerid,
-                                        image: image,
-                                        isPlant: is_plant,
-                                        q: quantity,
-                                        isResell: isResell,
-                                        wallet: wallet)));
+                                          name: doc['name'],
+                                          description: doc['Desc'],
+                                          price: double.parse(
+                                              doc['pricePerProduct']),
+                                          category: doc['categories'],
+                                          productid: doc['productId'],
+                                          uid: userauthid,
+                                          manufacturerid: doc['manufacturerId'],
+                                          image: doc['image'],
+                                          isPlant: doc['is_plant'],
+                                          q: doc['quantity'],
+                                          isResell: doc['is_resell'],
+                                          wallet: wallet,
+                                          weight: doc['weight'],
+                                        )));
                               },
                               child: Row(
                                 children: [
@@ -292,21 +219,27 @@ class _IndividualCategoryProductListState
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         Details(
-                                                            name: name,
-                                                            description:
-                                                                description,
-                                                            price: double.parse(
-                                                                price),
-                                                            category: category,
-                                                            productid: prod_id,
-                                                            uid: userauthid,
-                                                            manufacturerid:
-                                                                manufacturerid,
-                                                            image: image,
-                                                            isPlant: is_plant,
-                                                            q: quantity,
-                                                            isResell: isResell,
-                                                            wallet: wallet)));
+                                                          name: doc['name'],
+                                                          description:
+                                                              doc['Desc'],
+                                                          price: double.parse(doc[
+                                                              'pricePerProduct']),
+                                                          category:
+                                                              doc['categories'],
+                                                          productid:
+                                                              doc['productId'],
+                                                          uid: userauthid,
+                                                          manufacturerid: doc[
+                                                              'manufacturerId'],
+                                                          image: doc['image'],
+                                                          isPlant:
+                                                              doc['is_plant'],
+                                                          q: doc['quantity'],
+                                                          isResell:
+                                                              doc['is_resell'],
+                                                          wallet: wallet,
+                                                          weight: doc['weight'],
+                                                        )));
                                           },
                                           child: Padding(
                                             padding: EdgeInsets.only(
@@ -323,7 +256,11 @@ class _IndividualCategoryProductListState
                                               child: Row(
                                                 children: [
                                                   Text(
-                                                    name,
+                                                    doc['name'].length > 10
+                                                        ? doc['name'].substring(
+                                                                0, 10) +
+                                                            "..."
+                                                        : doc['name'],
                                                     maxLines: 2,
                                                     style: TextStyle(
                                                         fontSize: MediaQuery.of(
@@ -361,7 +298,7 @@ class _IndividualCategoryProductListState
                                                         .size
                                                         .height /
                                                     65,
-                                                color: Color(0xFF008080)),
+                                                color: const Color(0xFF008080)),
                                           ),
                                         ),
                                         SizedBox(
@@ -369,26 +306,6 @@ class _IndividualCategoryProductListState
                                                     .size
                                                     .height /
                                                 50),
-                                        Row(
-                                          children: [
-                                            Icon(Icons.star,
-                                                size: height / 50,
-                                                color: Color(0xFF008080)),
-                                            Icon(Icons.star,
-                                                size: height / 50,
-                                                color: Color(0xFF008080)),
-                                            Icon(Icons.star,
-                                                size: height / 50,
-                                                color: Color(0xFF008080)),
-                                            Icon(Icons.star,
-                                                size: height / 50,
-                                                color: Colors.black),
-                                            Icon(Icons.star,
-                                                size: height / 50,
-                                                color: Colors.black),
-                                          ],
-                                        ),
-                                        SizedBox(height: 20),
                                         Row(
                                           children: [
                                             Text(
@@ -443,8 +360,8 @@ class _IndividualCategoryProductListState
                                                         BorderRadius.circular(
                                                             20),
                                                   ),
-                                                  title: Center(
-                                                      child: const Text(
+                                                  title: const Center(
+                                                      child: Text(
                                                     "Added to Cart",
                                                   )),
                                                   actions: <Widget>[
@@ -480,7 +397,7 @@ class _IndividualCategoryProductListState
                                               );
                                             },
                                             child: Icon(Icons.shopping_cart,
-                                                color: Color(0xFF008080),
+                                                color: const Color(0xFF008080),
                                                 size: height / 40),
                                           ),
                                         )),
@@ -493,9 +410,7 @@ class _IndividualCategoryProductListState
                       }),
                 );
               }
-              return Scaffold(
-                  body: Center(
-                      child: CircularProgressIndicator(color: Colors.grey)));
+              return const Loader();
             })
       ],
     );

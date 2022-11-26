@@ -65,20 +65,6 @@ class AllProducts extends StatelessWidget {
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (context, index) {
                     DocumentSnapshot doc = snapshot.data!.docs[index];
-                    String name = doc['name'];
-
-                    String prodId = doc['productId'];
-                    String manufacturerid = doc['manufacturerId'];
-                    String price = doc['pricePerProduct'];
-                    String description = doc['Desc'];
-                    String image = doc['image'];
-                    String category = doc['categories'];
-                    bool isPlant = doc['is_plant'];
-                    int quantity = doc['quantity'];
-                    bool isResell = doc['is_resell'];
-                    if (name.length > 10) {
-                      name = name.substring(0, 10) + "...";
-                    }
                     return Container(
                       width: MediaQuery.of(context).size.width / 1.1,
                       height: MediaQuery.of(context).size.height / 4,
@@ -98,18 +84,20 @@ class AllProducts extends StatelessWidget {
                                 await HelperFunctions().readWalletPref();
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => Details(
-                                      name: name,
-                                      description: description,
-                                      price: double.parse(price),
-                                      category: category,
-                                      productid: prodId,
+                                      name: doc['name'],
+                                      description: doc['Desc'],
+                                      price:
+                                          double.parse(doc['pricePerProduct']),
+                                      category: doc['categories'],
+                                      productid: doc['productId'],
                                       uid: userauthid,
-                                      manufacturerid: manufacturerid,
-                                      image: image,
-                                      isPlant: isPlant,
-                                      q: quantity,
-                                      isResell: isResell,
+                                      manufacturerid: doc['manufacturerId'],
+                                      image: doc['image'],
+                                      isPlant: doc['is_plant'],
+                                      q: doc['quantity'],
+                                      isResell: doc['is_resell'],
                                       wallet: wallet,
+                                      weight: doc['weight'],
                                     )));
                           },
                           child: Row(
@@ -159,7 +147,11 @@ class AllProducts extends StatelessWidget {
                                         child: Row(
                                           children: [
                                             Text(
-                                              name,
+                                              doc['name'].length > 10
+                                                  ? doc['name']
+                                                          .substring(0, 10) +
+                                                      "..."
+                                                  : doc['name'],
                                               maxLines: 2,
                                               style: TextStyle(
                                                   fontSize:

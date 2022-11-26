@@ -6,14 +6,12 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:zerowaste/backend/local_data.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
 import 'package:zerowaste/frontend/consumer/consumerNavbar.dart';
-import 'package:zerowaste/frontend/login/profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:zerowaste/frontend/manufacturer/manufacturerNavbar.dart';
 import 'package:zerowaste/frontend/ngo/ngoNavbar.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
-import 'package:gst_verification/gst_verification.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
@@ -295,7 +293,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   postDetailsToFirestore() async {
     // calling our firestore
     // calling our user model
-    // sedning these values
+    // sending these values
 
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
@@ -307,11 +305,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     userModel.uid = user.uid;
     userModel.name = nameEditingController.text;
     userModel.type = typeEditingController;
-    userModel.Coupon0 = false;
-    userModel.Coupon1 = false;
-    userModel.Coupon2 = false;
-    userModel.Coupon3 = false;
-    userModel.Coupon4 = false;
     userModel.addr = '';
     userModel.phone = '';
     userModel.wallet = 0;
@@ -324,39 +317,32 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       'phone': '',
       'email': userModel.email,
       'type': typeEditingController,
-      'Coupon0': "0",
-      'Coupon1': "0",
-      'Coupon2': "0",
-      'Coupon3': "0",
-      'Coupon4': "0",
       'addr': '',
     });
-
     await firebaseFirestore.collection("Users").doc(user.uid).set({
       'uid': user.uid,
       'name': nameEditingController.text,
       'phone': '',
       'email': userModel.email,
       'type': typeEditingController,
-      'Coupon0': false,
-      'Coupon1': false,
-      'Coupon2': false,
-      'Coupon3': false,
-      'Coupon4': false,
+      'coupons': userModel.type == 'Consumer' ? [] : null,
       'addr': '',
       'wallet': 0.0
     });
+
     Fluttertoast.showToast(msg: "Account created successfully :) ");
-    print(userModel.name);
     await _helperFunctions.setNamePref(userModel.name);
     await _helperFunctions.setEmailPref(userModel.email);
     await _helperFunctions.setUserIdPref(userModel.uid);
-    await _helperFunctions.setCoupons(false, false, false, false, false);
     await _helperFunctions.setAddrPref(userModel.addr);
     await _helperFunctions.setPhonePref(userModel.phone);
     await _helperFunctions.setType(typeEditingController);
-    var email = _helperFunctions.readEmailPref();
-    print(email);
+    if (userModel.type == 'Consumer') {
+      await _helperFunctions.setCoupons(userModel.coupons!);
+      await _helperFunctions.setEsvAir(userModel.esv_air);
+      await _helperFunctions.setEsvCo2(userModel.esv_co2);
+      await _helperFunctions.setEsvTree(userModel.esv_tree);
+    }
 
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
       User? user = FirebaseAuth.instance.currentUser;
@@ -367,7 +353,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           .get()
           .then((value) {
         loggedInUser = UserModel.fromMap(value.data());
-        print(loggedInUser.toMap()['type']);
 
         if (loggedInUser.toMap()['type'] == 'Consumer') {
           Navigator.of(context)

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
-import 'package:zerowaste/frontend/Helpers/manufacturer/scratchcard.dart';
 import 'package:zerowaste/frontend/requirements_sell/send_notif.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 
@@ -154,13 +153,5 @@ class _ViewRequirementsState extends State<ViewRequirements> {
         ],
       ),
     ));
-  }
-
-  showScratchCard(BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return ScratchCard();
-        });
   }
 }

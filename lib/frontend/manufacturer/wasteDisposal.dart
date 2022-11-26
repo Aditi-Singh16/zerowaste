@@ -8,7 +8,6 @@ import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'dart:math' show cos, sqrt, asin;
-import 'package:flutter_sms/flutter_sms.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 class WasteDisposal extends StatefulWidget {

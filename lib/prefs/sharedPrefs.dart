@@ -5,14 +5,13 @@ class HelperFunctions {
   final nameKey = 'this_user_Name';
   final emailKey = 'this_user_email';
   final typeKey = 'this_user_type';
-  final coupon0 = 'this_coupon0';
-  final coupon1 = 'this_coupon1';
-  final coupon2 = 'this_coupon2';
-  final coupon3 = 'this_coupon3';
-  final coupon4 = 'this_coupon4';
+  final couponkey = 'this_coupons';
   final addrkey = 'this_addr';
   final phonekey = 'this_phone';
   final walletkey = 'this_wallet';
+  final esvAirkey = 'this_esvAir';
+  final esvTreekey = 'this_esvTree';
+  final esvCo2key = 'this_esvCo2';
 
   Future<void> setUserIdPref(String? id) async {
     final prefs = await SharedPreferences.getInstance();
@@ -68,15 +67,10 @@ class HelperFunctions {
     prefs.setString(typeKey, userType!);
   }
 
-  Future<void> setCoupons(bool? couponA, bool? couponB, bool? couponC,
-      bool? couponD, bool? couponE) async {
+  Future<void> setCoupons(List<dynamic> coupons) async {
     final prefs = await SharedPreferences.getInstance();
 
-    prefs.setBool(coupon0, couponA!);
-    prefs.setBool(coupon1, couponB!);
-    prefs.setBool(coupon2, couponC!);
-    prefs.setBool(coupon3, couponD!);
-    prefs.setBool(coupon4, couponE!);
+    prefs.setStringList(couponkey, coupons.map((e) => e.toString()).toList());
   }
 
   Future<void> setWallet(double? wallet) async {
@@ -86,6 +80,33 @@ class HelperFunctions {
       prefs.setDouble(walletkey, 0.0);
     }
     prefs.setDouble(walletkey, wallet!);
+  }
+
+  Future<void> setEsvAir(double? esvAir) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (esvAir == null) {
+      prefs.setDouble(esvAirkey, 0.0);
+    }
+    prefs.setDouble(esvAirkey, esvAir!);
+  }
+
+  Future<void> setEsvTree(double? esvTree) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (esvTree == null) {
+      prefs.setDouble(esvTreekey, 0.0);
+    }
+    prefs.setDouble(esvTreekey, esvTree!);
+  }
+
+  Future<void> setEsvCo2(double? esvCo2) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (esvCo2 == null) {
+      prefs.setDouble(esvCo2key, 0.0);
+    }
+    prefs.setDouble(esvCo2key, esvCo2!);
   }
 
   readUserIdPref() async {
@@ -118,33 +139,28 @@ class HelperFunctions {
     return prefs.getString('this_user_type') ?? '0';
   }
 
-  readCoupon0Pref() async {
+  readCouponPref() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('this_coupon0') ?? false;
-  }
-
-  readCoupon1Pref() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('this_coupon1') ?? false;
-  }
-
-  readCoupon2Pref() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('this_coupon2') ?? false;
-  }
-
-  readCoupon3Pref() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('this_coupon3') ?? false;
-  }
-
-  readCoupon4Pref() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('this_coupon4') ?? false;
+    return prefs.getStringList('this_coupons') ?? [];
   }
 
   readWalletPref() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('this_wallet') ?? 0.0;
+    return prefs.getDouble('this_wallet') ?? 0.0;
+  }
+
+  readEsvAirPref() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getDouble('this_esvAir') ?? 0.0;
+  }
+
+  readEsvCo2Pref() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getDouble('this_esvCo2') ?? 0.0;
+  }
+
+  readEsvTreePref() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getDouble('this_esvTree') ?? 0.0;
   }
 }

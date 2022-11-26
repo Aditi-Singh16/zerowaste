@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:zerowaste/frontend/constants.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 class FirebaseData {
@@ -94,21 +95,92 @@ class FirebaseData {
     return res.docs.length;
   }
 
-  Future<void> addCouponToDonors(var acceptedUid,
-      Map<String, dynamic> acceptedMap, var documentId, var uid) async {
-    FirebaseFirestore.instance.collection("Users").doc(acceptedUid).update({
-      "Count": FieldValue.increment(1),
-      "accepted_requests": FieldValue.arrayUnion([acceptedMap])
-    });
+  Future<void> addCouponToDonors(
+      var acceptedUid, var documentId, var uid, var index, var type) async {
+    if (type == "Consumer") {
+      await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(acceptedUid)
+          .update({
+        "coupons": FieldValue.arrayUnion([AppConstants.coupons[index]]),
+      });
+    }
 
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection("requirements")
         .doc(documentId)
         .delete();
+  }
 
-    await FirebaseFirestore.instance.collection("Users").doc(uid).set({
-      "donor": FieldValue.increment(1),
-    }, SetOptions(merge: true));
+  Future<void> addOrders(
+      var uid,
+      var name,
+      var productid,
+      var category,
+      var quantity,
+      var time,
+      var amount,
+      var date,
+      var manufacturerid,
+      var phone_number,
+      var address,
+      var image,
+      var w,
+      var description) async {
+    await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(uid)
+        .collection('Orders')
+        .add({
+      "ProductName": name,
+      "ProductId": productid,
+      "category": category,
+      "Quantity": quantity,
+      "Time": time,
+      "Amount": amount,
+      "Date": date,
+      "manufacturerId": manufacturerid,
+      "phone_number": phone_number,
+      "address": address,
+      "image": image,
+      "uid": uid,
+      "Desc": description,
+      "weight": w,
+      "is_resell": true,
+    });
+  }
+
+  Future<void> addToCart(var uid, var productid, var category, var image,
+      var manufacturerid, var name, var price, var quantity) async {
+    await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(uid)
+        .collection('Cart')
+        .doc(productid)
+        .set({
+      "categories": category,
+      "image": image,
+      "manufacturerId": manufacturerid,
+      "name": name,
+      "price": price,
+      "productId": productid,
+      "quantity": FieldValue.increment(int.parse(quantity)),
+      "userId": uid,
+    });
+  }
+
+  Future<void> updateWallet(var uid, var totalAmount, var wallet) async {
+    if (totalAmount > wallet) {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(uid)
+          .update({'wallet': 0});
+    } else {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(uid)
+          .update({'wallet': wallet - totalAmount});
+    }
   }
 
   Future<int> getUserOrdersCount(customer) async {

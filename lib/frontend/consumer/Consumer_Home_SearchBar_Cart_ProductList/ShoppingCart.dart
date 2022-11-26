@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
@@ -344,7 +345,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
   Future<void> openCheckout() async {
     var options = {
-      "key": "rzp_test_Ienn2nz5hJfAS1",
+      "key": dotenv.env['RAZORPAY_KEY'],
       "amount": (walletm)
           ? (amountw * 100).toString()
           : plant == true

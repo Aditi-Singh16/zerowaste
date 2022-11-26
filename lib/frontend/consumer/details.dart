@@ -3,6 +3,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:zerowaste/backend/firestore_info.dart';
 import 'package:zerowaste/frontend/Helpers/consumer/plant_gif.dart';
 import 'package:zerowaste/frontend/Helpers/consumer/product_display.dart';
 import 'package:zerowaste/frontend/Helpers/consumer/tab_display.dart';
@@ -32,6 +34,7 @@ class Details extends StatefulWidget {
   bool isPlant;
   bool isResell;
   double wallet;
+  double weight;
 
   Details(
       {required this.name,
@@ -45,7 +48,8 @@ class Details extends StatefulWidget {
       required this.isPlant,
       required this.q,
       required this.wallet,
-      required this.isResell});
+      required this.isResell,
+      required this.weight});
 
   @override
   State<Details> createState() => _DetailsState();
@@ -55,23 +59,19 @@ class _DetailsState extends State<Details> {
   String eneteredcoupon = '';
   List validity = [false, false, false, false, false];
   List allCoupons = ['OFF05', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
-  List Value = [5, 10, 15, 20, 2];
-  int wallet = 0;
-  double totalAmount = 0;
-  double totalDelivery = 0;
-  double totalAmountw = 0;
+
+  double delivery = 20.0;
+  double totalAmount = 20.0;
   bool coupon = false;
   bool plant = false;
   bool couponused = false;
+  bool walletApplied = false;
 
   int indx = 0;
   late Razorpay razorpay;
   String quantity = "";
-  int? previousquantity = -1;
   DateTime selectedDate = DateTime.now();
   final _formkey = GlobalKey<FormState>();
-  double beforediscount = 0;
-  double afterdiscount = 0;
   String error = '';
   String phone_number = '';
   TextEditingController _controller1 = TextEditingController();
@@ -81,18 +81,6 @@ class _DetailsState extends State<Details> {
   List<int>? esv_ls;
   int? weight;
   double w = 0;
-  //get weight from product collection using product id
-  void getweight() async {
-    await FirebaseFirestore.instance
-        .collection('products')
-        .doc(widget.productid)
-        .get()
-        .then((value) {
-      setState(() {
-        w = value['weight'];
-      });
-    });
-  }
 
   List<int> cat1 = [2, 1, 3];
   List<int> cat2 = [2, 1, 4];
@@ -118,16 +106,11 @@ class _DetailsState extends State<Details> {
     } else {
       esv_ls = cat7;
     }
-    //fetch weight from firebase product collection of current product id
-
-    getweight();
-    //multiple weight with esv list with index 0
   }
 
   @override
   void initState() {
     super.initState();
-    fetch_validity();
     setEsv();
     razorpay = new Razorpay();
     razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlerPaymentSuccess);
@@ -159,7 +142,7 @@ class _DetailsState extends State<Details> {
               Navigator.of(context).pop();
               setState(() {
                 plant = true;
-                totalDelivery = totalAmount + 20 + 5;
+                totalAmount = totalAmount + 2;
               });
               showDialog(
                 context: context,
@@ -201,7 +184,7 @@ class _DetailsState extends State<Details> {
       "ProductId": widget.productid,
       "Quantity": int.parse(quantity),
       "Time": time,
-      "Amount": (walletm) ? totalAmountw : totalDelivery,
+      "Amount": totalAmount,
       "Date": date,
       "manufacturerId": widget.manufacturerid,
       "phone_number": phone_number,
@@ -234,27 +217,6 @@ class _DetailsState extends State<Details> {
         .collection('products')
         .doc(widget.productid)
         .update({'quantity': (widget.q - int.parse(quantity))});
-    if (walletm == true) {
-      await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(widget.uid)
-          .update({
-        'wallet': (wallet - totalDelivery) > 0 ? wallet - totalDelivery : 0
-      });
-    }
-    if (beforediscount != afterdiscount) {
-      String allCouponsame = 'Coupon' + indx.toString();
-      await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(widget.uid)
-          .update({allCouponsame: false});
-    }
-    if (widget.isResell == true) {
-      await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(widget.manufacturerid)
-          .update({'wallet': totalAmountw == 0 ? totalDelivery : totalAmountw});
-    }
     // Toast.show("Pament success", context);
     showDialog(
       context: context,
@@ -324,10 +286,8 @@ class _DetailsState extends State<Details> {
 
   Future<void> openCheckout() async {
     var options = {
-      "key": "rzp_test_Ienn2nz5hJfAS1",
-      "totalAmount": wallet > 0
-          ? (totalAmountw * 100).toString()
-          : (totalDelivery * 100).toString(),
+      "key": dotenv.env['RAZORPAY_KEY'],
+      "totalAmount": totalAmount,
       "name": "Sample App",
       "description": "Payment for the some random product",
       'timeout': 300,
@@ -341,43 +301,6 @@ class _DetailsState extends State<Details> {
       razorpay.open(options);
     } catch (e) {
       print(e.toString());
-    }
-  }
-
-  Future<void> fetch_validity() async {
-    var docSnapshot = await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(widget.uid)
-        .get();
-
-    if (docSnapshot.exists) {
-      Map<String, dynamic> data = docSnapshot.data()!;
-
-      // You can then retrieve the value from the Map like this:
-      setState(() {
-        validity[0] = data['Coupon0'];
-        validity[1] = data['Coupon1'];
-        validity[2] = data['Coupon2'];
-        validity[3] = data['Coupon3'];
-        validity[4] = data['Coupon4'];
-        _controller1.text = data['phone'];
-        _controller2.text = data['addr'];
-        phone_number = data['phone'];
-        address = data['addr'];
-        wallet = data['wallet'];
-      });
-    }
-    var docSnapshot1 = await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(widget.uid)
-        .collection('Cart')
-        .doc(widget.productid)
-        .get();
-    if (docSnapshot1.exists) {
-      Map<String, dynamic> data1 = docSnapshot1.data()!;
-      setState(() {
-        previousquantity = data1['quantity'];
-      });
     }
   }
 
@@ -456,8 +379,10 @@ class _DetailsState extends State<Details> {
                       onChanged: (val) {
                         setState(() {
                           quantity = val;
-                          totalAmount = widget.price *
-                              int.parse(val); //displaying the total totalAmount
+                          totalAmount = delivery +
+                              widget.price *
+                                  int.parse(
+                                      val); //displaying the total totalAmount
                         });
                       },
                       validator: (val) {
@@ -551,40 +476,61 @@ class _DetailsState extends State<Details> {
                 const SizedBox(
                   height: 16,
                 ),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    InkWell(
-                        child: Container(
-                          child: Text('Apply Coupon',
-                              style:
-                                  AppStyle.text.copyWith(color: Colors.blue)),
+                    Row(
+                      children: [
+                        Checkbox(
+                          fillColor: MaterialStateProperty.all<Color>(
+                              AppColor.appcolor1),
+                          value: coupon,
+                          onChanged: (bool? val) {
+                            setState(() {
+                              coupon = val!;
+                            });
+                          },
                         ),
-                        onTap: () {
-                          setState(() {
-                            coupon = true;
-                          });
-                        }),
-                    coupon
-                        ? InkWell(
-                            child: Text('Remove',
-                                style:
-                                    AppStyle.text.copyWith(color: Colors.red)),
-                            onTap: () {
-                              setState(() {
-                                coupon = false;
-                                if (totalAmount !=
-                                    (widget.price * int.parse(quantity))) {
-                                  totalAmount =
-                                      widget.price * int.parse(quantity);
-                                }
-                              });
-                            })
+                        Text('Apply Coupon',
+                            style: TextStyle(color: AppColor.appcolor1))
+                      ],
+                    ),
+                    widget.wallet > 0.0
+                        ? Row(
+                            children: [
+                              Text('Apply Wallet',
+                                  style: TextStyle(color: AppColor.appcolor1)),
+                              Checkbox(
+                                fillColor: MaterialStateProperty.all<Color>(
+                                    AppColor.appcolor1),
+                                value: walletApplied,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    if (value == false) {
+                                      if (totalAmount == 0) {
+                                        totalAmount = totalAmount +
+                                            delivery +
+                                            widget.price * int.parse(quantity);
+                                      } else {
+                                        totalAmount =
+                                            totalAmount + widget.wallet;
+                                      }
+                                    } else if (totalAmount - widget.wallet >=
+                                        0) {
+                                      totalAmount = totalAmount - widget.wallet;
+                                    } else if (totalAmount - widget.wallet <
+                                        0) {
+                                      totalAmount = 0;
+                                    }
+                                    walletApplied = value!;
+                                  });
+                                },
+                              ),
+                            ],
+                          )
                         : Container(),
                   ],
-                ),
-                const SizedBox(
-                  height: 16,
                 ),
 
                 coupon
@@ -632,14 +578,8 @@ class _DetailsState extends State<Details> {
                                   indx = allCoupons.indexOf(eneteredcoupon);
                                   if (validity[indx] == true) {
                                     setState(() {
-                                      //applied coupon totalAmount
-                                      totalAmount =
-                                          widget.price * int.parse(quantity);
-                                      beforediscount = totalAmount;
-
                                       totalAmount = totalAmount -
                                           (totalAmount * (Value[indx]) / 100);
-                                      afterdiscount = totalAmount;
                                     });
                                   } else {
                                     setState(() {
@@ -674,7 +614,6 @@ class _DetailsState extends State<Details> {
                                 onPressed: () {
                                   setState(() {
                                     plant = false;
-                                    totalDelivery = totalDelivery - 5;
                                   });
                                 },
                                 child: Text("Remove",
@@ -688,9 +627,7 @@ class _DetailsState extends State<Details> {
                               style: AppStyle.h3.copyWith(color: Colors.white),
                             ),
                           ])
-                    : const SizedBox(
-                        height: 16,
-                      ),
+                    : Container(),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -713,10 +650,7 @@ class _DetailsState extends State<Details> {
                   children: [
                     Text('Grand Total:',
                         style: AppStyle.h3.copyWith(color: Colors.white)),
-                    Text(
-                        plant
-                            ? (totalAmount + 5 + 20 + wallet).toString()
-                            : (totalAmount + wallet + 20).toString(),
+                    Text((totalAmount).toString(),
                         style: AppStyle.h3.copyWith(color: Colors.white)),
                   ],
                 ),
@@ -736,35 +670,18 @@ class _DetailsState extends State<Details> {
                             minimumSize: MaterialStateProperty.all(
                                 Size(width / 2.6, 37))),
                         onPressed: () async {
-                          int finalquantity = 0;
                           String uid = FirebaseAuth.instance.currentUser!.uid;
 
                           if (_formkey.currentState!.validate()) {
-                            if (previousquantity != -1) {
-                              finalquantity =
-                                  previousquantity! + int.parse(quantity);
-                              if (finalquantity > widget.q) {
-                                finalquantity = widget.q;
-                              }
-                            } else {
-                              finalquantity = int.parse(quantity);
-                            }
-
-                            await FirebaseFirestore.instance
-                                .collection('Users')
-                                .doc(uid)
-                                .collection('Cart')
-                                .doc(widget.productid)
-                                .set({
-                              "categories": widget.category,
-                              "image": widget.image,
-                              "manufacturerId": widget.manufacturerid,
-                              "name": widget.name,
-                              "price": widget.price,
-                              "productId": widget.productid,
-                              "quantity": finalquantity,
-                              "userId": uid,
-                            });
+                            FirebaseData().addToCart(
+                                uid,
+                                widget.productid,
+                                widget.category,
+                                widget.image,
+                                widget.manufacturerid,
+                                widget.name,
+                                widget.price,
+                                quantity);
 
                             Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
@@ -906,131 +823,86 @@ class _DetailsState extends State<Details> {
                                                               phone_number
                                                                   .toString()) &&
                                                           address.length > 5) {
-                                                        setState(() {
-                                                          if (beforediscount ==
-                                                              afterdiscount) {
-                                                            totalAmount = widget
-                                                                    .price *
-                                                                int.parse(
-                                                                    quantity);
-                                                            plant
-                                                                ? (totalDelivery =
-                                                                    totalAmount +
-                                                                        5 +
-                                                                        20)
-                                                                : (totalDelivery =
-                                                                    totalAmount +
-                                                                        20);
-                                                          }
-                                                        });
-                                                        if (walletm == true &&
-                                                            totalAmountw == 0) {
-                                                          String time = DateFormat(
-                                                                  "hh:mm:ss a")
-                                                              .format(DateTime
-                                                                  .now());
-                                                          String date =
-                                                              "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
-                                                          await FirebaseFirestore
-                                                              .instance
-                                                              .collection(
-                                                                  'Users')
-                                                              .doc(widget.uid)
-                                                              .collection(
-                                                                  'Orders')
-                                                              .add({
-                                                            "ProductName":
-                                                                widget.name,
-                                                            "ProductId": widget
-                                                                .productid,
-                                                            "category":
-                                                                widget.category,
-                                                            "Quantity":
-                                                                quantity,
-                                                            "Time": time,
-                                                            "Amount": (walletm)
-                                                                ? totalAmountw
-                                                                : totalDelivery,
-                                                            "Date": date,
-                                                            "manufacturerId": widget
+                                                        String time = DateFormat(
+                                                                "hh:mm:ss a")
+                                                            .format(
+                                                                DateTime.now());
+                                                        String date =
+                                                            "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
+                                                        FirebaseData().addOrders(
+                                                            uid,
+                                                            name,
+                                                            widget.productid,
+                                                            widget.category,
+                                                            quantity,
+                                                            time,
+                                                            totalAmount,
+                                                            date,
+                                                            widget
                                                                 .manufacturerid,
-                                                            "phone_number":
-                                                                phone_number,
-                                                            "address": address,
-                                                            "image":
-                                                                widget.image,
-                                                            "uid": uid,
-                                                            "Desc": widget
-                                                                .description,
-                                                            "weight": w,
-                                                            "is_resell": true,
-                                                          });
+                                                            phone_number,
+                                                            address,
+                                                            widget.image,
+                                                            w,
+                                                            widget.description);
 
-                                                          await FirebaseFirestore
-                                                              .instance
-                                                              .collection(
-                                                                  'Users')
-                                                              .doc(widget.uid)
-                                                              .update({
-                                                            'wallet': (wallet -
-                                                                        totalDelivery) >
-                                                                    0
-                                                                ? wallet -
-                                                                    totalDelivery
-                                                                : 0
-                                                          });
+                                                        if (walletApplied) {
+                                                          await FirebaseData()
+                                                              .updateWallet(
+                                                                  uid,
+                                                                  totalAmount,
+                                                                  wallet);
+                                                        }
 
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (ctx) =>
-                                                                AlertDialog(
-                                                              shape:
-                                                                  RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            20),
-                                                              ),
-                                                              title: const Text(
-                                                                  "Order Completed"),
-                                                              actions: <Widget>[
-                                                                TextButton(
-                                                                  onPressed:
-                                                                      () {
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pushReplacement(MaterialPageRoute(
-                                                                            builder: (context) =>
-                                                                                const YourOrders()));
-                                                                  },
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (ctx) =>
+                                                              AlertDialog(
+                                                            shape:
+                                                                RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20),
+                                                            ),
+                                                            title: const Text(
+                                                                "Order Completed"),
+                                                            actions: <Widget>[
+                                                              TextButton(
+                                                                onPressed: () {
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pushReplacement(MaterialPageRoute(
+                                                                          builder: (context) =>
+                                                                              const YourOrders()));
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10),
+                                                                    color: Colors
+                                                                        .black,
+                                                                  ),
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(14),
                                                                   child:
-                                                                      Container(
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              10),
-                                                                      color: Colors
-                                                                          .black,
-                                                                    ),
-                                                                    padding:
-                                                                        const EdgeInsets.all(
-                                                                            14),
-                                                                    child:
-                                                                        const Text(
-                                                                      "Continue",
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Colors.white),
-                                                                    ),
+                                                                      const Text(
+                                                                    "Continue",
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .white),
                                                                   ),
                                                                 ),
-                                                              ],
-                                                            ),
-                                                          );
-                                                        } else {
-                                                          await openCheckout();
-                                                        }
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        );
+
+                                                        await openCheckout();
                                                       } else {
                                                         showDialog(
                                                           context: context,
@@ -1135,6 +1007,10 @@ class _DetailsState extends State<Details> {
                                         ),
                                         child: Stack(
                                           children: [
+                                            Container(
+                                              child:
+                                                  Text("You might also like"),
+                                            ),
                                             Container(
                                               margin: const EdgeInsets.all(8),
                                               height: height / 6,

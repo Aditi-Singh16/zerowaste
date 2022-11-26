@@ -34,7 +34,7 @@ class _SendNotificationState extends State<SendNotification> {
                       .set({
                     "requirement_satisfy": FieldValue.arrayUnion([
                       {
-                        'email': await HelperFunctions().readEmailPref(),
+                        'email': widget.user.data()['email'].toString(),
                         'quantity': widget.user.data()['quantity'].toString(),
                         'uid': await HelperFunctions().readUserIdPref(),
                         'product_name': widget.user.data()['product_name']
@@ -87,8 +87,7 @@ class _SendNotificationState extends State<SendNotification> {
                   .set({
                 "requirement_satisfy": FieldValue.arrayUnion([
                   {
-                    'email': await HelperFunctions()
-                        .readEmailPref(), //loggedin widget.user.data() ka email after shared pref
+                    'email': widget.user.data()['email'].toString(),
                     'quantity': int.parse(_quantityController.text),
                     'uid': await HelperFunctions().readUserIdPref(),
                     'product_name': widget.user.data()['product_name']

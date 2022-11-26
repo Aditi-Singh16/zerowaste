@@ -3,44 +3,48 @@ class UserModel {
   String? email;
   String? name;
   String? type;
-  bool? Coupon0;
-  bool? Coupon1;
-  bool? Coupon2;
-  bool? Coupon3;
-  bool? Coupon4;
+  List<dynamic>? coupons;
   String? addr;
   String? phone;
   double? wallet;
+  double? esv_air;
+  double? esv_tree;
+  double? esv_co2;
 
   UserModel(
       {this.uid,
       this.email,
       this.name,
       this.type,
-      this.Coupon0,
-      this.Coupon1,
-      this.Coupon2,
-      this.Coupon3,
-      this.Coupon4,
+      this.coupons,
       this.addr,
       this.phone,
-      this.wallet});
+      this.wallet,
+      this.esv_air,
+      this.esv_co2,
+      this.esv_tree});
 
   // receiving data from server
   factory UserModel.fromMap(map) {
     return UserModel(
-        uid: map['uid'],
-        email: map['email'],
-        name: map['name'],
-        type: map['type'],
-        Coupon0: map['Coupon0'],
-        Coupon1: map['Coupon1'],
-        Coupon2: map['Coupon2'],
-        Coupon3: map['Coupon3'],
-        Coupon4: map['Coupon4'],
-        addr: map['addr'],
-        phone: map['phone'],
-        wallet: double.parse(map['wallet'].toString()));
+      uid: map['uid'],
+      email: map['email'],
+      name: map['name'],
+      type: map['type'],
+      coupons: map['coupons'],
+      addr: map['addr'],
+      phone: map['phone'],
+      wallet: double.parse(map['wallet'].toString()),
+      esv_air: map['esv_air'] == null
+          ? 0.0
+          : double.parse(map['esv_air'].toString()),
+      esv_co2: map['esv_co2'] == null
+          ? 0.0
+          : double.parse(map['esv_co2'].toString()),
+      esv_tree: map['esv_tree'] == null
+          ? 0.0
+          : double.parse(map['esv_tree'].toString()),
+    );
   }
 
   // sending data to our server
@@ -50,14 +54,13 @@ class UserModel {
       'email': email,
       'name': name,
       'type': type,
-      'Coupon0': Coupon0,
-      'Coupon1': Coupon1,
-      'Coupon2': Coupon2,
-      'Coupon3': Coupon3,
-      'Coupon4': Coupon4,
+      'coupons': coupons,
       'addr': addr,
       'phone': phone,
-      'wallet': wallet
+      'wallet': wallet,
+      'esv_air': esv_air,
+      'esv_tree': esv_tree,
+      'esv_co2': esv_co2
     };
   }
 }

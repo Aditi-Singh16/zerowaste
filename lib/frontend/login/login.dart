@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
+import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
 import 'package:zerowaste/frontend/consumer/consumerNavbar.dart';
 import 'package:zerowaste/frontend/login/registration.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -186,19 +186,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         .then((value) {
                       loggedInUser = UserModel.fromMap(value.data());
 
-                      print(loggedInUser.toMap()['type']);
                       _helperFunctions
                           .setNamePref(loggedInUser.toMap()['name']);
                       _helperFunctions
                           .setEmailPref(loggedInUser.toMap()['email']);
                       _helperFunctions
                           .setUserIdPref(loggedInUser.toMap()['uid']);
-                      _helperFunctions.setCoupons(
-                          loggedInUser.toMap()['Coupon0'],
-                          loggedInUser.toMap()['Coupon1'],
-                          loggedInUser.toMap()['Coupon2'],
-                          loggedInUser.toMap()['Coupon3'],
-                          loggedInUser.toMap()['Coupon4']);
+                      _helperFunctions
+                          .setCoupons(loggedInUser.toMap()['coupons']);
                       _helperFunctions
                           .setAddrPref(loggedInUser.toMap()['addr']);
                       _helperFunctions
@@ -208,6 +203,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       if (loggedInUser.toMap()['type'] == 'Consumer') {
                         _helperFunctions.setType("Consumer");
+                        _helperFunctions
+                            .setEsvAir(loggedInUser.toMap()['esv_air']);
+                        _helperFunctions
+                            .setEsvCo2(loggedInUser.toMap()['esv_co2']);
+                        _helperFunctions
+                            .setEsvTree(loggedInUser.toMap()['esv_tree']);
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => ConsumerNavbar()));
                       } else if (loggedInUser.toMap()['type'] ==
@@ -222,10 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       }
                     });
 
-                    return SpinKitChasingDots(
-                      color: Colors.blue,
-                      size: 50.0,
-                    );
+                    return Loader();
                   })),
                 });
       } on FirebaseAuthException catch (error) {
@@ -253,7 +251,6 @@ class _LoginScreenState extends State<LoginScreen> {
             errorMessage = "An undefined Error happened.";
         }
         Fluttertoast.showToast(msg: errorMessage!);
-        print(error.code);
       }
     }
   }

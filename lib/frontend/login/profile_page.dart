@@ -11,6 +11,7 @@ import 'package:zerowaste/frontend/Helpers/manufacturer/scratchcard.dart';
 import 'package:zerowaste/frontend/Helpers/profile_helpers/details_tab.dart';
 import 'package:zerowaste/frontend/Helpers/profile_helpers/esv_tab.dart';
 import 'package:zerowaste/frontend/Helpers/color.dart';
+import 'package:zerowaste/frontend/constants.dart';
 import 'package:zerowaste/frontend/consumer/details.dart';
 
 import 'package:zerowaste/frontend/login/login.dart';
@@ -38,11 +39,8 @@ class _ProfilePageState extends State<ProfilePage> {
   bool isEditable = false;
   List<dynamic> rewards = [];
   String phone = "";
-  late int randomindex;
+  int randomindex = 0;
   List coupon = ['OFF5', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
-  double air = 0.0;
-  double co2 = 0.0;
-  double tree = 0.0;
   List description = [
     'Get 2% off on next purchase'
         'Get 5% off on next purchase',
@@ -67,48 +65,8 @@ class _ProfilePageState extends State<ProfilePage> {
   late UserModel currUser;
 
   @override
-  Future<void> fetch_validity() async {
-    var docSnapshot = await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(user!.uid)
-        .get();
-
-    if (docSnapshot.exists) {
-      Map<String, dynamic> data = docSnapshot.data()!;
-
-      // You can then retrieve the value from the Map like this:
-      setState(() {
-        if (data['Count'] != null) {
-          count = data['Count'];
-          for (int i = 0; i < count; i++) {
-            accepted_requests.add(data['accepted_requests'][i]);
-          }
-        }
-        if (data['wallet'] != null) {
-          wallet = data['wallet'];
-        }
-        if (data['Coupon0'] == true) {
-          rewards.add('OFF2');
-        }
-        if (data['Coupon1'] == true) {
-          rewards.add('OFF5');
-        }
-        if (data['Coupon2'] == true) {
-          rewards.add('OFF10');
-        }
-        if (data['Coupon3'] == true) {
-          rewards.add('OFF15');
-        }
-        if (data['Coupon4'] == true) {
-          rewards.add('OFF20');
-        }
-      });
-    }
-  }
-
   void initState() {
     super.initState();
-    fetch_validity();
     FirebaseFirestore.instance
         .collection("Users")
         .doc(user!.uid)
@@ -211,32 +169,21 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   .height *
                                               0.01,
                                         ),
-                                        Container(
-                                            margin: const EdgeInsets.only(
-                                                right: 200),
-                                            child: const Text(
-                                              "Available Balance",
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                            )),
-                                        SizedBox(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.01),
                                         Row(children: <Widget>[
-                                          Text(
-                                            'Rs. ',
-                                            style: const TextStyle(
+                                          const Text(
+                                            "Available Balance",
+                                            style: TextStyle(
                                                 color: Colors.white,
-                                                fontSize: 26,
+                                                fontSize: 15,
                                                 fontWeight: FontWeight.bold),
                                           ),
+                                          Spacer(),
                                           Text(
-                                            wallet.toString(),
+                                            'Rs.' +
+                                                loggedInUser.wallet.toString(),
                                             style: const TextStyle(
                                                 color: Colors.white,
-                                                fontSize: 26,
+                                                fontSize: 15,
                                                 fontWeight: FontWeight.bold),
                                           ),
                                         ]),
@@ -256,9 +203,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       ? Container(
                           margin: const EdgeInsets.all(40),
                           child: ESVTab(
-                            air: air,
-                            co2: co2,
-                            tree: tree,
+                            air: loggedInUser.esv_air!,
+                            co2: loggedInUser.esv_co2!,
+                            tree: loggedInUser.esv_tree!,
                             textColor: AppColor.text,
                           ),
                         )
@@ -309,15 +256,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                         (type == 'NGO')
-                            ? Text(
-                                'My Requirements',
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500),
-                              )
-                            : Container(),
-                        (type == 'NGO')
                             ? MyRequirements(
                                 uid: loggedInUser.uid!,
                               )
@@ -338,7 +276,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                         'Collect Reward',
                                         style: TextStyle(
                                             fontSize: 16,
-                                            color: (count > 0)
+                                            color: (loggedInUser
+                                                    .coupons!.isNotEmpty)
                                                 ? Colors.black
                                                 : Colors.grey,
                                             fontWeight: FontWeight.w500),
@@ -347,49 +286,17 @@ class _ProfilePageState extends State<ProfilePage> {
                                     elevation: 8,
                                     shadowColor: Colors.black12,
                                     margin: EdgeInsets.all(20),
-                                    color: (count > 0)
+                                    color: (loggedInUser.coupons!.isNotEmpty)
                                         ? Colors.blue
                                         : Color.fromARGB(255, 109, 106, 106),
                                   ),
                                 ),
-                                onTap: (count > 0)
+                                onTap: (loggedInUser.coupons!.isNotEmpty)
                                     ? () async {
-                                        String couponn = '';
-                                        String categoryy =
-                                            accepted_requests[count - 1]
-                                                ['category'];
-                                        int quantity =
-                                            accepted_requests[count - 1]
-                                                ['quantity'];
-                                        if (quantity >= category[categoryy]) {
-                                          randomindex = 3 + Random().nextInt(2);
-                                        } else {
-                                          randomindex =
-                                              Random().nextInt(coupon.length);
-                                        }
-                                        await showScratchCard(context);
-                                        couponn =
-                                            "Coupon" + (randomindex).toString();
-
-                                        setState(() {
-                                          if (rewards
-                                              .contains(coupon[randomindex])) {
-                                          } else {
-                                            rewards.add(coupon[randomindex]);
-
-                                            accepted_requests
-                                                .removeAt(count - 1);
-                                            count--;
-                                          }
-                                        });
-                                        await FirebaseFirestore.instance
-                                            .collection('Users')
-                                            .doc(loggedInUser.uid)
-                                            .update({
-                                          couponn: true,
-                                          'Count': FieldValue.increment(-1),
-                                          'accepted_requests': accepted_requests
-                                        });
+                                        randomindex = Random().nextInt(
+                                            AppConstants.coupons.length);
+                                        await showScratchCard(
+                                            context, randomindex);
                                       }
                                     : null,
                               )
@@ -496,11 +403,13 @@ class _ProfilePageState extends State<ProfilePage> {
     ));
   }
 
-  showScratchCard(BuildContext context) {
+  showScratchCard(BuildContext context, int randomindex) {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
-          return ScratchCard();
+          return ScratchCard(
+            randomindex: randomindex,
+          );
         });
   }
 }
