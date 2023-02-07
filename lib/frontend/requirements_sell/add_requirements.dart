@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:zerowaste/backend/firestore_info.dart';
-import 'package:zerowaste/frontend/consumer/consumer_tabbar.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 class AddRequirement extends StatefulWidget {
@@ -27,8 +26,8 @@ class _AddRequirementState extends State<AddRequirement> {
   var _category = "Books";
   var _description = "";
 
-  void ButtonValidate() {
-    Scaffold.of(context).showSnackBar(SnackBar(
+  void buttonValidate() {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: Colors.green,
         content: Text('Requirement Added successfully!')));
   }
@@ -280,7 +279,7 @@ class _AddRequirementState extends State<AddRequirement> {
                             fontWeight: FontWeight.bold,
                           )),
                       onPressed: () async {
-                        color ? ButtonValidate() : null;
+                        color ? buttonValidate() : null;
                         FirebaseData().addRequirement({
                           "uid": await HelperFunctions().readUserIdPref(),
                           "name": await HelperFunctions().readNamePref(),

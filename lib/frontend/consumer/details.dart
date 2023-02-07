@@ -16,7 +16,6 @@ import 'package:zerowaste/frontend/Helpers/style.dart';
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:zerowaste/frontend/consumer/Orders.dart';
-import 'package:flutter/cupertino.dart';
 
 var size, height, width;
 List<int>? esv;
@@ -57,7 +56,7 @@ class Details extends StatefulWidget {
 
 class _DetailsState extends State<Details> {
   String eneteredcoupon = '';
-  List validity = [false, false, false, false, false];
+
   List allCoupons = ['OFF05', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
 
   double delivery = 20.0;
@@ -73,10 +72,6 @@ class _DetailsState extends State<Details> {
   DateTime selectedDate = DateTime.now();
   final _formkey = GlobalKey<FormState>();
   String error = '';
-  String phone_number = '';
-  TextEditingController _controller1 = TextEditingController();
-  TextEditingController _controller2 = TextEditingController();
-  String address = '';
 
   List<int>? esv_ls;
   int? weight;
@@ -187,8 +182,6 @@ class _DetailsState extends State<Details> {
       "Amount": totalAmount,
       "Date": date,
       "manufacturerId": widget.manufacturerid,
-      "phone_number": phone_number,
-      "address": address,
       "image": widget.image,
       "price": widget.price,
       "orderId": docId,
@@ -209,10 +202,6 @@ class _DetailsState extends State<Details> {
       "tree": FieldValue.increment(esv_ls![1] + w)
     });
 
-    await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(widget.uid)
-        .update({'phone': phone_number, 'addr': address});
     await FirebaseFirestore.instance
         .collection('products')
         .doc(widget.productid)
@@ -281,7 +270,6 @@ class _DetailsState extends State<Details> {
 
   void handlerExternalWallet(ExternalWalletResponse response) {
     print("External Wallet $response");
-    // Toast.show("External Wallet", context);
   }
 
   Future<void> openCheckout() async {
@@ -575,17 +563,11 @@ class _DetailsState extends State<Details> {
                               });
                               if (_formkey.currentState!.validate()) {
                                 if (allCoupons.contains(eneteredcoupon)) {
-                                  indx = allCoupons.indexOf(eneteredcoupon);
-                                  if (validity[indx] == true) {
-                                    setState(() {
-                                      totalAmount = totalAmount -
-                                          (totalAmount * (Value[indx]) / 100);
-                                    });
-                                  } else {
-                                    setState(() {
-                                      error = 'Invalid Coupon Code';
-                                    });
-                                  }
+                                  setState(() {
+                                    totalAmount = totalAmount -
+                                        (totalAmount * (Value[indx]) / 100);
+                                    coupon = !coupon;
+                                  });
                                 } else {
                                   setState(() {
                                     error = 'Invalid Coupon Code';
@@ -610,7 +592,7 @@ class _DetailsState extends State<Details> {
                               'Plant Contribution: ',
                               style: AppStyle.h3.copyWith(color: Colors.white),
                             ),
-                            FlatButton(
+                            ElevatedButton(
                                 onPressed: () {
                                   setState(() {
                                     plant = false;
@@ -701,264 +683,35 @@ class _DetailsState extends State<Details> {
                                 Size(width / 2.6, 37))),
                         onPressed: () async {
                           if (_formkey.currentState!.validate()) {
-                            showModalBottomSheet(
-                              isScrollControlled: true,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(16),
-                                    topRight: Radius.circular(16)),
-                              ),
-                              context: context, // set this to true
-                              builder: (_) {
-                                return DraggableScrollableSheet(
-                                  initialChildSize: 0.47,
-                                  maxChildSize: 0.6,
-                                  minChildSize: 0.3,
-                                  expand: false,
-                                  builder: (_, controller) {
-                                    String pattern = r'(^[7-9][0-9]{9}$)';
-                                    RegExp regExp = new RegExp(pattern);
+                            String time =
+                                DateFormat("hh:mm:ss a").format(DateTime.now());
+                            String date =
+                                "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
 
-                                    return Container(
-                                        // rounded border container top
-                                        // take input and button click to update data from flutter firebase
-                                        child: Padding(
-                                            padding: const EdgeInsets.all(10),
-                                            child: Column(
-                                              children: <Widget>[
-                                                Text(
-                                                  "Personal Details",
-                                                  style: TextStyle(
-                                                    fontSize:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width /
-                                                            20,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                const Divider(),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(10),
-                                                  child: TextField(
-                                                    controller: _controller1,
-                                                    decoration: InputDecoration(
-                                                      enabled: true,
-                                                      prefixIcon: const Icon(
-                                                        CupertinoIcons
-                                                            .phone_circle_fill,
-                                                        size: 24,
-                                                      ),
-                                                      border:
-                                                          const OutlineInputBorder(),
-                                                      focusedBorder:
-                                                          OutlineInputBorder(
-                                                        borderSide:
-                                                            const BorderSide(
-                                                                color: Colors
-                                                                    .black,
-                                                                width: 2.0),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(20.0),
-                                                      ),
-                                                      labelText:
-                                                          'Contact Number',
-                                                      hintText:
-                                                          'Enter Your Phone Number',
-                                                    ),
-                                                    onChanged: (text) {
-                                                      phone_number =
-                                                          text.toString();
-                                                      text = text.toString();
-                                                    },
-                                                  ),
-                                                ),
-                                                const Divider(),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(15),
-                                                  child: TextField(
-                                                    controller: _controller2,
-                                                    onChanged: (text) {
-                                                      address = text;
-                                                    },
-                                                    decoration: InputDecoration(
-                                                      enabled: true,
-                                                      prefixIcon: const Icon(
-                                                        CupertinoIcons.home,
-                                                        size: 24,
-                                                      ),
-                                                      border:
-                                                          const OutlineInputBorder(),
-                                                      focusedBorder:
-                                                          OutlineInputBorder(
-                                                        borderSide:
-                                                            const BorderSide(
-                                                                color: Colors
-                                                                    .black,
-                                                                width: 2.0),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(20.0),
-                                                      ),
-                                                      labelText: 'Your Address',
-                                                      hintText:
-                                                          'Enter Your Address',
-                                                    ),
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  height: 2,
-                                                ),
-                                                CupertinoButton(
-                                                    color: Colors.black,
-                                                    child: const Text(
-                                                        'Continue to Payment...'),
-                                                    onPressed: () async {
-                                                      if (phone_number !=
-                                                              null &&
-                                                          regExp.hasMatch(
-                                                              phone_number
-                                                                  .toString()) &&
-                                                          address.length > 5) {
-                                                        String time = DateFormat(
-                                                                "hh:mm:ss a")
-                                                            .format(
-                                                                DateTime.now());
-                                                        String date =
-                                                            "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
-                                                        FirebaseData().addOrders(
-                                                            uid,
-                                                            name,
-                                                            widget.productid,
-                                                            widget.category,
-                                                            quantity,
-                                                            time,
-                                                            totalAmount,
-                                                            date,
-                                                            widget
-                                                                .manufacturerid,
-                                                            phone_number,
-                                                            address,
-                                                            widget.image,
-                                                            w,
-                                                            widget.description);
+                            //remove coupon
+                            await FirebaseData()
+                                .updateCoupons(uid, eneteredcoupon);
 
-                                                        if (walletApplied) {
-                                                          await FirebaseData()
-                                                              .updateWallet(
-                                                                  uid,
-                                                                  totalAmount,
-                                                                  wallet);
-                                                        }
+                            if (walletApplied) {
+                              await FirebaseData()
+                                  .updateWallet(uid, totalAmount, wallet);
+                            }
 
-                                                        showDialog(
-                                                          context: context,
-                                                          builder: (ctx) =>
-                                                              AlertDialog(
-                                                            shape:
-                                                                RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          20),
-                                                            ),
-                                                            title: const Text(
-                                                                "Order Completed"),
-                                                            actions: <Widget>[
-                                                              TextButton(
-                                                                onPressed: () {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pushReplacement(MaterialPageRoute(
-                                                                          builder: (context) =>
-                                                                              const YourOrders()));
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            10),
-                                                                    color: Colors
-                                                                        .black,
-                                                                  ),
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .all(14),
-                                                                  child:
-                                                                      const Text(
-                                                                    "Continue",
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .white),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        );
+                            await openCheckout();
 
-                                                        await openCheckout();
-                                                      } else {
-                                                        showDialog(
-                                                          context: context,
-                                                          builder: (ctx) =>
-                                                              AlertDialog(
-                                                            shape:
-                                                                RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          20),
-                                                            ),
-                                                            title: const Text(
-                                                                "Incorrect Details"),
-                                                            content: const Text(
-                                                                "Please check your address and contact number!"),
-                                                            actions: <Widget>[
-                                                              TextButton(
-                                                                onPressed: () {
-                                                                  Navigator.of(
-                                                                          ctx)
-                                                                      .pop();
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            10),
-                                                                    color: Colors
-                                                                        .black,
-                                                                  ),
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .all(14),
-                                                                  child:
-                                                                      const Text(
-                                                                    "Continue",
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .white),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        );
-                                                      }
-                                                    })
-                                              ],
-                                            )));
-                                  },
-                                );
-                              },
-                            );
+                            FirebaseData().addOrders(
+                                uid,
+                                widget.name,
+                                widget.productid,
+                                widget.category,
+                                quantity,
+                                time,
+                                totalAmount,
+                                date,
+                                widget.manufacturerid,
+                                widget.image,
+                                w,
+                                widget.description);
                           }
                         },
                         child: Text('Buy Now',
@@ -1007,10 +760,6 @@ class _DetailsState extends State<Details> {
                                         ),
                                         child: Stack(
                                           children: [
-                                            Container(
-                                              child:
-                                                  Text("You might also like"),
-                                            ),
                                             Container(
                                               margin: const EdgeInsets.all(8),
                                               height: height / 6,

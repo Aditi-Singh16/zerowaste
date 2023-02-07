@@ -25,7 +25,8 @@ class ReturnOrder extends StatefulWidget {
 
 class _ReturnOrderState extends State<ReturnOrder> {
   String uid = FirebaseAuth.instance.currentUser!.uid;
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
+      new GlobalKey<ScaffoldMessengerState>();
   final _formKey = GlobalKey<FormState>();
   var _quantity = "";
   var _autovalidate = false;
@@ -175,8 +176,11 @@ class _ReturnOrderState extends State<ReturnOrder> {
                   SizedBox(height: 20),
                   SizedBox(
                       width: double.infinity,
-                      child: RaisedButton(
-                          color: (color) ? Colors.black : Colors.grey,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              textStyle: TextStyle(
+                            color: (color) ? Colors.black : Colors.grey,
+                          )),
                           child: Text('Return',
                               style: TextStyle(
                                 color: Colors.white,
@@ -187,8 +191,11 @@ class _ReturnOrderState extends State<ReturnOrder> {
                               })),
                   SizedBox(
                       width: double.infinity,
-                      child: RaisedButton(
-                          color: Colors.red.shade300,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              textStyle: TextStyle(
+                            color: Colors.red.shade300,
+                          )),
                           child: Text('Cancel',
                               style: TextStyle(
                                 color: Colors.white,

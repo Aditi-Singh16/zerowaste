@@ -31,12 +31,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   // our form key
   final _formKey = GlobalKey<FormState>();
   // editing Controller
-  final nameEditingController = new TextEditingController();
-  final emailEditingController = new TextEditingController();
-  final passwordEditingController = new TextEditingController();
-  final confirmPasswordEditingController = new TextEditingController();
+  final nameEditingController = TextEditingController();
+  final emailEditingController = TextEditingController();
+  final passwordEditingController = TextEditingController();
+  final confirmPasswordEditingController = TextEditingController();
+  final phoneEditingController = TextEditingController();
+  final addrEditingController = TextEditingController();
   String typeEditingController = 'Consumer';
-  final gstEditingController = new TextEditingController();
+  final gstEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +48,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         controller: nameEditingController,
         keyboardType: TextInputType.name,
         validator: (value) {
-          RegExp regex = new RegExp(r'^.{3,}$');
+          RegExp regex = RegExp(r'^.{3,}$');
           if (value!.isEmpty) {
             return ("Name cannot be Empty");
           }
@@ -97,6 +99,55 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ),
         ));
 
+    //phone no field
+    final phoneField = TextFormField(
+        autofocus: false,
+        controller: phoneEditingController,
+        keyboardType: TextInputType.phone,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return ("Please Enter Your Phone No.");
+          }
+          return null;
+        },
+        onSaved: (value) {
+          phoneEditingController.text = value!;
+        },
+        textInputAction: TextInputAction.next,
+        decoration: InputDecoration(
+          prefixIcon: Icon(Icons.call),
+          contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+          hintText: "Phone No.",
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ));
+
+    //address field
+    final addrField = TextFormField(
+        autofocus: false,
+        controller: addrEditingController,
+        keyboardType: TextInputType.streetAddress,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return ("Please Enter Your Address");
+          }
+
+          return null;
+        },
+        onSaved: (value) {
+          addrEditingController.text = value!;
+        },
+        textInputAction: TextInputAction.next,
+        decoration: InputDecoration(
+          prefixIcon: Icon(Icons.home),
+          contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+          hintText: "Address",
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ));
+
     //type field
     final typeField = DropdownButton<String>(
       value: typeEditingController,
@@ -127,7 +178,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         controller: passwordEditingController,
         obscureText: true,
         validator: (value) {
-          RegExp regex = new RegExp(r'^.{6,}$');
+          RegExp regex = RegExp(r'^.{6,}$');
           if (value!.isEmpty) {
             return ("Password is required for login");
           }
@@ -193,58 +244,45 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.blue),
-          onPressed: () {
-            // passing this to our root
-            Navigator.of(context).pop();
-          },
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.blue),
+            onPressed: () {
+              // passing this to our root
+              Navigator.of(context).pop();
+            },
+          ),
         ),
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Container(
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 35, right: 35, top: 0),
+        body: Container(
+          padding: EdgeInsets.all(10),
+          child: CustomScrollView(scrollDirection: Axis.vertical, slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
               child: Form(
                 key: _formKey,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Image.asset("assets/images/logo.png", height: 170),
-                    Text(
-                      "ONE STEP TOWARDS ENVIRONMENT",
-                      style: TextStyle(
-                          color: Color(0xff3472c0),
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 36),
+                    Image.asset("assets/images/logo.png",
+                        height: MediaQuery.of(context).size.height * 0.1),
                     firstNameField,
-                    SizedBox(height: 20),
                     emailField,
-                    SizedBox(height: 20),
+                    phoneField,
+                    addrField,
                     passwordField,
-                    SizedBox(height: 20),
                     confirmPasswordField,
-                    SizedBox(height: 20),
                     typeField,
-                    SizedBox(height: 20),
                     signUpButton,
-                    SizedBox(height: 15),
                   ],
                 ),
               ),
             ),
-          ),
-        ),
-      ),
-    );
+          ]),
+        ));
   }
 
   void signUp(String email, String password) async {
@@ -305,8 +343,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     userModel.uid = user.uid;
     userModel.name = nameEditingController.text;
     userModel.type = typeEditingController;
-    userModel.addr = '';
-    userModel.phone = '';
+    userModel.addr = addrEditingController.text;
+    userModel.phone = phoneEditingController.text;
     userModel.wallet = 0;
 
     DataBaseHelper dataBaseHelper = DataBaseHelper.instance;
@@ -314,19 +352,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     await dataBaseHelper.insertUser({
       'uid': user.uid,
       'name': nameEditingController.text,
-      'phone': '',
+      'phone': phoneEditingController.text,
       'email': userModel.email,
       'type': typeEditingController,
-      'addr': '',
+      'addr': phoneEditingController.text,
     });
     await firebaseFirestore.collection("Users").doc(user.uid).set({
       'uid': user.uid,
       'name': nameEditingController.text,
-      'phone': '',
+      'phone': phoneEditingController.text,
       'email': userModel.email,
       'type': typeEditingController,
       'coupons': userModel.type == 'Consumer' ? [] : null,
-      'addr': '',
+      'addr': addrEditingController.text,
       'wallet': 0.0
     });
 

@@ -111,56 +111,62 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: SingleChildScrollView(
-          child: Container(
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.all(36.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Image.asset("assets/images/logo.png", height: 190),
-                    Text(
-                      "ONE STEP TOWARDS ENVIRONMENT",
-                      style: TextStyle(
-                          color: Color(0xff3472c0),
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 45),
-                    emailField,
-                    SizedBox(height: 25),
-                    passwordField,
-                    SizedBox(height: 35),
-                    loginButton,
-                    SizedBox(height: 15),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text("Don't have an account? "),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          RegistrationScreen()));
-                            },
-                            child: Text(
-                              "SignUp",
-                              style: TextStyle(
-                                  color: Color(0xff7dbeda),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15),
-                            ),
-                          )
-                        ])
-                  ],
+        child: Container(
+          padding: const EdgeInsets.all(10.0),
+          child: CustomScrollView(
+            scrollDirection: Axis.vertical,
+            slivers: [
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Image.asset("assets/images/logo.png",
+                          height: MediaQuery.of(context).size.height * 0.2),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      emailField,
+                      SizedBox(
+                        height: 20,
+                      ),
+                      passwordField,
+                      SizedBox(
+                        height: 20,
+                      ),
+                      loginButton,
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text("Don't have an account? "),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            RegistrationScreen()));
+                              },
+                              child: Text(
+                                "SignUp",
+                                style: TextStyle(
+                                    color: Color(0xff7dbeda),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15),
+                              ),
+                            )
+                          ])
+                    ],
+                  ),
                 ),
-              ),
-            ),
+              )
+            ],
           ),
         ),
       ),

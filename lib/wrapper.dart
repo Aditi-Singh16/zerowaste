@@ -7,7 +7,6 @@ import 'package:zerowaste/frontend/consumer/consumerNavbar.dart';
 import 'package:zerowaste/frontend/login/login.dart';
 import 'package:zerowaste/frontend/manufacturer/manufacturerNavbar.dart';
 import 'package:zerowaste/frontend/ngo/ngoNavbar.dart';
-import 'package:zerowaste/frontend/login/profile_page.dart';
 
 class Wrapper extends StatefulWidget {
   const Wrapper({

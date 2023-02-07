@@ -2,13 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
 import 'package:zerowaste/wrapper.dart';
 
 void main() async {
-  await dotenv.load();
-  ErrorWidget.builder =
-      (FlutterErrorDetails details) => const Center(child: Loader());
+  await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])

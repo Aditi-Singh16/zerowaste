@@ -125,9 +125,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
   }
 
   Widget _plantgif(BuildContext context) {
-    return new AlertDialog(
+    return AlertDialog(
       title: const Text('Congratulations!!!'),
-      content: new Column(
+      content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -135,11 +135,14 @@ class _ShoppingCartState extends State<ShoppingCart> {
         ],
       ),
       actions: <Widget>[
-        FlatButton(
+        ElevatedButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
-          textColor: Theme.of(context).primaryColor,
+          style: ElevatedButton.styleFrom(
+              textStyle: TextStyle(
+            color: Theme.of(context).primaryColor,
+          )),
           child: const Text('Close'),
         ),
       ],
@@ -147,9 +150,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
   }
 
   Widget _buildPopupDialog(BuildContext context) {
-    return new AlertDialog(
+    return AlertDialog(
       title: const Text('Meet Your Plant'),
-      content: new Column(
+      content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -159,7 +162,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
         ],
       ),
       actions: <Widget>[
-        FlatButton(
+        ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
               setState(() {
@@ -167,19 +170,20 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 plant = true;
                 megatotal = (amount1 == 0) ? total + 20 + 5 : amount1 + 20 + 5;
               });
-              print('Megatotal');
-              print(megatotal);
               showDialog(
                 context: context,
                 builder: (BuildContext context) => _plantgif(context),
               );
             },
             child: const Text("Yes")),
-        FlatButton(
+        ElevatedButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
-          textColor: Theme.of(context).primaryColor,
+          style: ElevatedButton.styleFrom(
+              textStyle: TextStyle(
+            color: Theme.of(context).primaryColor,
+          )),
           child: const Text('Close'),
         ),
       ],
@@ -196,8 +200,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
     String time = DateFormat("hh:mm:ss a").format(DateTime.now());
     newu.get().then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
-        print("naaaaameeeeeeee");
-        print(doc['name']);
         String quantity = doc['quantity'].toString();
         String date =
             "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
@@ -773,7 +775,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                                       ),
                                                                       actions: <
                                                                           Widget>[
-                                                                        FlatButton(
+                                                                        ElevatedButton(
                                                                           child:
                                                                               Text('OK'),
                                                                           onPressed:
@@ -1179,14 +1181,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                     25,
                                               )),
                                         ),
-                                        FlatButton(
+                                        ElevatedButton(
                                             onPressed: () {
                                               setState(() {
                                                 plant = false;
                                                 megatotal = megatotal - 5;
                                               });
-                                              print('Megatotal');
-                                              print(megatotal);
                                             },
                                             child: Text("Remove",
                                                 style: TextStyle(

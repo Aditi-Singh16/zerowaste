@@ -122,8 +122,6 @@ class FirebaseData {
       var amount,
       var date,
       var manufacturerid,
-      var phone_number,
-      var address,
       var image,
       var w,
       var description) async {
@@ -140,8 +138,6 @@ class FirebaseData {
       "Amount": amount,
       "Date": date,
       "manufacturerId": manufacturerid,
-      "phone_number": phone_number,
-      "address": address,
       "image": image,
       "uid": uid,
       "Desc": description,
@@ -181,6 +177,12 @@ class FirebaseData {
           .doc(uid)
           .update({'wallet': wallet - totalAmount});
     }
+  }
+
+  Future<void> updateCoupons(var uid, var coupon) async {
+    await FirebaseFirestore.instance.collection('Users').doc(uid).update({
+      'coupons': FieldValue.arrayRemove([coupon])
+    });
   }
 
   Future<int> getUserOrdersCount(customer) async {

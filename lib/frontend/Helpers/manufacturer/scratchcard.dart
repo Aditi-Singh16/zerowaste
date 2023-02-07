@@ -29,6 +29,9 @@ class _ScratchCardState extends State<ScratchCard> {
         color: Colors.blue,
         onChange: (value) => print("Scratch progress: $value%"),
         onThreshold: () => print("Threshold reached"),
+        onScratchEnd: () {
+          print("waaaaaaaaaaaaaaa");
+        },
         child: Container(
           height: MediaQuery.of(context).size.height * 0.42,
           width: MediaQuery.of(context).size.width * 0.5,

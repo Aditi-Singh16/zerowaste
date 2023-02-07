@@ -90,7 +90,7 @@ class _PageFormState extends State<PageForm> {
     if (_formKey.currentState!.validate() && image != null) {
       sendData();
 
-      Scaffold.of(context).showSnackBar(const SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: Colors.green,
           content: Text('Product Added successfully!')));
       setState(() {
@@ -105,7 +105,7 @@ class _PageFormState extends State<PageForm> {
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => Dashboard()));
     } else {
-      Scaffold.of(context).showSnackBar(const SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: Colors.redAccent,
           content: Text('Problem Adding the product :(')));
       setState(() {
@@ -462,8 +462,11 @@ class _PageFormState extends State<PageForm> {
             const SizedBox(height: 20),
             SizedBox(
                 width: double.infinity,
-                child: RaisedButton(
-                    color: (color) ? Colors.black : Colors.grey,
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        textStyle: TextStyle(
+                      color: (color) ? Colors.black : Colors.grey,
+                    )),
                     child: const Text('Add Product',
                         style: TextStyle(
                           color: Colors.white,
