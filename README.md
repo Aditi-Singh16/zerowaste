@@ -22,6 +22,23 @@ This application was developed by the team TechItUp, which won the First runner-
 7. Analytics Dashboard for stakeholders.
 
 
+## :star: Top 5 Benefits
+1. **One man's trash is another man's treasure**<br> 
+    The app provides 2 ways to put products back in the cycle. Donate to the NGO or Recycle at the Recycling Plant
+2. **Unsold products won’t be the cause of loss to anyone**<br> 
+   Unsold products now can be sent back to the manufacturer and/or resold to the higher-demand areas. 
+3. **Rewards for every act of kindness**<br>
+   Discounted scratchcards are provided to the customers on every donation.
+4. **Awareness in all dimensions**<br> 
+       The app educates the customer by:<br>
+       - Providing in-app D-I-Y videos to reuse/recycle at home.<br>
+       - Predicting the required quantity of product based on historical data of sales.<br>
+       - Showing the product's Environment Saving(ES) Values and how eco-friendly is the product that they are purchasing.<br>
+5. **Advance Security**<br> 
+   The application provides higher levels of security and verification for GST numbers to safeguard the customer from any fraudsters.
+
+
+
 ## :recycle: Use Cases
 
 ![image](https://user-images.githubusercontent.com/74586135/202919504-1448aa3c-fec5-4150-8bea-5a25f7529980.png)
