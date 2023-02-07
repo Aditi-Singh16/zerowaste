@@ -120,49 +120,52 @@ class _LoginScreenState extends State<LoginScreen> {
                 hasScrollBody: false,
                 child: Form(
                   key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Image.asset("assets/images/logo.png",
-                          height: MediaQuery.of(context).size.height * 0.2),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      emailField,
-                      SizedBox(
-                        height: 20,
-                      ),
-                      passwordField,
-                      SizedBox(
-                        height: 20,
-                      ),
-                      loginButton,
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text("Don't have an account? "),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            RegistrationScreen()));
-                              },
-                              child: Text(
-                                "SignUp",
-                                style: TextStyle(
-                                    color: Color(0xff7dbeda),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15),
-                              ),
-                            )
-                          ])
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Image.asset("assets/images/logo.png",
+                            height: MediaQuery.of(context).size.height * 0.2),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        emailField,
+                        SizedBox(
+                          height: 20,
+                        ),
+                        passwordField,
+                        SizedBox(
+                          height: 20,
+                        ),
+                        loginButton,
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text("Don't have an account? "),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              RegistrationScreen()));
+                                },
+                                child: Text(
+                                  "SignUp",
+                                  style: TextStyle(
+                                      color: Color(0xff7dbeda),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15),
+                                ),
+                              )
+                            ])
+                      ],
+                    ),
                   ),
                 ),
               )
