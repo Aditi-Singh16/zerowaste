@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:zerowaste/backend/local_data.dart';
@@ -256,13 +253,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             },
           ),
         ),
-        body: Container(
-          padding: EdgeInsets.all(10),
-          child: CustomScrollView(scrollDirection: Axis.vertical, slivers: [
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Form(
-                key: _formKey,
+        body: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Form(
+            key: _formKey,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.75,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -281,7 +279,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ),
               ),
             ),
-          ]),
+          ),
         ));
   }
 

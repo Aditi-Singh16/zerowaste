@@ -5,7 +5,7 @@ import 'package:zerowaste/frontend/Helpers/color.dart';
 
 abstract class AppStyle {
   static const h1Light = TextStyle(
-      fontSize: 32,
+      fontSize: 25,
       fontWeight: FontWeight.bold,
       // height: 38,
       // letterSpacing: 20,
@@ -33,11 +33,7 @@ abstract class AppStyle {
       color: AppColor.text);
 
   static const text = TextStyle(
-      fontSize: 14,
-      fontWeight: FontWeight.normal,
-      // letterSpacing: 20,
-      // height: 20,
-      color: AppColor.text);
+      fontSize: 14, fontWeight: FontWeight.normal, color: AppColor.text);
 
   static const bodyText = TextStyle(
       fontSize: 12,

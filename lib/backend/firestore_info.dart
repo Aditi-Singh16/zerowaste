@@ -125,15 +125,22 @@ class FirebaseData {
       var image,
       var w,
       var description) async {
+    String docId = FirebaseFirestore.instance
+        .collection('Users')
+        .doc(uid)
+        .collection('Orders')
+        .doc()
+        .id;
     await FirebaseFirestore.instance
         .collection('Users')
         .doc(uid)
         .collection('Orders')
         .add({
+      "OrderId": docId,
       "ProductName": name,
       "ProductId": productid,
       "category": category,
-      "Quantity": quantity,
+      "Quantity": int.parse(quantity),
       "Time": time,
       "Amount": amount,
       "Date": date,
@@ -143,6 +150,19 @@ class FirebaseData {
       "Desc": description,
       "weight": w,
       "is_resell": true,
+      "is_return": false
+    });
+  }
+
+  Future<void> deleteFromCart(var uid) async {
+    CollectionReference userCart = FirebaseFirestore.instance
+        .collection('Users')
+        .doc(uid)
+        .collection('Cart');
+    await userCart.get().then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        userCart.doc(doc.id).delete();
+      });
     });
   }
 

@@ -21,12 +21,6 @@ class _YourOrdersState extends State<YourOrders> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            leading: Image.asset(
-              'assets/images/logo1.png',
-              fit: BoxFit.contain,
-            ),
-            title: Text("My Orders")),
         body: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('Users')
@@ -200,7 +194,8 @@ class _YourOrdersState extends State<YourOrders> {
                                                   SizedBox(width: 10),
                                                   Text(
                                                     "\u{20B9}" +
-                                                        doc['price'].toString(),
+                                                        doc['Amount']
+                                                            .toString(),
                                                     style: TextStyle(
                                                       fontSize: 15,
                                                       color: Colors.blueGrey,

@@ -6,32 +6,19 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-import 'package:zerowaste/backend/userModal/user.dart';
+import 'package:zerowaste/backend/firestore_info.dart';
 import 'package:zerowaste/frontend/Helpers/consumer/tab_display.dart';
 import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
-import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
-import 'package:zerowaste/frontend/consumer/Orders.dart';
 import 'package:zerowaste/frontend/Helpers/color.dart';
-import 'package:zerowaste/frontend/consumer/details.dart';
 import 'package:zerowaste/frontend/Helpers/style.dart';
+import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 String? name;
-String phone_number = '';
-TextEditingController _controller1 = TextEditingController();
-TextEditingController _controller2 = TextEditingController();
-String address = '';
-bool checkifpayed = false;
+
 num megatotal = 0;
-String? name2;
-String? phone_number2;
-num quant2 = 0;
-num price2 = 0;
-var date = new DateTime.now().toString();
-var dateParse = DateTime.parse(date);
 
 List validity = [false, false, false, false, false];
 List couponn = ['OFF05', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
-List Value = [5, 10, 15, 20, 2];
 int wallet = 0;
 double amount1 = 0;
 double amountd = 0;
@@ -47,25 +34,14 @@ num afterdiscount = 0;
 String error = '';
 late num total;
 
-var formattedDate = "${dateParse.day}-${dateParse.month}-${dateParse.year}";
-int delivery_charges = 20;
-String uid = FirebaseAuth.instance.currentUser!.uid;
-
-DateTime selectedDate = DateTime.now();
-
-CollectionReference products = FirebaseFirestore.instance
-    .collection('Products')
-    .doc('unfoWBpH8AidhiSmwx44')
-    .collection('Products');
-
 class ShoppingCart extends StatefulWidget {
   @override
   State<ShoppingCart> createState() => _ShoppingCartState();
 }
 
 class _ShoppingCartState extends State<ShoppingCart> {
-  String productid = '6Ffxps7z7OvLjMtUwcxn';
-  String manufacturerid = 'unfoWBpH8AidhiSmwx44';
+  String uid = FirebaseAuth.instance.currentUser!.uid;
+  DateTime selectedDate = DateTime.now();
   int amount = megatotal.toInt();
 
   Razorpay razorpay = Razorpay();
@@ -75,35 +51,19 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  DateTime selectedDate = DateTime.now();
-
-  //final Stream<QuerySnapshot> _usersStream = FirebaseFirestore.instance.collection('test').snapshots();
-
-  CollectionReference newu = FirebaseFirestore.instance
-      .collection('Users')
-      .doc(uid)
-      .collection('Cart');
-
-  get async => null;
-  Future<void> fetch_validity() async {
+  Future<void> fetchValidity() async {
     var docSnapshot =
         await FirebaseFirestore.instance.collection('Users').doc(uid).get();
 
     if (docSnapshot.exists) {
       Map<String, dynamic> data = docSnapshot.data()!;
 
-      // You can then retrieve the value from the Map like this:
       setState(() {
         validity[0] = data['Coupon0'];
         validity[1] = data['Coupon1'];
         validity[2] = data['Coupon2'];
         validity[3] = data['Coupon3'];
         validity[4] = data['Coupon4'];
-        _controller1.text = data['phone'];
-        _controller2.text = data['addr'];
-        phone_number = data['phone'];
-        address = data['addr'];
-        wallet = data['wallet'];
       });
     }
   }
@@ -111,7 +71,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
   @override
   void initState() {
     super.initState();
-    fetch_validity();
+    fetchValidity();
 
     razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlerPaymentSuccess);
     razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlerErrorFailure);
@@ -191,92 +151,50 @@ class _ShoppingCartState extends State<ShoppingCart> {
   }
 
   void handlerPaymentSuccess(PaymentSuccessResponse response) async {
-    // loop through fields in a firebase document
-    // and update the values
-    checkifpayed = true;
-
-    print("Payment success $response");
-
     String time = DateFormat("hh:mm:ss a").format(DateTime.now());
-    newu.get().then((QuerySnapshot querySnapshot) {
+    CollectionReference userCart = FirebaseFirestore.instance
+        .collection('Users')
+        .doc(uid)
+        .collection('Cart');
+    userCart.get().then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
-        String quantity = doc['quantity'].toString();
         String date =
             "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
-        String docId = FirebaseFirestore.instance
-            .collection('Users')
-            .doc(uid)
-            .collection('Orders')
-            .doc()
-            .id;
-        FirebaseFirestore.instance
-            .collection('Users')
-            .doc(uid)
-            .collection('Orders')
-            .doc(docId)
-            .set({
-          "image": doc['image'],
-          "ProductName": doc['name'],
-          "Quantity": doc['quantity'],
-          "price": doc['price'].toDouble(),
-          "address": address,
-          "phone_number": phone_number,
-          "Time": time,
-          "manufacturerId": doc['manufacturerId'],
-          "userId": uid,
-          "Date": date,
-          "orderId": docId,
-          "is_return": false,
-          "is_resell": true,
-          "category": doc['categories'],
-          "Desc": doc['description'],
-          "weight": doc['weight'],
-          "is_resell": true,
-          "uid": uid
-        });
+        FirebaseData().addOrders(
+            uid,
+            doc['name'],
+            doc['productId'],
+            doc['categories'],
+            doc['quantity'],
+            time,
+            doc['price'].toDouble(),
+            date,
+            doc['manufacturerId'],
+            doc['image'],
+            doc['weight'],
+            doc['description']);
       });
     });
 
-    checkifpayed = true;
     CollectionReference newc = FirebaseFirestore.instance
         .collection('Users')
         .doc(uid)
         .collection('Cart');
     newc.get().then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
-        print("product id ${doc['productId']}");
-        String productid = doc['productId'];
-        String qua = doc['quantity'].toString();
-        print("Quantity $qua");
         FirebaseFirestore.instance
             .collection('products')
-            .doc(productid)
+            .doc(doc['productId'])
             .update({
-          "quantity": FieldValue.increment(-int.parse(qua)),
+          "quantity":
+              FieldValue.increment(-int.parse(doc['quantity'].toString())),
         });
       });
     });
+
     //delete cart items
-    newu.get().then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) {
-        newu.doc(doc.id).delete();
-      });
-    });
-    await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(uid)
-        .update({'phone': phone_number, 'addr': address});
-    if (walletm == true) {
-      await FirebaseFirestore.instance.collection('Users').doc(uid).update(
-          {'wallet': (wallet - megatotal) > 0 ? wallet - megatotal : 0});
-    }
-    if (beforediscount != afterdiscount) {
-      String couponname = 'Coupon' + indx.toString();
-      await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(uid)
-          .update({couponname: false});
-    }
+    FirebaseData().deleteFromCart(uid);
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -355,7 +273,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
               : (megatotal * 100).toString(),
       "name": "Sample App",
       "description": "Payment for the some random product",
-      "prefill": {"contact": phone_number},
+      "prefill": {"contact": await HelperFunctions().readPhonePref()},
       "external": {
         "wallets": ["paytm"]
       }
@@ -371,13 +289,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
   @override
   Widget build(BuildContext context) {
     SystemUiOverlayStyle(statusBarColor: Colors.grey.shade100);
-    var size, height, width;
-    size = MediaQuery.of(context).size;
-    height = size.height;
-    width = size.width;
-    num checkquantity = 0;
-    CollectionReference product =
-        FirebaseFirestore.instance.collection('products');
+
     // get quantity field from products collection
 
     return StreamBuilder(
@@ -410,7 +322,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
             return Scaffold(
               appBar: PreferredSize(
-                preferredSize: Size.fromHeight(height * 0.06),
+                preferredSize:
+                    Size.fromHeight(MediaQuery.of(context).size.height * 0.06),
                 child: AppBar(
                   leading: IconButton(
                     icon: Icon(Icons.arrow_back, color: Colors.white),
@@ -431,7 +344,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
                               Container(
                                 padding: EdgeInsets.only(top: 100, bottom: 20),
                                 child: CircleAvatar(
-                                  radius: height / 7, // Image radius
+                                  radius: MediaQuery.of(context).size.height /
+                                      7, // Image radius
                                   backgroundImage: NetworkImage(
                                       'https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/categories%2Fcart.gif?alt=media&token=6ef4fdc0-b651-49a6-8f23-e09a67b86d54'),
                                 ),
@@ -795,14 +709,21 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                     ],
                                                   ),
                                                   SizedBox(
-                                                      height: height / 100),
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height /
+                                                              100),
                                                   Row(
                                                     children: [
                                                       Text(
                                                         '\u{20B9}',
                                                         style: TextStyle(
-                                                            fontSize:
-                                                                height / 60),
+                                                            fontSize: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .height /
+                                                                60),
                                                       ),
                                                       Text(
                                                           (doc1['price'] *
@@ -812,8 +733,11 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                           style: TextStyle(
                                                               color:
                                                                   Colors.black,
-                                                              fontSize:
-                                                                  height / 60,
+                                                              fontSize: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .height /
+                                                                  60,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold)),
@@ -979,7 +903,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                     minimumSize:
                                                         MaterialStateProperty.all(
                                                             Size(
-                                                                size.width /
+                                                                MediaQuery.of(context)
+                                                                        .size
+                                                                        .width /
                                                                     2.6,
                                                                 37))),
                                                 onPressed: () async {
@@ -1329,421 +1255,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                 width: MediaQuery.of(context).size.width / 1.5,
                                 height: MediaQuery.of(context).size.height / 20,
                                 child: ElevatedButton(
-                                  onPressed: () {
-                                    //pull up card on button pressed
-                                    showModalBottomSheet(
-                                      isScrollControlled: true,
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(16),
-                                            topRight: Radius.circular(16)),
-                                      ),
-                                      context: context, // set this to true
-                                      builder: (_) {
-                                        return DraggableScrollableSheet(
-                                          initialChildSize: 0.47,
-                                          maxChildSize: 0.6,
-                                          minChildSize: 0.3,
-                                          expand: false,
-                                          builder: (_, controller) {
-                                            String pattern =
-                                                r'(^[7-9][0-9]{9}$)';
-                                            RegExp regExp = new RegExp(pattern);
-
-                                            return Container(
-                                                // rounded border container top
-                                                // take input and button click to update data from flutter firebase
-                                                child: Padding(
-                                                    padding: EdgeInsets.all(10),
-                                                    child: Column(
-                                                      children: <Widget>[
-                                                        Text(
-                                                          "Personal Details",
-                                                          style: TextStyle(
-                                                            fontSize: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width /
-                                                                20,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                        Divider(),
-                                                        Padding(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  10),
-                                                          child: TextField(
-                                                            controller:
-                                                                _controller1,
-                                                            enabled: true,
-                                                            decoration:
-                                                                InputDecoration(
-                                                              prefixIcon: Icon(
-                                                                CupertinoIcons
-                                                                    .phone_circle_fill,
-                                                                size: 24,
-                                                              ),
-                                                              border:
-                                                                  OutlineInputBorder(),
-                                                              focusedBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide: const BorderSide(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    width: 2.0),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            20.0),
-                                                              ),
-                                                              labelText:
-                                                                  'Contact Number',
-                                                              hintText:
-                                                                  'Enter Your Phone Number',
-                                                            ),
-                                                            onChanged: (text) {
-                                                              phone_number = text
-                                                                  .toString();
-                                                              text = text
-                                                                  .toString();
-                                                            },
-                                                          ),
-                                                        ),
-                                                        Divider(),
-                                                        Padding(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  10),
-                                                          child: TextField(
-                                                            controller:
-                                                                _controller2,
-                                                            onChanged: (text) {
-                                                              address = text;
-                                                            },
-                                                            enabled: true,
-                                                            decoration:
-                                                                InputDecoration(
-                                                              prefixIcon: Icon(
-                                                                CupertinoIcons
-                                                                    .home,
-                                                                size: 24,
-                                                              ),
-                                                              border:
-                                                                  OutlineInputBorder(),
-                                                              focusedBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide: const BorderSide(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    width: 2.0),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            20.0),
-                                                              ),
-                                                              labelText:
-                                                                  'Your Address',
-                                                              hintText:
-                                                                  'Enter Your Address',
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 2,
-                                                        ),
-                                                        CupertinoButton(
-                                                            color: Colors.black,
-                                                            child: Text(
-                                                                'Continue to Payment...'),
-                                                            onPressed:
-                                                                () async {
-                                                              num? quant1 = 0;
-                                                              num? total1 = 0;
-                                                              String
-                                                                  product_name;
-
-                                                              for (int i = 0;
-                                                                  i <
-                                                                      snapshot
-                                                                          .data
-                                                                          .docs
-                                                                          .length;
-                                                                  i++) {
-                                                                product_name = snapshot
-                                                                        .data
-                                                                        .docs[i]
-                                                                        .data()[
-                                                                    'name'];
-                                                                quant1 = quant1! +
-                                                                    snapshot
-                                                                        .data
-                                                                        .docs[i]
-                                                                        .data()['quantity'];
-                                                                total1 = snapshot
-                                                                            .data
-                                                                            .docs[i]
-                                                                            .data()[
-                                                                        'price'] *
-                                                                    snapshot
-                                                                        .data
-                                                                        .docs[i]
-                                                                        .data()['quantity'];
-                                                              }
-
-                                                              if (phone_number !=
-                                                                      null &&
-                                                                  regExp.hasMatch(
-                                                                      phone_number
-                                                                          .toString()) &&
-                                                                  address.length >
-                                                                      5) {
-                                                                if (wallet ==
-                                                                        true &&
-                                                                    megatotal ==
-                                                                        0) {
-                                                                  String time = DateFormat(
-                                                                          "hh:mm:ss a")
-                                                                      .format(DateTime
-                                                                          .now());
-                                                                  newu.get().then(
-                                                                      (QuerySnapshot
-                                                                          querySnapshot) {
-                                                                    querySnapshot
-                                                                        .docs
-                                                                        .forEach(
-                                                                            (doc) {
-                                                                      print(
-                                                                          "naaaaameeeeeeee");
-                                                                      print(doc[
-                                                                          'name']);
-                                                                      String
-                                                                          quantity =
-                                                                          doc['quantity']
-                                                                              .toString();
-                                                                      String
-                                                                          date =
-                                                                          "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
-                                                                      String docId = FirebaseFirestore
-                                                                          .instance
-                                                                          .collection(
-                                                                              'Users')
-                                                                          .doc(
-                                                                              uid)
-                                                                          .collection(
-                                                                              'Orders')
-                                                                          .doc()
-                                                                          .id;
-                                                                      FirebaseFirestore
-                                                                          .instance
-                                                                          .collection(
-                                                                              'Users')
-                                                                          .doc(
-                                                                              uid)
-                                                                          .collection(
-                                                                              'Orders')
-                                                                          .doc(
-                                                                              docId)
-                                                                          .set({
-                                                                        "image":
-                                                                            doc['image'],
-                                                                        "ProductName":
-                                                                            doc['name'],
-                                                                        "Quantity":
-                                                                            doc['quantity'],
-                                                                        "price":
-                                                                            doc['price'].toDouble(),
-                                                                        "address":
-                                                                            address,
-                                                                        "phone_number":
-                                                                            phone_number,
-                                                                        "Time":
-                                                                            time,
-                                                                        "manufacturerId":
-                                                                            doc['manufacturerId'],
-                                                                        "userId":
-                                                                            uid,
-                                                                        "Date":
-                                                                            date,
-                                                                        "orderId":
-                                                                            docId,
-                                                                        "is_return":
-                                                                            false,
-                                                                        "uid":
-                                                                            uid
-                                                                      });
-                                                                    });
-                                                                  });
-                                                                  await FirebaseFirestore
-                                                                      .instance
-                                                                      .collection(
-                                                                          'Users')
-                                                                      .doc(uid)
-                                                                      .update({
-                                                                    'wallet': (wallet -
-                                                                                megatotal) >
-                                                                            0
-                                                                        ? wallet -
-                                                                            megatotal
-                                                                        : 0
-                                                                  });
-
-                                                                  showDialog(
-                                                                    context:
-                                                                        context,
-                                                                    builder:
-                                                                        (ctx) =>
-                                                                            AlertDialog(
-                                                                      shape:
-                                                                          RoundedRectangleBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(20),
-                                                                      ),
-                                                                      title: const Text(
-                                                                          "Order Completed"),
-                                                                      actions: <
-                                                                          Widget>[
-                                                                        TextButton(
-                                                                          onPressed:
-                                                                              () {
-                                                                            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => YourOrders()));
-                                                                          },
-                                                                          child:
-                                                                              Container(
-                                                                            decoration:
-                                                                                BoxDecoration(
-                                                                              borderRadius: BorderRadius.circular(10),
-                                                                              color: Colors.black,
-                                                                            ),
-                                                                            padding:
-                                                                                const EdgeInsets.all(14),
-                                                                            child:
-                                                                                const Text(
-                                                                              "Continue",
-                                                                              style: TextStyle(color: Colors.white),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  );
-                                                                } else {
-                                                                  await openCheckout();
-                                                                }
-                                                              } else {
-                                                                if (checkifpayed ==
-                                                                    false) {
-                                                                  showDialog(
-                                                                    context:
-                                                                        context,
-                                                                    builder:
-                                                                        (ctx) =>
-                                                                            AlertDialog(
-                                                                      shape:
-                                                                          RoundedRectangleBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(20),
-                                                                      ),
-                                                                      title: const Text(
-                                                                          "Incorrect Details"),
-                                                                      content:
-                                                                          const Text(
-                                                                              "Please check your address and contact number!"),
-                                                                      actions: <
-                                                                          Widget>[
-                                                                        TextButton(
-                                                                          onPressed:
-                                                                              () {
-                                                                            Navigator.of(ctx).pop();
-                                                                          },
-                                                                          child:
-                                                                              Container(
-                                                                            decoration:
-                                                                                BoxDecoration(
-                                                                              borderRadius: BorderRadius.circular(10),
-                                                                              color: Colors.black,
-                                                                            ),
-                                                                            padding:
-                                                                                const EdgeInsets.all(14),
-                                                                            child:
-                                                                                const Text(
-                                                                              "Continue",
-                                                                              style: TextStyle(color: Colors.white),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  );
-                                                                } else if (checkifpayed ==
-                                                                    true) {
-                                                                  checkifpayed =
-                                                                      false;
-                                                                  showDialog(
-                                                                    context:
-                                                                        context,
-                                                                    builder:
-                                                                        (ctx) =>
-                                                                            AlertDialog(
-                                                                      shape:
-                                                                          RoundedRectangleBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(20),
-                                                                      ),
-                                                                      title: const Text(
-                                                                          "Order Placed"),
-                                                                      actions: <
-                                                                          Widget>[
-                                                                        TextButton(
-                                                                          onPressed:
-                                                                              () {
-                                                                            Navigator.of(ctx).pop();
-                                                                          },
-                                                                          child:
-                                                                              Container(
-                                                                            decoration:
-                                                                                BoxDecoration(
-                                                                              borderRadius: BorderRadius.circular(10),
-                                                                              color: Colors.black,
-                                                                            ),
-                                                                            padding:
-                                                                                const EdgeInsets.all(14),
-                                                                            child:
-                                                                                const Text(
-                                                                              "Continue",
-                                                                              style: TextStyle(color: Colors.white),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  );
-                                                                }
-                                                                checkifpayed =
-                                                                    false;
-                                                              }
-                                                            })
-                                                      ],
-                                                    )));
-                                          },
-                                        );
-                                      },
-                                    );
+                                  onPressed: () async {
+                                    await openCheckout();
                                   },
-                                  child: plant == true
-                                      ? Text('Proceed to Checkout ' +
-                                          '\u{20B9}' +
-                                          (megatotal + 5).toString() +
-                                          " (" +
-                                          quant.toString() +
-                                          " Item) ")
-                                      : Text('Proceed to Checkout ' +
-                                          '\u{20B9}' +
-                                          (megatotal).toString() +
-                                          " (" +
-                                          quant.toString() +
-                                          " Item) "),
+                                  child: Text('Proceed to Checkout '),
                                   style: ElevatedButton.styleFrom(
                                     primary: Colors.black, // background
                                     onPrimary: Colors.white,

@@ -16,10 +16,10 @@ class ProductNameAndPrice extends StatelessWidget {
       children: [
         Text(
           name,
-          style: AppStyle.h1Light.copyWith(fontSize: 20),
+          style: AppStyle.h1Light.copyWith(fontSize: 18),
         ),
         Text(
-          ' $amount',
+          '\u20B9 $amount',
           style: AppStyle.h1Light
               .copyWith(color: Colors.white, fontWeight: FontWeight.w400),
         ),
