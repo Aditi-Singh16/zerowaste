@@ -7,32 +7,14 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:zerowaste/backend/firestore_info.dart';
+import 'package:zerowaste/frontend/Helpers/consumer/empty_cart.dart';
+import 'package:zerowaste/frontend/Helpers/consumer/plant_gif.dart';
 import 'package:zerowaste/frontend/Helpers/consumer/tab_display.dart';
 import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
 import 'package:zerowaste/frontend/Helpers/color.dart';
 import 'package:zerowaste/frontend/Helpers/style.dart';
+import 'package:zerowaste/frontend/constants.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
-
-String? name;
-
-num megatotal = 0;
-
-List validity = [false, false, false, false, false];
-List couponn = ['OFF05', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
-int wallet = 0;
-double amount1 = 0;
-double amountd = 0;
-int amountw = 0;
-bool coupon = false;
-bool plant = false;
-bool couponused = false;
-bool walletm = false;
-String eneteredcoupon = '';
-int indx = 0;
-num beforediscount = 0;
-num afterdiscount = 0;
-String error = '';
-late num total;
 
 class ShoppingCart extends StatefulWidget {
   @override
@@ -42,7 +24,14 @@ class ShoppingCart extends StatefulWidget {
 class _ShoppingCartState extends State<ShoppingCart> {
   String uid = FirebaseAuth.instance.currentUser!.uid;
   DateTime selectedDate = DateTime.now();
-  int amount = megatotal.toInt();
+  bool shouldPlant = false;
+  bool couponApplied = false;
+  String enteredCoupon = "";
+  double total = 20;
+  String error = "";
+  double wallet = 0;
+  List<bool> validity = [false, false, false, false, false];
+  bool walletApplied = false;
 
   Razorpay razorpay = Razorpay();
   String quantity = "";
@@ -64,6 +53,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
         validity[2] = data['Coupon2'];
         validity[3] = data['Coupon3'];
         validity[4] = data['Coupon4'];
+        wallet = data['wallet'];
       });
     }
   }
@@ -84,55 +74,22 @@ class _ShoppingCartState extends State<ShoppingCart> {
     razorpay.clear();
   }
 
-  Widget _plantgif(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Congratulations!!!'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Image.asset("assets/images/plantatree.gif"),
-        ],
-      ),
-      actions: <Widget>[
-        ElevatedButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          style: ElevatedButton.styleFrom(
-              textStyle: TextStyle(
-            color: Theme.of(context).primaryColor,
-          )),
-          child: const Text('Close'),
-        ),
-      ],
-    );
-  }
-
   Widget _buildPopupDialog(BuildContext context) {
     return AlertDialog(
       title: const Text('Meet Your Plant'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text("Plant a Tree just at " +
-              '\u{20B9}' +
-              "5 and take a step towards Green India"),
-        ],
-      ),
+      content: const Text(
+          "Plant a Tree just at \u{20B9}5 and take a step towards Green India"),
       actions: <Widget>[
         ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
               setState(() {
-                //amount1==0 means coupon is not applied
-                plant = true;
-                megatotal = (amount1 == 0) ? total + 20 + 5 : amount1 + 20 + 5;
+                shouldPlant = true;
+                total = total + 5;
               });
               showDialog(
                 context: context,
-                builder: (BuildContext context) => _plantgif(context),
+                builder: (BuildContext context) => PlantGIF(),
               );
             },
             child: const Text("Yes")),
@@ -193,7 +150,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
     });
 
     //delete cart items
-    FirebaseData().deleteFromCart(uid);
+    FirebaseData().deleteWholeCart(uid);
 
     showDialog(
       context: context,
@@ -222,8 +179,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
         ],
       ),
     );
-
-    // Toast.show("Pament success", context);
   }
 
   void handlerErrorFailure() {
@@ -254,23 +209,16 @@ class _ShoppingCartState extends State<ShoppingCart> {
         ],
       ),
     );
-    print("Pament error");
-    // Toast.show("Pament error", context);
   }
 
   void handlerExternalWallet() {
     print("External Wallet");
-    // Toast.show("External Wallet", context);
   }
 
   Future<void> openCheckout() async {
     var options = {
       "key": dotenv.env['RAZORPAY_KEY'],
-      "amount": (walletm)
-          ? (amountw * 100).toString()
-          : plant == true
-              ? ((megatotal + 5) * 100).toString()
-              : (megatotal * 100).toString(),
+      "amount": total,
       "name": "Sample App",
       "description": "Payment for the some random product",
       "prefill": {"contact": await HelperFunctions().readPhonePref()},
@@ -295,99 +243,46 @@ class _ShoppingCartState extends State<ShoppingCart> {
     return StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('Users')
-            //uid of user
             .doc(uid)
             .collection('Cart')
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          CollectionReference n = FirebaseFirestore.instance
-              .collection('Users')
-              .doc(uid)
-              .collection('Cart');
-
           if (!snapshot.hasData) {
-            return Scaffold(body: Loader());
+            return const Scaffold(body: Loader());
           }
           if (snapshot.hasData) {
-            // get length of douments firebas
-            total = 0;
-            num? quant = 0;
+            CollectionReference userCart = FirebaseFirestore.instance
+                .collection('Users')
+                .doc(uid)
+                .collection('Cart');
             for (int i = 0; i < snapshot.data.docs.length; i++) {
-              quant = quant! + snapshot.data.docs[i].data()['quantity'];
-              total = total +
-                  snapshot.data.docs[i].data()['price'] *
-                      snapshot.data.docs[i].data()['quantity'];
-              megatotal = total + 20;
+              total = 20.0 +
+                  snapshot.data.docs[i]['price'] *
+                      snapshot.data.docs[i]['quantity'];
             }
-
             return Scaffold(
               appBar: PreferredSize(
                 preferredSize:
                     Size.fromHeight(MediaQuery.of(context).size.height * 0.06),
                 child: AppBar(
                   leading: IconButton(
-                    icon: Icon(Icons.arrow_back, color: Colors.white),
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
                     onPressed: () => {
                       // go back page
                       Navigator.pop(context)
                     },
                   ),
-                  title: Text("My Cart"),
+                  title: const Text("My Cart"),
                 ),
               ),
               body: Container(
                 child: total == 0
-                    ? Scaffold(
-                        body: Container(
-                          child: Column(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.only(top: 100, bottom: 20),
-                                child: CircleAvatar(
-                                  radius: MediaQuery.of(context).size.height /
-                                      7, // Image radius
-                                  backgroundImage: NetworkImage(
-                                      'https://firebasestorage.googleapis.com/v0/b/zerowaste-6af31.appspot.com/o/categories%2Fcart.gif?alt=media&token=6ef4fdc0-b651-49a6-8f23-e09a67b86d54'),
-                                ),
-                              ),
-                              Center(
-                                child: Text(
-                                  "Your ZeroWaste cart is empty!",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.only(top: 20),
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  child: InkWell(
-                                      onTap: () {
-                                        // go back page
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text('Continue Shopping...')),
-                                  style: ElevatedButton.styleFrom(
-                                    primary: Colors.black, // background
-                                    onPrimary: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          12), // <-- Radius
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      )
+                    ? const EmptyCart()
                     : SingleChildScrollView(
                         child: Column(
                           children: [
                             ListView.builder(
-                                physics: BouncingScrollPhysics(),
+                                physics: const BouncingScrollPhysics(),
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
                                 // firebase length of itemcount
@@ -396,15 +291,13 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                   //    DocumentSnapshot doc = snapshot.data!.docs[index];
                                   DocumentSnapshot doc1 =
                                       snapshot.data!.docs[index];
-
-                                  print(doc1.id);
                                   String name = doc1['name'];
                                   if (name.length > 9) {
                                     name = name.substring(0, 9) + "...";
                                   }
                                   return Container(
-                                    margin:
-                                        EdgeInsets.only(left: 10, right: 10),
+                                    margin: const EdgeInsets.only(
+                                        left: 10, right: 10),
                                     width:
                                         MediaQuery.of(context).size.width / 1.1,
                                     height:
@@ -420,345 +313,334 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                       color: Colors.white,
 
                                       //margin: EdgeInsets.only(left: 12.0),
-                                      child: InkWell(
-                                        onTap: () {
-                                          //  Navigator.of(context).push(
-                                          //  MaterialPageRoute(
-                                          //   builder: (context) => DetailsPage(detail: doc),
-                                          //  ),
-                                          //  );
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              flex: 2,
-                                              child: Container(
-                                                margin: EdgeInsets.all(
-                                                    MediaQuery.of(context)
-                                                            .size
-                                                            .width /
-                                                        33),
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                  child: Image.network(
-                                                    doc1['image'],
-                                                    fit: BoxFit.fitWidth,
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height /
-                                                            3,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width /
-                                                            2.6,
-                                                  ),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 2,
+                                            child: Container(
+                                              margin: EdgeInsets.all(
+                                                  MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                      33),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                child: Image.network(
+                                                  doc1['image'],
+                                                  fit: BoxFit.fitWidth,
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height /
+                                                      3,
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                      2.6,
                                                 ),
                                               ),
                                             ),
-                                            Expanded(
-                                              flex: 2,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        top: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height /
-                                                            30),
-
-                                                    // child: InkWell(
-                                                    //   onTap: (){
-                                                    //     Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Details(snapshot[name],snapshot[description],snapshot[price],snapshot[categories])));
-                                                    //   },
-
-                                                    child: Padding(
-                                                      padding: EdgeInsets.only(
-                                                          right: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height /
-                                                              150),
-                                                      child: Row(
-                                                        children: [
-                                                          Text(
-                                                            name,
-                                                            maxLines: 2,
-                                                            style: TextStyle(
-                                                                fontSize: MediaQuery
-                                                                            .of(
-                                                                                context)
-                                                                        .size
-                                                                        .height /
-                                                                    50,
-                                                                color: Colors
-                                                                    .black,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          ),
-                                                          Spacer(),
-                                                          InkWell(
-                                                            child: Container(
-                                                              margin: EdgeInsets.only(
-                                                                  right: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .height /
-                                                                      100),
-                                                              child: InkWell(
-                                                                onTap: () {
-                                                                  FirebaseFirestore
-                                                                      .instance
-                                                                      .collection(
-                                                                          'Users')
-                                                                      .doc(uid)
-                                                                      .collection(
-                                                                          'Cart')
-                                                                      .doc(doc1
-                                                                          .id)
-                                                                      .delete();
-                                                                },
-                                                                child: Icon(
-                                                                  Icons
-                                                                      .delete_forever_rounded,
-                                                                  color: Colors
-                                                                      .grey,
-                                                                  size: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .height /
-                                                                      35,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                      height:
+                                          ),
+                                          Expanded(
+                                            flex: 2,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      top:
                                                           MediaQuery.of(context)
                                                                   .size
                                                                   .height /
-                                                              50),
-                                                  Padding(
+                                                              30),
+                                                  child: Padding(
                                                     padding: EdgeInsets.only(
                                                         right: MediaQuery.of(
                                                                     context)
                                                                 .size
                                                                 .height /
+                                                            150),
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          name,
+                                                          maxLines: 2,
+                                                          style: TextStyle(
+                                                              fontSize: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .height /
+                                                                  50,
+                                                              color:
+                                                                  Colors.black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                        const Spacer(),
+                                                        InkWell(
+                                                          child: Container(
+                                                            margin: EdgeInsets.only(
+                                                                right: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .height /
+                                                                    100),
+                                                            child: InkWell(
+                                                              onTap: () async {
+                                                                await FirebaseData()
+                                                                    .deleteSingleItemFromCart(
+                                                                        uid,
+                                                                        doc1.id);
+                                                              },
+                                                              child: Icon(
+                                                                Icons
+                                                                    .delete_forever_rounded,
+                                                                color:
+                                                                    Colors.grey,
+                                                                size: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .height /
+                                                                    35,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height /
                                                             50),
-                                                    child: Text(
-                                                      "Tag: " +
-                                                          doc1['categories']
-                                                              .toString(),
-                                                      maxLines: 4,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height /
+                                                              50),
+                                                  child: Text(
+                                                    "Tag: " +
+                                                        doc1['categories']
+                                                            .toString(),
+                                                    maxLines: 4,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                        fontSize: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height /
+                                                            65,
+                                                        color: Colors.grey),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height /
+                                                            50),
+                                                Row(
+                                                  children: [
+                                                    InkWell(
+                                                      onTap: () {
+                                                        if (doc1['quantity'] >
+                                                            1) {
+                                                          // update data from flutter firebase
+
+                                                          userCart
+                                                              .doc(doc1.id)
+                                                              .set(
+                                                                  {
+                                                                "quantity":
+                                                                    doc1['quantity'] -
+                                                                        1,
+                                                              },
+                                                                  SetOptions(
+                                                                      merge:
+                                                                          true));
+                                                        } else if (doc1[
+                                                                'quantity'] <=
+                                                            0) {
+                                                          FirebaseFirestore
+                                                              .instance
+                                                              .collection(
+                                                                  'Users')
+                                                              .doc(uid
+                                                                  .toString())
+                                                              .collection(
+                                                                  'Cart')
+                                                              .doc(doc1.id)
+                                                              .delete();
+                                                        }
+                                                      },
+                                                      child: const Icon(
+                                                          CupertinoIcons
+                                                              .minus_circle_fill),
+                                                    ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height /
+                                                            100),
+                                                    Text(doc1['quantity']
+                                                        .toString()),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height /
+                                                            100),
+                                                    InkWell(
+                                                      onTap: () {
+                                                        // update data from flutter firebase
+                                                        CollectionReference
+                                                            pro1 =
+                                                            FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'products');
+                                                        // get single field from product collection
+                                                        pro1
+                                                            .doc(doc1[
+                                                                'productId'])
+                                                            .get()
+                                                            .then((value) {
+                                                          if (value[
+                                                                  'quantity'] >
+                                                              doc1[
+                                                                  'quantity']) {
+                                                            userCart
+                                                                .doc(doc1.id)
+                                                                .set(
+                                                                    {
+                                                                  "quantity":
+                                                                      doc1['quantity'] +
+                                                                          1,
+                                                                },
+                                                                    SetOptions(
+                                                                        merge:
+                                                                            true));
+                                                          } else {
+                                                            //cart quantity is equal to product quantity
+                                                            userCart
+                                                                .doc(doc1.id)
+                                                                .set(
+                                                                    {
+                                                                  "quantity":
+                                                                      doc1['quantity'] -
+                                                                          1,
+                                                                },
+                                                                    SetOptions(
+                                                                        merge:
+                                                                            true));
+                                                            showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (BuildContext
+                                                                        context) {
+                                                                  return AlertDialog(
+                                                                    title:
+                                                                        const Text(
+                                                                      'Select a lower quantity',
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .black,
+                                                                          fontWeight:
+                                                                              FontWeight.w600),
+                                                                    ),
+                                                                    content:
+                                                                        const Text(
+                                                                      'Quantity exceeds the available stock',
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .black,
+                                                                          fontWeight:
+                                                                              FontWeight.w400),
+                                                                    ),
+                                                                    actions: <
+                                                                        Widget>[
+                                                                      ElevatedButton(
+                                                                        child: const Text(
+                                                                            'OK'),
+                                                                        onPressed:
+                                                                            () {
+                                                                          Navigator.of(context)
+                                                                              .pop();
+                                                                        },
+                                                                      )
+                                                                    ],
+                                                                  );
+                                                                });
+                                                          }
+                                                        });
+                                                      },
+                                                      child: const Icon(
+                                                          CupertinoIcons
+                                                              .plus_circle_fill),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height /
+                                                            100),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      '\u{20B9}',
                                                       style: TextStyle(
                                                           fontSize: MediaQuery.of(
                                                                       context)
                                                                   .size
                                                                   .height /
-                                                              65,
-                                                          color: Colors.grey),
+                                                              60),
                                                     ),
-                                                  ),
-                                                  SizedBox(
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height /
-                                                              50),
-                                                  Row(
-                                                    children: [
-                                                      InkWell(
-                                                        onTap: () {
-                                                          if (doc1['quantity'] >
-                                                              1) {
-                                                            // update data from flutter firebase
-                                                            newu.doc(doc1.id).set(
-                                                                {
-                                                                  "quantity":
-                                                                      doc1['quantity'] -
-                                                                          1,
-                                                                },
-                                                                SetOptions(
-                                                                    merge:
-                                                                        true));
-                                                          } else if (doc1[
-                                                                  'quantity'] <=
-                                                              0) {
-                                                            FirebaseFirestore
-                                                                .instance
-                                                                .collection(
-                                                                    'Users')
-                                                                .doc(uid
-                                                                    .toString())
-                                                                .collection(
-                                                                    'Cart')
-                                                                .doc(doc1.id)
-                                                                .delete();
-                                                          }
-                                                        },
-                                                        child: Icon(CupertinoIcons
-                                                            .minus_circle_fill),
-                                                      ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height /
-                                                              100),
-                                                      Text(doc1['quantity']
-                                                          .toString()),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height /
-                                                              100),
-                                                      InkWell(
-                                                        onTap: () {
-                                                          // update data from flutter firebase
-                                                          CollectionReference
-                                                              pro1 =
-                                                              FirebaseFirestore
-                                                                  .instance
-                                                                  .collection(
-                                                                      'products');
-                                                          // get single field from product collection
-                                                          pro1
-                                                              .doc(doc1[
-                                                                  'productId'])
-                                                              .get()
-                                                              .then((value) {
-                                                            if (value[
-                                                                    'quantity'] >
+                                                    Text(
+                                                        (doc1['price'] *
                                                                 doc1[
-                                                                    'quantity']) {
-                                                              newu.doc(doc1.id).set(
-                                                                  {
-                                                                    "quantity":
-                                                                        doc1['quantity'] +
-                                                                            1,
-                                                                  },
-                                                                  SetOptions(
-                                                                      merge:
-                                                                          true));
-                                                            } else {
-                                                              //cart quantity is equal to product quantity
-                                                              newu.doc(doc1.id).set(
-                                                                  {
-                                                                    "quantity":
-                                                                        doc1['quantity'] -
-                                                                            1,
-                                                                  },
-                                                                  SetOptions(
-                                                                      merge:
-                                                                          true));
-                                                              showDialog(
-                                                                  context:
-                                                                      context,
-                                                                  builder:
-                                                                      (BuildContext
-                                                                          context) {
-                                                                    return AlertDialog(
-                                                                      title:
-                                                                          Text(
-                                                                        'Select a lower quantity',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.black,
-                                                                            fontWeight: FontWeight.w600),
-                                                                      ),
-                                                                      content:
-                                                                          Text(
-                                                                        'Quantity exceeds the available stock',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.black,
-                                                                            fontWeight: FontWeight.w400),
-                                                                      ),
-                                                                      actions: <
-                                                                          Widget>[
-                                                                        ElevatedButton(
-                                                                          child:
-                                                                              Text('OK'),
-                                                                          onPressed:
-                                                                              () {
-                                                                            Navigator.of(context).pop();
-                                                                          },
-                                                                        )
-                                                                      ],
-                                                                    );
-                                                                  });
-                                                            }
-                                                          });
-                                                        },
-                                                        child: Icon(CupertinoIcons
-                                                            .plus_circle_fill),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height /
-                                                              100),
-                                                  Row(
-                                                    children: [
-                                                      Text(
-                                                        '\u{20B9}',
+                                                                    'quantity'])
+                                                            .toString(),
                                                         style: TextStyle(
+                                                            color: Colors.black,
                                                             fontSize: MediaQuery.of(
                                                                         context)
                                                                     .size
                                                                     .height /
-                                                                60),
-                                                      ),
-                                                      Text(
-                                                          (doc1['price'] *
-                                                                  doc1[
-                                                                      'quantity'])
-                                                              .toString(),
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                              fontSize: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height /
-                                                                  60,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold)),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
+                                                                60,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold)),
+                                                  ],
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   );
                                 }),
-                            Divider(),
+                            const Divider(),
                             Padding(
-                              padding: EdgeInsets.only(left: 10, right: 10),
+                              padding:
+                                  const EdgeInsets.only(left: 10, right: 10),
                               child: Container(
-                                  padding: EdgeInsets.only(left: 10, right: 10),
+                                  padding: const EdgeInsets.only(
+                                      left: 10, right: 10),
                                   width: MediaQuery.of(context).size.width,
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                       color: AppColor.secondary,
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(25))),
@@ -804,7 +686,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                 _buildPopupDialog(context),
                                           );
                                         }),
-                                    Divider(),
+                                    const Divider(),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
@@ -817,36 +699,21 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                             ),
                                             onTap: () {
                                               setState(() {
-                                                coupon = true;
+                                                couponApplied = true;
                                               });
                                             }),
-                                        coupon
+                                        couponApplied
                                             ? InkWell(
-                                                child: Container(
-                                                  child: Text('Remove',
-                                                      style: AppStyle.text
-                                                          .copyWith(
-                                                              color:
-                                                                  Colors.red)),
-                                                ),
+                                                child: Text('Remove',
+                                                    style: AppStyle.text
+                                                        .copyWith(
+                                                            color: Colors.red)),
                                                 onTap: () {
                                                   setState(() {
-                                                    coupon = false;
-                                                    if (beforediscount !=
-                                                        afterdiscount) {
-                                                      amount1 = 0;
-
-                                                      megatotal = (plant)
-                                                          ? (amount1 == 0)
-                                                              ? total + 20 + 5
-                                                              : amount1 + 20 + 5
-                                                          : (amount1 == 0)
-                                                              ? total + 20
-                                                              : amount1 + 20;
-                                                    }
+                                                    couponApplied = false;
                                                   });
                                                 })
-                                            : Visibility(
+                                            : const Visibility(
                                                 visible: false,
                                                 child: Text('')),
                                       ],
@@ -854,7 +721,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                     const SizedBox(
                                       height: 16,
                                     ),
-                                    coupon
+                                    couponApplied
                                         ? Container(
                                             width: MediaQuery.of(context)
                                                     .size
@@ -865,16 +732,16 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                   color: Colors.white),
                                               onChanged: (val) {
                                                 setState(
-                                                    () => eneteredcoupon = val);
+                                                    () => enteredCoupon = val);
                                               },
                                               decoration: InputDecoration(
                                                 enabledBorder:
-                                                    OutlineInputBorder(
+                                                    const OutlineInputBorder(
                                                   borderSide: BorderSide(
                                                       color: AppColor.primary),
                                                 ),
                                                 focusedBorder:
-                                                    OutlineInputBorder(
+                                                    const OutlineInputBorder(
                                                   borderSide: BorderSide(
                                                       width: 1,
                                                       color: AppColor.primary),
@@ -886,12 +753,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                               ),
                                             ),
                                           )
-                                        : Visibility(
+                                        : const Visibility(
                                             visible: false,
                                             child: SizedBox(height: 0)),
-                                    Text(error,
-                                        style: TextStyle(color: Colors.red)),
-                                    coupon
+                                    couponApplied
                                         ? Center(
                                             child: ElevatedButton(
                                                 style: ButtonStyle(
@@ -914,44 +779,24 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                   });
                                                   if (_formkey.currentState!
                                                       .validate()) {
-                                                    if (couponn.contains(
-                                                        eneteredcoupon)) {
-                                                      print(
-                                                          'entered coupon is in coupon');
-                                                      indx = couponn.indexOf(
-                                                          eneteredcoupon);
-                                                      if (validity[indx] ==
+                                                    if (AppConstants.coupons
+                                                        .contains(
+                                                            enteredCoupon)) {
+                                                      int idx = AppConstants
+                                                          .coupons
+                                                          .indexOf(
+                                                              enteredCoupon);
+
+                                                      if (validity[idx] ==
                                                           true) {
-                                                        print(
-                                                            ' entered coupon is valid coupon');
                                                         setState(() {
                                                           //applied coupon amount
 
-                                                          beforediscount =
-                                                              total;
-
-                                                          amount1 = (total -
-                                                              (total *
-                                                                  (Value[
-                                                                      indx]) /
-                                                                  100));
-                                                          afterdiscount =
-                                                              amount1;
-                                                          plant
-                                                              ? megatotal =
-                                                                  (amount1 == 0)
-                                                                      ? total +
-                                                                          5 +
-                                                                          20
-                                                                      : amount +
-                                                                          5 +
-                                                                          20
-                                                              : megatotal =
-                                                                  (amount1 == 0)
-                                                                      ? total +
-                                                                          20
-                                                                      : amount +
-                                                                          20;
+                                                          total = total *
+                                                              (1 -
+                                                                  AppConstants.couponValue[
+                                                                          idx] /
+                                                                      100);
                                                         });
                                                       } else {
                                                         setState(() {
@@ -971,7 +816,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                     style: AppStyle.h3.copyWith(
                                                         color: Colors.white))),
                                           )
-                                        : Visibility(
+                                        : const Visibility(
                                             visible: false, child: Text('')),
                                     const SizedBox(
                                       height: 16,
@@ -984,7 +829,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                               InkWell(
                                                   child: Container(
                                                     child: Text(
-                                                        'Use wallet money     Rs.' +
+                                                        'Use wallet money Rs.' +
                                                             '$wallet',
                                                         style: AppStyle.text
                                                             .copyWith(
@@ -993,18 +838,17 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                   ),
                                                   onTap: () {
                                                     setState(() {
-                                                      walletm = true;
+                                                      walletApplied = true;
 
-                                                      if (wallet > megatotal) {
-                                                        amountw = 0;
+                                                      if (wallet > total) {
+                                                        total = 0;
                                                       } else {
-                                                        amountw =
-                                                            megatotal.floor() -
-                                                                wallet;
+                                                        total = total - wallet;
+                                                        wallet = 0;
                                                       }
                                                     });
                                                   }),
-                                              walletm
+                                              walletApplied
                                                   ? InkWell(
                                                       child: Container(
                                                         child: Text('Remove',
@@ -1015,15 +859,15 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                       ),
                                                       onTap: () {
                                                         setState(() {
-                                                          walletm = false;
+                                                          walletApplied = false;
                                                         });
                                                       })
-                                                  : Visibility(
+                                                  : const Visibility(
                                                       visible: false,
                                                       child: Text('')),
                                             ],
                                           )
-                                        : Visibility(
+                                        : const Visibility(
                                             visible: false, child: Text('')),
                                     const SizedBox(
                                       height: 16,
@@ -1037,7 +881,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Container(
-                                  padding: EdgeInsets.only(left: 40),
+                                  padding: const EdgeInsets.only(left: 40),
                                   child: Text("Total",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
@@ -1047,11 +891,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                       )),
                                 ),
                                 Container(
-                                  padding: EdgeInsets.only(right: 40),
-                                  child: Text(
-                                      (amount1 == 0)
-                                          ? total.toString()
-                                          : amount1.toString(),
+                                  padding: const EdgeInsets.only(right: 40),
+                                  child: Text('$total',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize:
@@ -1061,12 +902,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                 ),
                               ],
                             ),
-                            Divider(),
+                            const Divider(),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Container(
-                                  padding: EdgeInsets.only(left: 40),
+                                  padding: const EdgeInsets.only(left: 40),
                                   child: Text("Delivery Charges",
                                       style: TextStyle(
                                         color: Colors.grey,
@@ -1077,8 +918,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                       )),
                                 ),
                                 Container(
-                                  padding: EdgeInsets.only(right: 40),
-                                  child: Text(delivery_charges.toString(),
+                                  padding: const EdgeInsets.only(right: 40),
+                                  child: Text('20',
                                       style: TextStyle(
                                         color: Colors.grey,
                                         fontWeight: FontWeight.bold,
@@ -1089,14 +930,15 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                 ),
                               ],
                             ),
-                            Divider(),
-                            (plant)
+                            const Divider(),
+                            shouldPlant
                                 ? Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                         Container(
-                                          padding: EdgeInsets.only(left: 40),
+                                          padding:
+                                              const EdgeInsets.only(left: 40),
                                           child: Text('Plant Contribution: ',
                                               style: TextStyle(
                                                 color: Colors.black,
@@ -1110,8 +952,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                         ElevatedButton(
                                             onPressed: () {
                                               setState(() {
-                                                plant = false;
-                                                megatotal = megatotal - 5;
+                                                shouldPlant = false;
+                                                total = total - 5;
                                               });
                                             },
                                             child: Text("Remove",
@@ -1128,7 +970,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                           height: 16,
                                         ),
                                         Container(
-                                          padding: EdgeInsets.only(right: 40),
+                                          padding:
+                                              const EdgeInsets.only(right: 40),
                                           child: Text("5",
                                               style: TextStyle(
                                                 color: Colors.black,
@@ -1143,108 +986,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                 : const SizedBox(
                                     height: 16,
                                   ),
-                            Divider(),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.only(left: 40),
-                                  child: Text("Sub-Total",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width /
-                                                25,
-                                      )),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.only(right: 40),
-                                  child: Text(megatotal.toString(),
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width /
-                                                25,
-                                      )),
-                                ),
-                              ],
-                            ),
-                            Divider(),
-                            (walletm)
-                                ? Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.only(left: 40),
-                                        child: Text('Final Total:',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  20,
-                                            )),
-                                      ),
-                                      Container(
-                                        padding: EdgeInsets.only(right: 40),
-                                        child: Text('$amountw',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  20,
-                                            )),
-                                      ),
-                                    ],
-                                  )
-                                : Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.only(left: 40),
-                                        child: Text('Final Total:',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  20,
-                                            )),
-                                      ),
-                                      Container(
-                                        padding: EdgeInsets.only(right: 40),
-                                        child: plant == true
-                                            ? Text((megatotal + 5).toString(),
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize:
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width /
-                                                          20,
-                                                ))
-                                            : Text((megatotal).toString(),
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize:
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width /
-                                                          20,
-                                                )),
-                                      ),
-                                    ],
-                                  ),
+                            const Divider(),
                             const SizedBox(
                               height: 16,
                             ),
@@ -1258,7 +1000,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                   onPressed: () async {
                                     await openCheckout();
                                   },
-                                  child: Text('Proceed to Checkout '),
+                                  child: const Text('Proceed to Checkout '),
                                   style: ElevatedButton.styleFrom(
                                     primary: Colors.black, // background
                                     onPrimary: Colors.white,
@@ -1269,7 +1011,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                   ),
                                 )),
                             Container(
-                              margin: EdgeInsets.all(10),
+                              margin: const EdgeInsets.all(10),
                             )
                           ],
                         ),
@@ -1277,7 +1019,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
               ),
             );
           }
-          return Scaffold(
+          return const Scaffold(
               body:
                   Center(child: CircularProgressIndicator(color: Colors.grey)));
         });

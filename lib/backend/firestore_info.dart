@@ -154,7 +154,7 @@ class FirebaseData {
     });
   }
 
-  Future<void> deleteFromCart(var uid) async {
+  Future<void> deleteWholeCart(var uid) async {
     CollectionReference userCart = FirebaseFirestore.instance
         .collection('Users')
         .doc(uid)
@@ -164,6 +164,15 @@ class FirebaseData {
         userCart.doc(doc.id).delete();
       });
     });
+  }
+
+  Future<void> deleteSingleItemFromCart(var uid, var docId) async {
+    await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(uid)
+        .collection('Cart')
+        .doc(docId)
+        .delete();
   }
 
   Future<void> addToCart(var uid, var productid, var category, var image,

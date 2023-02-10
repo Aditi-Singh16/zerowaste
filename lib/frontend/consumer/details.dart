@@ -10,12 +10,14 @@ import 'package:zerowaste/frontend/Helpers/consumer/product_display.dart';
 import 'package:zerowaste/frontend/Helpers/consumer/tab_display.dart';
 import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
 import 'package:zerowaste/frontend/Helpers/profile_helpers/esv_tab.dart';
+import 'package:zerowaste/frontend/constants.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/ShoppingCart.dart';
 import 'package:zerowaste/frontend/Helpers/color.dart';
 import 'package:zerowaste/frontend/Helpers/style.dart';
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:zerowaste/frontend/consumer/Orders.dart';
+import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 var size, height, width;
 List<int>? esv;
@@ -159,6 +161,7 @@ class _DetailsState extends State<Details> {
   }
 
   void handlerPaymentSuccess(PaymentSuccessResponse response) async {
+    String uid = await HelperFunctions().readUserIdPref();
     String time = DateFormat("hh:mm:ss a").format(DateTime.now());
     String date =
         "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
@@ -548,7 +551,9 @@ class _DetailsState extends State<Details> {
                                 if (allCoupons.contains(eneteredcoupon)) {
                                   setState(() {
                                     totalAmount = totalAmount -
-                                        (totalAmount * (Value[indx]) / 100);
+                                        (totalAmount *
+                                            (AppConstants.couponValue[indx]) /
+                                            100);
                                     coupon = !coupon;
                                   });
                                 } else {
@@ -666,13 +671,14 @@ class _DetailsState extends State<Details> {
                                 Size(width / 2.6, 37))),
                         onPressed: () async {
                           if (_formkey.currentState!.validate()) {
-                            //remove coupon
+                            String uid =
+                                await HelperFunctions().readUserIdPref();
                             await FirebaseData()
                                 .updateCoupons(uid, eneteredcoupon);
 
                             if (walletApplied) {
-                              await FirebaseData()
-                                  .updateWallet(uid, totalAmount, wallet);
+                              await FirebaseData().updateWallet(
+                                  uid, totalAmount, widget.wallet);
                             }
 
                             await openCheckout();
