@@ -10,12 +10,14 @@ import 'package:zerowaste/frontend/Helpers/consumer/product_display.dart';
 import 'package:zerowaste/frontend/Helpers/consumer/tab_display.dart';
 import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
 import 'package:zerowaste/frontend/Helpers/profile_helpers/esv_tab.dart';
+import 'package:zerowaste/frontend/constants.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/ShoppingCart.dart';
 import 'package:zerowaste/frontend/Helpers/color.dart';
 import 'package:zerowaste/frontend/Helpers/style.dart';
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:zerowaste/frontend/consumer/Orders.dart';
+import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 var size, height, width;
 List<int>? esv;
@@ -75,7 +77,6 @@ class _DetailsState extends State<Details> {
 
   List<int>? esv_ls;
   int? weight;
-  double w = 0;
 
   List<int> cat1 = [2, 1, 3];
   List<int> cat2 = [2, 1, 4];
@@ -160,46 +161,31 @@ class _DetailsState extends State<Details> {
   }
 
   void handlerPaymentSuccess(PaymentSuccessResponse response) async {
+    String uid = await HelperFunctions().readUserIdPref();
     String time = DateFormat("hh:mm:ss a").format(DateTime.now());
     String date =
         "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
-    String docId = FirebaseFirestore.instance
-        .collection('Users')
-        .doc(widget.uid)
-        .collection('Orders')
-        .doc()
-        .id;
-    await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(widget.uid)
-        .collection('Orders')
-        .doc(docId)
-        .set({
-      "ProductName": widget.name,
-      "ProductId": widget.productid,
-      "Quantity": int.parse(quantity),
-      "Time": time,
-      "Amount": totalAmount,
-      "Date": date,
-      "manufacturerId": widget.manufacturerid,
-      "image": widget.image,
-      "price": widget.price,
-      "orderId": docId,
-      "is_return": false,
-      "category": widget.category,
-      "Desc": widget.description,
-      "weight": w,
-      "is_resell": true,
-      "uid": uid
-    });
+    FirebaseData().addOrders(
+        uid,
+        widget.name,
+        widget.productid,
+        widget.category,
+        quantity,
+        time,
+        totalAmount,
+        date,
+        widget.manufacturerid,
+        widget.image,
+        widget.weight,
+        widget.description);
 
     await FirebaseFirestore.instance
         .collection("environment")
         .doc(widget.uid)
         .set({
-      "air": FieldValue.increment(esv_ls![0] * w),
-      "co2": FieldValue.increment(esv_ls![2] * w),
-      "tree": FieldValue.increment(esv_ls![1] + w)
+      "air": FieldValue.increment(esv_ls![0] * widget.weight),
+      "co2": FieldValue.increment(esv_ls![2] * widget.weight),
+      "tree": FieldValue.increment(esv_ls![1] + widget.weight)
     });
 
     await FirebaseFirestore.instance
@@ -217,7 +203,7 @@ class _DetailsState extends State<Details> {
         actions: <Widget>[
           TextButton(
             onPressed: () {
-              Navigator.of(context).pushReplacement(
+              Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => const YourOrders()));
             },
             child: Container(
@@ -456,9 +442,9 @@ class _DetailsState extends State<Details> {
                     : Container(),
 
                 ESVTab(
-                  air: esv_ls![0] * w,
-                  co2: esv_ls![2] * w,
-                  tree: esv_ls![1] + w,
+                  air: esv_ls![0] * widget.weight,
+                  co2: esv_ls![2] * widget.weight,
+                  tree: esv_ls![1] + widget.weight,
                   textColor: Colors.white,
                 ),
                 const SizedBox(
@@ -565,7 +551,9 @@ class _DetailsState extends State<Details> {
                                 if (allCoupons.contains(eneteredcoupon)) {
                                   setState(() {
                                     totalAmount = totalAmount -
-                                        (totalAmount * (Value[indx]) / 100);
+                                        (totalAmount *
+                                            (AppConstants.couponValue[indx]) /
+                                            100);
                                     coupon = !coupon;
                                   });
                                 } else {
@@ -683,35 +671,17 @@ class _DetailsState extends State<Details> {
                                 Size(width / 2.6, 37))),
                         onPressed: () async {
                           if (_formkey.currentState!.validate()) {
-                            String time =
-                                DateFormat("hh:mm:ss a").format(DateTime.now());
-                            String date =
-                                "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
-
-                            //remove coupon
+                            String uid =
+                                await HelperFunctions().readUserIdPref();
                             await FirebaseData()
                                 .updateCoupons(uid, eneteredcoupon);
 
                             if (walletApplied) {
-                              await FirebaseData()
-                                  .updateWallet(uid, totalAmount, wallet);
+                              await FirebaseData().updateWallet(
+                                  uid, totalAmount, widget.wallet);
                             }
 
                             await openCheckout();
-
-                            FirebaseData().addOrders(
-                                uid,
-                                widget.name,
-                                widget.productid,
-                                widget.category,
-                                quantity,
-                                time,
-                                totalAmount,
-                                date,
-                                widget.manufacturerid,
-                                widget.image,
-                                w,
-                                widget.description);
                           }
                         },
                         child: Text('Buy Now',

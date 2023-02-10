@@ -2,27 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
-import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/Carousel.dart';
-import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/GridItems.dart';
-import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ProductList.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/ShoppingCart.dart';
-import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/SearchBar/my_Search_bar_screen.dart';
 
 String uid = FirebaseAuth.instance.currentUser!.uid;
-CollectionReference newu =
-    FirebaseFirestore.instance.collection('Users').doc(uid).collection('Cart');
 
 class CustomAppBar extends StatefulWidget {
-  int amount = megatotal.toInt();
-
-  final _formkey = GlobalKey<FormState>();
-
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-
-  DateTime selectedDate = DateTime.now();
-
-  //final Stream<QuerySnapshot> _usersStream = FirebaseFirestore.instance.collection('test').snapshots();
-
   CustomAppBar({Key? key}) : super(key: key);
 
   @override
@@ -37,17 +21,15 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
   @override
   Widget build(BuildContext context) {
-    var size, height, width;
-    size = MediaQuery.of(context).size;
-    height = size.height;
-    width = size.width;
-    bool exist;
-
     return StreamBuilder(
-        stream: newu.snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('Users')
+            .doc(uid)
+            .collection('Cart')
+            .snapshots(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasError) {
-            return Center(
+            return const Center(
               child: Loader(),
             );
           }
@@ -60,14 +42,14 @@ class _CustomAppBarState extends State<CustomAppBar> {
             }
 
             return Container(
-              padding: EdgeInsets.only(top: 80, left: 25, right: 25),
+              padding: const EdgeInsets.only(top: 80, left: 25, right: 25),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
                       RichText(
-                          text: TextSpan(children: [
+                          text: const TextSpan(children: [
                         TextSpan(
                           text: "ZeroWaste",
                           style: TextStyle(
@@ -88,7 +70,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   Stack(
                     children: [
                       Container(
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10),
@@ -97,7 +79,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                               color: Colors.grey.withOpacity(0.3),
                               blurRadius: 0.1,
                               spreadRadius: 0.1,
-                              offset: Offset(0, 1),
+                              offset: const Offset(0, 1),
                             )
                           ],
                         ),
@@ -113,7 +95,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                     ),
                                   );
                                 },
-                                child: Icon(Icons.shopping_cart_outlined,
+                                child: const Icon(Icons.shopping_cart_outlined,
                                     color: Colors.grey)),
                           ],
                         ),
@@ -127,7 +109,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                 child: Container(
                                   width: 10,
                                   height: 10,
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     color: Color(0xFF008080),
                                     shape: BoxShape.circle,
                                   ),
@@ -139,7 +121,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ),
             );
           }
-          return Center(
+          return const Center(
             child: Loader(),
           );
         });
