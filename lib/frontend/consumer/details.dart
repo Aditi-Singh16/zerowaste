@@ -179,13 +179,10 @@ class _DetailsState extends State<Details> {
         widget.weight,
         widget.description);
 
-    await FirebaseFirestore.instance
-        .collection("environment")
-        .doc(widget.uid)
-        .set({
-      "air": FieldValue.increment(esv_ls![0] * widget.weight),
-      "co2": FieldValue.increment(esv_ls![2] * widget.weight),
-      "tree": FieldValue.increment(esv_ls![1] + widget.weight)
+    await FirebaseFirestore.instance.collection("Users").doc(widget.uid).set({
+      "esv_air": FieldValue.increment(esv_ls![0] * widget.weight),
+      "esv_co2": FieldValue.increment(esv_ls![2] * widget.weight),
+      "esv_tree": FieldValue.increment(esv_ls![1] + widget.weight)
     });
 
     await FirebaseFirestore.instance

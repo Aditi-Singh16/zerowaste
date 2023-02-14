@@ -150,7 +150,9 @@ class FirebaseData {
       "Desc": description,
       "weight": w,
       "is_resell": true,
-      "is_return": false
+      "is_return": false,
+      "address": await HelperFunctions().readAddressPref(),
+      "phone_no": await HelperFunctions().readPhonePref(),
     });
   }
 

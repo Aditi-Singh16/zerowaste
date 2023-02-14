@@ -41,25 +41,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String phone = "";
   int randomindex = 0;
   List coupon = ['OFF5', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
-  List description = [
-    'Get 2% off on next purchase'
-        'Get 5% off on next purchase',
-    'Get 10% off on next purchase',
-    'Get 15% off on next purchase',
-    'Get 20% off on next purchase',
-  ];
-  Map category = {
-    'Books': 50,
-    'Electronics': 5,
-    'Recycled Products': 7,
-    'Cotton Clothes': 5,
-    'Nylon Clothes': 5,
-    'Silk Clothes': 5,
-    'Bags': 7
-  };
-  List<Map<String, dynamic>> accepted_requests = [];
 
-  bool isEditablePhone = false;
   bool reward = true;
 
   late UserModel currUser;
@@ -222,37 +204,44 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   Container(
                     padding: const EdgeInsets.all(5),
+                    width: MediaQuery.of(context).size.width * 0.87,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
+                        gradient: LinearGradient(
+                            colors: [
+                              Color.fromARGB(255, 113, 199, 116),
+                              Color.fromARGB(255, 86, 153, 207)
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomCenter),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            blurRadius: 7,
+                            offset: const Offset(0, 3),
+                          )
+                        ],
+                        borderRadius: BorderRadius.circular(25)),
                     child: Column(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              bottom: 20, left: 20, right: 20),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            padding: const EdgeInsets.all(20),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                DetailsFieldTab(
-                                    field: "Name: ", name: loggedInUser.name!),
-                                DetailsFieldTab(
-                                    field: "Email: ",
-                                    name: loggedInUser.email!),
-                                DetailsFieldTab(
-                                    field: "Role: ", name: loggedInUser.type!),
-                                DetailsFieldTab(
-                                    field: "Address: ",
-                                    name: loggedInUser.addr!),
-                                DetailsFieldTab(
-                                    field: "Phone: ",
-                                    name: loggedInUser.phone!),
-                              ],
-                            ),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              DetailsFieldTab(
+                                  field: "Name: ", name: loggedInUser.name!),
+                              DetailsFieldTab(
+                                  field: "Email: ", name: loggedInUser.email!),
+                              DetailsFieldTab(
+                                  field: "Role: ", name: loggedInUser.type!),
+                              DetailsFieldTab(
+                                  field: "Address: ", name: loggedInUser.addr!),
+                              DetailsFieldTab(
+                                  field: "Phone: ", name: loggedInUser.phone!),
+                            ],
                           ),
                         ),
                         (type == 'NGO')
