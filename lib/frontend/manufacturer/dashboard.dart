@@ -65,6 +65,7 @@ class _DashboardState extends State<Dashboard> {
   String itemvalue = 'Cotton Clothes';
   String monthvalue = 'January';
   String cityvalue = 'Silchar';
+  String yearvalue = DateTime.now().year.toString();
 
   // List of items in our dropdown menu
   List<List<String>> dropdownValues = [
@@ -104,11 +105,15 @@ class _DashboardState extends State<Dashboard> {
 
   List<ChartData> predictionChartData = [];
   List<ChartData> actualChartData = [];
+  Map<int, List<ChartData>> previousChartData = {};
+  List<String> yeardorpdownValues = [DateTime.now().year.toString()];
+  int prevYear = 0;
   var quantAvail = 0;
 
   Future<void> predData() async {
     actualChartData = [];
     predictionChartData = [];
+    previousChartData = {};
 
     final interpreter =
         await Interpreter.fromAsset('model/quantity_prediction.tflite');
@@ -119,6 +124,15 @@ class _DashboardState extends State<Dashboard> {
     res.forEach((element) {
       var convertedDateTime = element.data()['timestamp'].toDate();
       String monthName = DateFormat.LLLL().format(convertedDateTime).toString();
+      int currentYear = 2023;
+      int year = DateTime.parse(convertedDateTime.toString()).year;
+      if (currentYear - year > 0) {
+        if (!yeardorpdownValues.contains(monthName)) {
+          yeardorpdownValues.add(year.toString());
+        }
+        previousChartData.putIfAbsent(
+            year, () => [ChartData(monthName, element.data()['quantity'])]);
+      }
       for (int i = 0; i < monthsAct.length; i++) {
         if (monthsAct[i] == monthName) {
           actualChartData.add(ChartData(monthName, element.data()['quantity']));
@@ -145,6 +159,10 @@ class _DashboardState extends State<Dashboard> {
       interpreter.run(input, output);
       predictionChartData.add(ChartData(monthSlice[i], output[0][0].toInt()));
       setState(() {});
+      print(previousChartData[2022]);
+      actualChartData.forEach((element) {
+        print(element.x);
+      });
     }
   }
 
@@ -308,12 +326,59 @@ class _DashboardState extends State<Dashboard> {
                           )
                         ]))),
             actualChartData.isNotEmpty
-                ? Padding(
-                    padding: const EdgeInsets.only(left: 22.0),
-                    child: Text('My Inventory', style: TextStyle(fontSize: 25)),
+                ? Row(
+                    children: [
+                      yeardorpdownValues.isEmpty
+                          ? Padding(
+                              padding: const EdgeInsets.only(left: 22.0),
+                              child: Text('My Inventory',
+                                  style: TextStyle(fontSize: 25)),
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.only(left: 22.0),
+                              child: Text('My Inventory',
+                                  style: TextStyle(fontSize: 25)),
+                            ),
+                      Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 22.0),
+                        child: Container(
+                          padding: EdgeInsets.only(left: 5),
+                          decoration: BoxDecoration(
+                            color: AppColor.dropdown,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: DropdownButton(
+                            underline: Container(),
+                            value: yearvalue,
+                            icon: const Icon(Icons.keyboard_arrow_down),
+                            iconEnabledColor: Colors.white,
+                            items: yeardorpdownValues.map((String years) {
+                              return DropdownMenuItem(
+                                alignment: Alignment.center,
+                                value: years,
+                                child: Text(years,
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.white)),
+                              );
+                            }).toList(),
+                            dropdownColor: Color(0xff3472c0),
+                            onChanged: (String? newValue) {
+                              print(newValue);
+                              yearvalue = newValue!;
+
+                              setState(() {
+                                prevYear = int.parse(newValue!);
+                              });
+                            },
+                          ),
+                        ),
+                      )
+                    ],
                   )
                 : Container(),
-            actualChartData.isNotEmpty
+            actualChartData.isNotEmpty &&
+                    yearvalue == DateTime.now().year.toString()
                 ? Center(
                     child: Container(
                         height: MediaQuery.of(context).size.height * 0.4,
@@ -329,7 +394,23 @@ class _DashboardState extends State<Dashboard> {
                                 yValueMapper: (ChartData data, _) => data.y,
                               )
                             ])))
-                : Container(),
+                : prevYear != 0
+                    ? Center(
+                        child: Container(
+                            height: MediaQuery.of(context).size.height * 0.4,
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            child: SfCartesianChart(
+                                primaryXAxis: CategoryAxis(),
+                                tooltipBehavior: _tooltipAct,
+                                series: <ChartSeries<ChartData, String>>[
+                                  // Renders line chart
+                                  ColumnSeries<ChartData, String>(
+                                    dataSource: previousChartData[prevYear]!,
+                                    xValueMapper: (ChartData data, _) => data.x,
+                                    yValueMapper: (ChartData data, _) => data.y,
+                                  )
+                                ])))
+                    : Container(),
             Padding(
               padding: const EdgeInsets.only(left: 22.0),
               child: Text('My Products', style: TextStyle(fontSize: 25)),

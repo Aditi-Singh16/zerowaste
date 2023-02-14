@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
+import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 //
 class ManuFactureOrders extends StatefulWidget {
@@ -12,9 +13,17 @@ class ManuFactureOrders extends StatefulWidget {
 }
 
 class _ManuFactureOrdersState extends State<ManuFactureOrders> {
-  String manufacturerId = FirebaseAuth.instance.currentUser!.uid;
+  var manufacturerId = "";
 
   final db = FirebaseFirestore.instance;
+
+  void setManufacturerId() async {
+    var id = await HelperFunctions().readUserIdPref();
+    setState(() {
+      manufacturerId = id;
+    });
+    print(manufacturerId);
+  }
 
   _showMyDialog(var rate) {
     return showDialog(
@@ -49,6 +58,11 @@ class _ManuFactureOrdersState extends State<ManuFactureOrders> {
   }
 
   @override
+  void initState() {
+    setManufacturerId();
+    super.initState();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
         body: StreamBuilder<QuerySnapshot>(
@@ -87,6 +101,8 @@ class _ManuFactureOrdersState extends State<ManuFactureOrders> {
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           "Quantity: " +
@@ -94,18 +110,20 @@ class _ManuFactureOrdersState extends State<ManuFactureOrders> {
                                                   .data()!['Quantity']
                                                   .toString(),
                                         ),
-                                        SizedBox(height: 10),
+                                        SizedBox(height: 5),
                                         Text(
                                           "Amount: \u{20B9}" +
-                                              doc.data()!['price'].toString() +
+                                              ((doc.data()!['Amount'] - 20) /
+                                                      doc.data()!['Quantity'])
+                                                  .toString() +
                                               "/product",
                                         ),
-                                        SizedBox(height: 10),
+                                        SizedBox(height: 5),
                                         Text("Delivery Address: " +
                                             doc.data()!['address']),
-                                        SizedBox(height: 10),
+                                        SizedBox(height: 5),
                                         Text("Phone Number: " +
-                                            doc.data()!['phone_number']),
+                                            doc.data()!['phone_no']),
                                         ElevatedButton(
                                             onPressed: () async {
                                               var numer = 0.0;
@@ -149,7 +167,7 @@ class _ManuFactureOrdersState extends State<ManuFactureOrders> {
                         }).toList(),
                       ),
                     )
-                  : Loader();
+                  : const Loader();
             }));
   }
 }

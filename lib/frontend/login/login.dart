@@ -201,8 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           .setEmailPref(loggedInUser.toMap()['email']);
                       _helperFunctions
                           .setUserIdPref(loggedInUser.toMap()['uid']);
-                      _helperFunctions
-                          .setCoupons(loggedInUser.toMap()['coupons']);
+
                       _helperFunctions
                           .setAddrPref(loggedInUser.toMap()['addr']);
                       _helperFunctions
@@ -222,6 +221,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             builder: (context) => ConsumerNavbar()));
                       } else if (loggedInUser.toMap()['type'] ==
                           'Manufacturer') {
+                        _helperFunctions.setCoupons([]);
                         _helperFunctions.setType("Manufacturer");
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => ManufacturerNavbar()));

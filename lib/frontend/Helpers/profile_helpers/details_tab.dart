@@ -21,10 +21,15 @@ class _DetailsFieldTabState extends State<DetailsFieldTab> {
               fontSize: 16, color: Colors.black, fontWeight: FontWeight.w600),
         ),
         const Spacer(),
-        Text(
-          widget.name,
-          style: const TextStyle(
-              fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500),
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.5,
+          child: Text(
+            widget.name,
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+                fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500),
+          ),
         ),
       ],
     );
