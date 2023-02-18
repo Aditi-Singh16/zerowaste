@@ -234,13 +234,13 @@ class _YourOrdersState extends State<YourOrders> {
                                                                   'quantity': doc[
                                                                       'Quantity'],
                                                                   'pricePerProduct':
-                                                                      doc['price']
+                                                                      doc['Amount']
                                                                           .toString(),
                                                                   'timestamp':
                                                                       DateTime
                                                                           .now(),
                                                                   'is_plant':
-                                                                      "true",
+                                                                      true,
                                                                   'weight': doc[
                                                                       'weight'],
                                                                   "is_resell":
@@ -301,7 +301,7 @@ class _YourOrdersState extends State<YourOrders> {
                                                                       .grey),
                                                         ),
                                                   SizedBox(width: 15),
-                                                  !doc['is_return']
+                                                  doc['is_return'] == false
                                                       ? ElevatedButton(
                                                           onPressed: () {
                                                             Navigator.of(context).push(MaterialPageRoute(
@@ -312,7 +312,7 @@ class _YourOrdersState extends State<YourOrders> {
                                                                         doc[
                                                                             'manufacturerId'],
                                                                     price: doc[
-                                                                            'price']
+                                                                            'Amount']
                                                                         .toDouble(),
                                                                     address: doc[
                                                                         'address'],
@@ -320,7 +320,7 @@ class _YourOrdersState extends State<YourOrders> {
                                                                             'Quantity']
                                                                         .toInt(),
                                                                     orderId: doc[
-                                                                        'orderId'],
+                                                                        'OrderId'],
                                                                     image: doc[
                                                                         'image'])));
                                                           },

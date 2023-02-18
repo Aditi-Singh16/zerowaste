@@ -85,13 +85,15 @@ class _ViewRequirementsState extends State<AllRequirements> {
                                           };
                                           var type = await HelperFunctions()
                                               .readTypePref();
+
                                           await FirebaseData()
                                               .addCouponToDonors(
                                                   acceptedUid,
                                                   doc.id,
                                                   widget.uid,
                                                   index,
-                                                  type);
+                                                  type,
+                                                  acceptedMap);
                                         },
                                         child: Text(
                                           "Order",

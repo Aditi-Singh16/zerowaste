@@ -256,7 +256,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 .doc(uid)
                 .collection('Cart');
             for (int i = 0; i < snapshot.data.docs.length; i++) {
-              total = 20.0 +
+              total = total +
                   snapshot.data.docs[i]['price'] *
                       snapshot.data.docs[i]['quantity'];
             }

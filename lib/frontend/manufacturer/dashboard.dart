@@ -21,10 +21,10 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  num? sales;
-  num? customers;
-  num? returns;
-  num? donations;
+  int sales = 0;
+  int customers = 0;
+  int returns = 0;
+  int donations = 0;
   List<int> gridData = [];
   List<String> gridLabel = [
     "Total Sales",
@@ -42,22 +42,17 @@ class _DashboardState extends State<Dashboard> {
 
   getManufacturerAnalytics() async {
     var uid = await _helperFunctions.readUserIdPref();
-    var sales = await FirebaseData().getManufactureSoldCount();
-    var customers = await FirebaseData().getManufactureCustomerCount();
-    var returns = await FirebaseData().getManufacureReturnCount();
-    var donations = await FirebaseData().getManufactureDonationCount();
+    int sales = await FirebaseData().getManufactureSoldCount();
+    int customers = await FirebaseData().getManufactureCustomerCount();
+    int returns = await FirebaseData().getManufacureReturnCount();
+    int donations = await FirebaseData().getManufactureDonationCount();
     setState(() {
       userId = uid;
       sales = sales;
       customers = customers;
       returns = returns;
       donations = donations;
-      gridData = [
-        sales.toInt(),
-        returns.toInt(),
-        customers.toInt(),
-        donations.toInt()
-      ];
+      gridData = [sales, returns, customers, donations];
     });
   }
 
@@ -97,11 +92,12 @@ class _DashboardState extends State<Dashboard> {
   var monthsAct = [];
 
   Random rnd = new Random();
-  var unitPrice = 10;
-  var taxPrice = 5;
+  var unitPrice = 0;
+  var taxPrice = 0;
+  TextEditingController _unitPriceController = new TextEditingController();
 
-  TooltipBehavior _tooltipAct = TooltipBehavior(enable: true);
-  TooltipBehavior _tooltipPred = TooltipBehavior(enable: true);
+  final TooltipBehavior _tooltipAct = TooltipBehavior(enable: true);
+  final TooltipBehavior _tooltipPred = TooltipBehavior(enable: true);
 
   List<ChartData> predictionChartData = [];
   List<ChartData> actualChartData = [];
@@ -118,13 +114,12 @@ class _DashboardState extends State<Dashboard> {
     final interpreter =
         await Interpreter.fromAsset('model/quantity_prediction.tflite');
     var monthSlice = [];
-    unitPrice = 15 + rnd.nextInt(10000 - 15);
     taxPrice = 1 + rnd.nextInt(20 - 1);
     List res = await FirebaseData().getProducts(itemvalue);
     res.forEach((element) {
       var convertedDateTime = element.data()['timestamp'].toDate();
       String monthName = DateFormat.LLLL().format(convertedDateTime).toString();
-      int currentYear = 2023;
+      int currentYear = DateTime.now().year;
       int year = DateTime.parse(convertedDateTime.toString()).year;
       if (currentYear - year > 0) {
         if (!yeardorpdownValues.contains(monthName)) {
@@ -148,7 +143,7 @@ class _DashboardState extends State<Dashboard> {
     for (int i = 0; i < monthSlice.length; i++) {
       var input = [
         [
-          (unitPrice).toDouble(),
+          (int.parse(_unitPriceController.text)).toDouble(),
           (taxPrice).toDouble(),
           (dropdownValues[1].indexOf(monthSlice[i])).toDouble(),
           (dropdownValues[2].indexOf(cityvalue)).toDouble(),
@@ -159,10 +154,6 @@ class _DashboardState extends State<Dashboard> {
       interpreter.run(input, output);
       predictionChartData.add(ChartData(monthSlice[i], output[0][0].toInt()));
       setState(() {});
-      print(previousChartData[2022]);
-      actualChartData.forEach((element) {
-        print(element.x);
-      });
     }
   }
 
@@ -202,7 +193,7 @@ class _DashboardState extends State<Dashboard> {
                   childAspectRatio: (1 / .8),
                   crossAxisSpacing: 10.0,
                   mainAxisSpacing: 10.0,
-                  children: List.generate(4, (index) {
+                  children: List.generate(gridData.length, (index) {
                     return Card(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5.0),
@@ -293,17 +284,38 @@ class _DashboardState extends State<Dashboard> {
                     );
                   }),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20.0),
-              child: ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Color(0xff3472c0)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.3,
+                  height: 35,
+                  child: TextField(
+                    controller: _unitPriceController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: 'Unit Price',
+                    ),
+                    onChanged: (val) {
+                      setState(() {
+                        _unitPriceController.text = val;
+                      });
+                    },
                   ),
-                  onPressed: () {
-                    predData();
-                  },
-                  child: Text('Go')),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20.0),
+                  child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Color(0xff3472c0)),
+                      ),
+                      onPressed: () {
+                        predData();
+                      },
+                      child: Text('Go')),
+                ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.only(left: 22.0),
@@ -364,7 +376,6 @@ class _DashboardState extends State<Dashboard> {
                             }).toList(),
                             dropdownColor: Color(0xff3472c0),
                             onChanged: (String? newValue) {
-                              print(newValue);
                               yearvalue = newValue!;
 
                               setState(() {
@@ -387,7 +398,6 @@ class _DashboardState extends State<Dashboard> {
                             primaryXAxis: CategoryAxis(),
                             tooltipBehavior: _tooltipAct,
                             series: <ChartSeries<ChartData, String>>[
-                              // Renders line chart
                               ColumnSeries<ChartData, String>(
                                 dataSource: actualChartData,
                                 xValueMapper: (ChartData data, _) => data.x,
@@ -403,7 +413,6 @@ class _DashboardState extends State<Dashboard> {
                                 primaryXAxis: CategoryAxis(),
                                 tooltipBehavior: _tooltipAct,
                                 series: <ChartSeries<ChartData, String>>[
-                                  // Renders line chart
                                   ColumnSeries<ChartData, String>(
                                     dataSource: previousChartData[prevYear]!,
                                     xValueMapper: (ChartData data, _) => data.x,

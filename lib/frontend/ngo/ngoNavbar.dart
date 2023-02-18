@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/Home/ConsumerHome.dart';
 import 'package:zerowaste/frontend/consumer/learning_modules/moduleoptions.dart';
 import 'package:zerowaste/frontend/login/profile_page.dart';
+import 'package:zerowaste/frontend/manufacturer/inputDisposalCategory.dart';
 import 'package:zerowaste/frontend/requirements_sell/add_requirements.dart';
 
 class NgoNavbar extends StatefulWidget {
@@ -28,6 +29,7 @@ class _NgoNavbarState extends State<NgoNavbar> {
             ),
             title: Text("Add Requirements")),
         body: const AddRequirement()),
+    InputCategory(),
     const ProfilePage(),
   ];
 
@@ -113,6 +115,25 @@ class _NgoNavbarState extends State<NgoNavbar> {
               });
             },
             icon: pageIndex == 3
+                ? Icon(
+                    CupertinoIcons.map_fill,
+                    color: Colors.black,
+                    size: MediaQuery.of(context).size.height / 24,
+                  )
+                : Icon(
+                    CupertinoIcons.map,
+                    color: Colors.black,
+                    size: MediaQuery.of(context).size.height / 24,
+                  ),
+          ),
+          IconButton(
+            enableFeedback: false,
+            onPressed: () {
+              setState(() {
+                pageIndex = 4;
+              });
+            },
+            icon: pageIndex == 4
                 ? Icon(
                     Icons.person,
                     color: Colors.black,

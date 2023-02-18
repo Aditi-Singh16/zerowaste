@@ -29,16 +29,15 @@ class FirebaseData {
     }
   }
 
-  Future<num> getManufactureSoldCount() async {
+  Future<int> getManufactureSoldCount() async {
     var uid = await HelperFunctions().readUserIdPref();
-    print(uid);
     var res = await FirebaseFirestore.instance
         .collectionGroup('Orders')
         .where('manufacturerId', isEqualTo: uid)
         .get();
-    num quantity = 0;
+    int quantity = 0;
     res.docs.forEach((element) {
-      quantity = quantity + element['Quantity'];
+      quantity = quantity + (element['Quantity'] as int);
     });
     return quantity;
   }
@@ -60,7 +59,6 @@ class FirebaseData {
         .where('is_return', isEqualTo: true)
         .get();
 
-    print(res.docs.length);
     return res.docs.length;
   }
 
@@ -95,16 +93,15 @@ class FirebaseData {
     return res.docs.length;
   }
 
-  Future<void> addCouponToDonors(
-      var acceptedUid, var documentId, var uid, var index, var type) async {
-    if (type == "Consumer") {
-      await FirebaseFirestore.instance
-          .collection("Users")
-          .doc(acceptedUid)
-          .update({
-        "coupons": FieldValue.arrayUnion([AppConstants.coupons[index]]),
-      });
-    }
+  Future<void> addCouponToDonors(var acceptedUid, var documentId, var uid,
+      var index, var type, var acceptedMap) async {
+    await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(acceptedUid)
+        .update({
+      "coupons": FieldValue.arrayUnion([AppConstants.coupons[index]]),
+      "accepted_requests": FieldValue.arrayUnion([acceptedMap]),
+    });
 
     await FirebaseFirestore.instance
         .collection("requirements")
@@ -140,7 +137,7 @@ class FirebaseData {
       "ProductName": name,
       "ProductId": productid,
       "category": category,
-      "Quantity": int.parse(quantity),
+      "Quantity": quantity,
       "Time": time,
       "Amount": amount,
       "Date": date,
@@ -177,8 +174,17 @@ class FirebaseData {
         .delete();
   }
 
-  Future<void> addToCart(var uid, var productid, var category, var image,
-      var manufacturerid, var name, var price, var quantity) async {
+  Future<void> addToCart(
+      var uid,
+      var productid,
+      var category,
+      var image,
+      var manufacturerid,
+      var name,
+      var price,
+      var quantity,
+      var weight,
+      var desc) async {
     await FirebaseFirestore.instance
         .collection('Users')
         .doc(uid)
@@ -193,6 +199,8 @@ class FirebaseData {
       "productId": productid,
       "quantity": FieldValue.increment(int.parse(quantity)),
       "userId": uid,
+      "weight": weight,
+      "description": desc
     });
   }
 

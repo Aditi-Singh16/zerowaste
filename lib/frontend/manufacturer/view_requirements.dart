@@ -25,6 +25,7 @@ class _ViewRequirementsState extends State<ViewRequirements> {
   TextEditingController _quantityController = TextEditingController();
 
   String userType = "NGO";
+  var email = '';
 
   Future<void> _showMyDialog(QueryDocumentSnapshot user) async {
     return showDialog<void>(
@@ -33,6 +34,18 @@ class _ViewRequirementsState extends State<ViewRequirements> {
         builder: (BuildContext context) {
           return SendNotification(user: user);
         });
+  }
+
+  setEmail() async {
+    var res = await _helperFunctions.readEmailPref();
+    setState(() {
+      email = res;
+    });
+  }
+
+  initState() {
+    super.initState();
+    setEmail();
   }
 
   @override
@@ -102,41 +115,29 @@ class _ViewRequirementsState extends State<ViewRequirements> {
                                     'Quantity: ${snapshot.data!.docs[i]['quantity']}'),
                                 trailing: TextButton(
                                     style: TextButton.styleFrom(
-                                      backgroundColor:
-                                          Color(0xff5CAD81), // Background Color
+                                      backgroundColor: snapshot.data!.docs[i]
+                                                  ['email'] ==
+                                              email
+                                          ? Colors.white
+                                          : Color(
+                                              0xff5CAD81), // Background Color
                                     ),
                                     child: Text(
                                       userType == "NGO" ? "I got this!" : "Add",
-                                      style:
-                                          TextStyle(color: Color(0xff001427)),
+                                      style: TextStyle(
+                                          color: snapshot.data!.docs[i]
+                                                      ['email'] ==
+                                                  email
+                                              ? Colors.grey
+                                              : Color(0xff001427)),
                                     ),
-                                    onPressed: () async {
-                                      if (userType == "NGO") {
-                                        _showMyDialog(snapshot.data!.docs[i]);
-                                      } else {
-                                        //notify email to consumer
-                                        final Email email = Email(
-                                          body:
-                                              'Hi, ${snapshot.data!.docs[i]['product_name']} has been added to our product list!!',
-                                          subject: 'Request Fulfilment',
-                                          recipients: [
-                                            snapshot.data!.docs[i]['email']
-                                          ],
-                                          isHTML: false,
-                                        );
-
-                                        await FlutterEmailSender.send(email)
-                                            .then((val) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(SnackBar(
-                                            content: const Text(
-                                                'Email sent successfully!'),
-                                            duration:
-                                                const Duration(seconds: 5),
-                                          ));
-                                        });
-                                      }
-                                    }),
+                                    onPressed:
+                                        snapshot.data!.docs[i]['email'] == email
+                                            ? null
+                                            : () async {
+                                                _showMyDialog(
+                                                    snapshot.data!.docs[i]);
+                                              }),
                               ),
                               elevation: 8,
                               margin: EdgeInsets.all(10),

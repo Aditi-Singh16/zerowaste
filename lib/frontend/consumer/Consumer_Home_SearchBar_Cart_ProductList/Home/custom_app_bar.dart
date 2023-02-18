@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
 import 'package:zerowaste/frontend/consumer/Consumer_Home_SearchBar_Cart_ProductList/ShoppingCart.dart';
+import 'package:zerowaste/frontend/manufacturer/inputDisposalCategory.dart';
 
 String uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -116,7 +118,23 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                 )),
                       ),
                     ],
-                  )
+                  ),
+                  IconButton(
+                    enableFeedback: false,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => InputCategory(),
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      CupertinoIcons.map,
+                      color: Colors.grey,
+                      size: MediaQuery.of(context).size.height / 24,
+                    ),
+                  ),
                 ],
               ),
             );

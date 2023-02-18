@@ -394,6 +394,15 @@ class _DetailsState extends State<Details> {
                   style: AppStyle.bodyText.copyWith(color: Colors.white),
                 ),
                 const SizedBox(
+                  height: 8,
+                ),
+                widget.isResell
+                    ? Text(
+                        'Second hand product!',
+                        style: AppStyle.bodyText.copyWith(color: Colors.white),
+                      )
+                    : Container(),
+                const SizedBox(
                   height: 16,
                 ),
 
@@ -640,7 +649,7 @@ class _DetailsState extends State<Details> {
                           String uid = FirebaseAuth.instance.currentUser!.uid;
 
                           if (_formkey.currentState!.validate()) {
-                            FirebaseData().addToCart(
+                            await FirebaseData().addToCart(
                                 uid,
                                 widget.productid,
                                 widget.category,
@@ -648,7 +657,9 @@ class _DetailsState extends State<Details> {
                                 widget.manufacturerid,
                                 widget.name,
                                 widget.price,
-                                quantity);
+                                quantity,
+                                widget.weight,
+                                widget.description);
 
                             Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
@@ -685,72 +696,6 @@ class _DetailsState extends State<Details> {
                             style: AppStyle.h3.copyWith(color: Colors.white))),
                   ],
                 ),
-
-                FutureBuilder<QuerySnapshot>(
-                    future: FirebaseFirestore.instance
-                        .collection('products')
-                        .where('categories', isEqualTo: widget.category)
-                        .where('quantity', isGreaterThan: 0)
-                        .limit(5)
-                        .get(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const Loader();
-                      }
-                      if (snapshot.connectionState == ConnectionState.done &&
-                          snapshot.hasData) {
-                        return SizedBox(
-                          height: snapshot.data!.docs.indexWhere((element) =>
-                                          element['productId'] ==
-                                          widget.productid) ==
-                                      0 &&
-                                  snapshot.data!.docs.length == 1
-                              ? 0
-                              : MediaQuery.of(context).size.height * 0.2,
-                          child: ListView(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.horizontal,
-                            children: snapshot.data!.docs.map((doc) {
-                              return doc['productId'] == widget.productid
-                                  ? Container()
-                                  : Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 10.0),
-                                      child: Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.4,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(
-                                              10), //border corner radius
-                                        ),
-                                        child: Stack(
-                                          children: [
-                                            Container(
-                                              margin: const EdgeInsets.all(8),
-                                              height: height / 6,
-                                              width: width / 2.3,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                                image: DecorationImage(
-                                                  image: NetworkImage(
-                                                      doc['image']),
-                                                  fit: BoxFit.fitHeight,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                            }).toList(),
-                          ),
-                        );
-                      }
-                      return Container();
-                    })
               ],
             ),
           ),

@@ -34,7 +34,7 @@ class _SendNotificationState extends State<SendNotification> {
                       .set({
                     "requirement_satisfy": FieldValue.arrayUnion([
                       {
-                        'email': widget.user.data()['email'].toString(),
+                        'email': await HelperFunctions().readEmailPref(),
                         'quantity': widget.user.data()['quantity'].toString(),
                         'uid': await HelperFunctions().readUserIdPref(),
                         'product_name': widget.user.data()['product_name']

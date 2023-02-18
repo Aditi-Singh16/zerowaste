@@ -36,10 +36,6 @@ class _WasteDisposalState extends State<WasteDisposal> {
   String category;
   _WasteDisposalState(this.category);
 
-  setMarkers() {
-    return allMarkers;
-  }
-
   double calculateDistance(lat1, lon1, lat2, lon2) {
     var p = 0.017453292519943295;
     var c = cos;
@@ -76,18 +72,20 @@ class _WasteDisposalState extends State<WasteDisposal> {
               zoom: 17),
         ),
       );
-      setState(() {
-        userLat = l.latitude as double;
-        userLng = l.longitude as double;
-        allMarkers.add(Marker(
-          markerId: MarkerId('Home'),
-          position: LatLng(l.latitude ?? 0.0, l.longitude ?? 0.0),
-          icon: BitmapDescriptor.fromBytes(resizedMarkerImageBytes),
-          infoWindow: const InfoWindow(
-            title: "Me",
-          ),
-        ));
-      });
+      if (mounted) {
+        setState(() {
+          userLat = l.latitude as double;
+          userLng = l.longitude as double;
+          allMarkers.add(Marker(
+            markerId: MarkerId('Home'),
+            position: LatLng(l.latitude ?? 0.0, l.longitude ?? 0.0),
+            icon: BitmapDescriptor.fromBytes(resizedMarkerImageBytes),
+            infoWindow: const InfoWindow(
+              title: "Me",
+            ),
+          ));
+        });
+      }
     });
   }
 
@@ -115,11 +113,7 @@ class _WasteDisposalState extends State<WasteDisposal> {
                 nearest = snapshot.data!.docs[i]['name'];
                 LatLng _new = LatLng(snapshot.data!.docs[i]['coords'].latitude,
                     snapshot.data!.docs[i]['coords'].longitude);
-                if (latlng.length > 0) {
-                  for (var i = 0; i < latlng.length; i++) {
-                    latlng.removeAt(i);
-                  }
-                }
+                latlng = [];
                 latlng.add(_new);
               }
               allMarkers.add(Marker(
@@ -207,7 +201,14 @@ class _WasteDisposalState extends State<WasteDisposal> {
   }
 
   @override
+  dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   Widget build(BuildContext context) {
-    return Scaffold(body: loadMap());
+    return Scaffold(
+      body: loadMap(),
+    );
   }
 }
