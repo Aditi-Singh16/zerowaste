@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:zerowaste/backend/local_data.dart';
 import 'package:zerowaste/backend/userModal/user.dart';
 import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
 import 'package:zerowaste/frontend/consumer/consumerNavbar.dart';
@@ -55,8 +56,8 @@ class _LoginScreenState extends State<LoginScreen> {
         },
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
-          prefixIcon: Icon(Icons.mail),
-          contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+          prefixIcon: const Icon(Icons.mail),
+          contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
           hintText: "Email",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
@@ -82,8 +83,8 @@ class _LoginScreenState extends State<LoginScreen> {
         },
         textInputAction: TextInputAction.done,
         decoration: InputDecoration(
-          prefixIcon: Icon(Icons.vpn_key),
-          contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+          prefixIcon: const Icon(Icons.vpn_key),
+          contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
           hintText: "Password",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
@@ -93,14 +94,14 @@ class _LoginScreenState extends State<LoginScreen> {
     final loginButton = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
-      color: Color(0xff00277d),
+      color: const Color(0xff00277d),
       child: MaterialButton(
-          padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+          padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context).size.width,
           onPressed: () {
             signIn(emailController.text, passwordController.text);
           },
-          child: Text(
+          child: const Text(
             "Login",
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -128,36 +129,36 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: <Widget>[
                         Image.asset("assets/images/logo.png",
                             height: MediaQuery.of(context).size.height * 0.2),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         emailField,
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         passwordField,
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         loginButton,
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Text("Don't have an account? "),
+                              const Text("Don't have an account? "),
                               GestureDetector(
                                 onTap: () {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              RegistrationScreen()));
+                                              const RegistrationScreen()));
                                 },
-                                child: Text(
+                                child: const Text(
                                   "SignUp",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: Color(0xff7dbeda),
                                       fontWeight: FontWeight.bold,
                                       fontSize: 15),
@@ -180,61 +181,54 @@ class _LoginScreenState extends State<LoginScreen> {
   void signIn(String email, String password) async {
     if (_formKey.currentState!.validate()) {
       try {
-        await _auth
+        _auth
             .signInWithEmailAndPassword(email: email, password: password)
-            .then((uid) => {
-                  Fluttertoast.showToast(msg: "Login Successful"),
-                  Navigator.of(context)
-                      .pushReplacement(MaterialPageRoute(builder: (context) {
-                    User? user = FirebaseAuth.instance.currentUser;
-                    UserModel loggedInUser = UserModel();
-                    FirebaseFirestore.instance
-                        .collection("Users")
-                        .doc(user!.uid)
-                        .get()
-                        .then((value) {
-                      loggedInUser = UserModel.fromMap(value.data());
+            .then((uid) async {
+          User? user = FirebaseAuth.instance.currentUser;
+          UserModel loggedInUser = UserModel();
+          loggedInUser = await FirebaseFirestore.instance
+              .collection("Users")
+              .doc(user!.uid)
+              .get()
+              .then((value) {
+            return UserModel.fromMap(value.data());
+          });
+          await DataBaseHelper.instance.insertUser({
+            'uid': user.uid,
+            'name': loggedInUser.toMap()['name'],
+            'phone': loggedInUser.toMap()['phone'],
+            'email': email,
+            'type': loggedInUser.toMap()['type'],
+            'addr': loggedInUser.toMap()['addr'],
+          });
+          Fluttertoast.showToast(msg: "Login Successful");
 
-                      _helperFunctions
-                          .setNamePref(loggedInUser.toMap()['name']);
-                      _helperFunctions
-                          .setEmailPref(loggedInUser.toMap()['email']);
-                      _helperFunctions
-                          .setUserIdPref(loggedInUser.toMap()['uid']);
+          _helperFunctions.setNamePref(loggedInUser.toMap()['name']);
+          _helperFunctions.setEmailPref(loggedInUser.toMap()['email']);
+          _helperFunctions.setUserIdPref(loggedInUser.toMap()['uid']);
 
-                      _helperFunctions
-                          .setAddrPref(loggedInUser.toMap()['addr']);
-                      _helperFunctions
-                          .setPhonePref(loggedInUser.toMap()['phone']);
-                      _helperFunctions
-                          .setWallet(loggedInUser.toMap()['wallet']);
+          _helperFunctions.setAddrPref(loggedInUser.toMap()['addr']);
+          _helperFunctions.setPhonePref(loggedInUser.toMap()['phone']);
+          _helperFunctions.setWallet(loggedInUser.toMap()['wallet']);
 
-                      if (loggedInUser.toMap()['type'] == 'Consumer') {
-                        _helperFunctions.setType("Consumer");
-                        _helperFunctions
-                            .setEsvAir(loggedInUser.toMap()['esv_air']);
-                        _helperFunctions
-                            .setEsvCo2(loggedInUser.toMap()['esv_co2']);
-                        _helperFunctions
-                            .setEsvTree(loggedInUser.toMap()['esv_tree']);
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => ConsumerNavbar()));
-                      } else if (loggedInUser.toMap()['type'] ==
-                          'Manufacturer') {
-                        _helperFunctions.setCoupons([]);
-                        _helperFunctions.setType("Manufacturer");
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => ManufacturerNavbar()));
-                      } else if (loggedInUser.toMap()['type'] == 'NGO') {
-                        _helperFunctions.setType("NGO");
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => NgoNavbar()));
-                      }
-                    });
-
-                    return Loader();
-                  })),
-                });
+          if (loggedInUser.toMap()['type'] == 'Consumer') {
+            _helperFunctions.setType("Consumer");
+            _helperFunctions.setEsvAir(loggedInUser.toMap()['esv_air']);
+            _helperFunctions.setEsvCo2(loggedInUser.toMap()['esv_co2']);
+            _helperFunctions.setEsvTree(loggedInUser.toMap()['esv_tree']);
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const ConsumerNavbar()));
+          } else if (loggedInUser.toMap()['type'] == 'Manufacturer') {
+            _helperFunctions.setCoupons([]);
+            _helperFunctions.setType("Manufacturer");
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const ManufacturerNavbar()));
+          } else if (loggedInUser.toMap()['type'] == 'NGO') {
+            _helperFunctions.setType("NGO");
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const NgoNavbar()));
+          }
+        });
       } on FirebaseAuthException catch (error) {
         switch (error.code) {
           case "invalid-email":

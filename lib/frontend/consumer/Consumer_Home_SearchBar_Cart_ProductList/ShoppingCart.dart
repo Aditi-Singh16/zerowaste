@@ -27,10 +27,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
   bool shouldPlant = false;
   bool couponApplied = false;
   String enteredCoupon = "";
-  double total = 20;
+  double total = 0;
   String error = "";
   double wallet = 0;
-  List<bool> validity = [false, false, false, false, false];
+  List<String> validity = [];
   bool walletApplied = false;
 
   Razorpay razorpay = Razorpay();
@@ -48,11 +48,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
       Map<String, dynamic> data = docSnapshot.data()!;
 
       setState(() {
-        validity[0] = data['Coupon0'];
-        validity[1] = data['Coupon1'];
-        validity[2] = data['Coupon2'];
-        validity[3] = data['Coupon3'];
-        validity[4] = data['Coupon4'];
+        if (data['coupons'].length > 0) {
+          validity = data['coupons'];
+        }
         wallet = data['wallet'];
       });
     }
@@ -82,11 +80,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
       actions: <Widget>[
         ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pop();
+              print(total);
+              print(total + 5);
               setState(() {
                 shouldPlant = true;
-                total = total + 5;
               });
+              Navigator.of(context).pop();
               showDialog(
                 context: context,
                 builder: (BuildContext context) => PlantGIF(),
@@ -138,21 +137,28 @@ class _ShoppingCartState extends State<ShoppingCart> {
         .doc(uid)
         .collection('Cart');
     newc.get().then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) {
-        FirebaseFirestore.instance
+      querySnapshot.docs.forEach((doc) async {
+        await FirebaseFirestore.instance
             .collection('products')
             .doc(doc['productId'])
             .update({
           "quantity":
               FieldValue.increment(-int.parse(doc['quantity'].toString())),
         });
+        await FirebaseFirestore.instance.collection("Users").doc(uid).update({
+          "esv_air": FieldValue.increment(
+              AppConstants.esv_ls[doc['categories']]![1] * doc['weight']),
+          "esv_co2": FieldValue.increment(
+              AppConstants.esv_ls[doc['categories']]![2] * doc['weight']),
+          "esv_tree": FieldValue.increment(
+              AppConstants.esv_ls[doc['categories']]![0] * doc['weight'])
+        });
       });
     });
 
     //delete cart items
     FirebaseData().deleteWholeCart(uid);
-
-    showDialog(
+    await showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(
@@ -250,15 +256,21 @@ class _ShoppingCartState extends State<ShoppingCart> {
           if (!snapshot.hasData) {
             return const Scaffold(body: Loader());
           }
+
           if (snapshot.hasData) {
             CollectionReference userCart = FirebaseFirestore.instance
                 .collection('Users')
                 .doc(uid)
                 .collection('Cart');
+            total = 0;
             for (int i = 0; i < snapshot.data.docs.length; i++) {
               total = total +
                   snapshot.data.docs[i]['price'] *
                       snapshot.data.docs[i]['quantity'];
+            }
+            total = total + 20;
+            if (shouldPlant == true) {
+              total = total + 5;
             }
             return Scaffold(
               appBar: PreferredSize(
@@ -780,30 +792,19 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                   if (_formkey.currentState!
                                                       .validate()) {
                                                     if (AppConstants.coupons
-                                                        .contains(
+                                                            .contains(
+                                                                enteredCoupon) &&
+                                                        validity.contains(
                                                             enteredCoupon)) {
-                                                      int idx = AppConstants
-                                                          .coupons
-                                                          .indexOf(
-                                                              enteredCoupon);
+                                                      setState(() {
+                                                        //applied coupon amount
 
-                                                      if (validity[idx] ==
-                                                          true) {
-                                                        setState(() {
-                                                          //applied coupon amount
-
-                                                          total = total *
-                                                              (1 -
-                                                                  AppConstants.couponValue[
-                                                                          idx] /
-                                                                      100);
-                                                        });
-                                                      } else {
-                                                        setState(() {
-                                                          error =
-                                                              'Invalid Coupon Code';
-                                                        });
-                                                      }
+                                                        total = total *
+                                                            (1 -
+                                                                AppConstants.couponValue[
+                                                                        enteredCoupon]! /
+                                                                    100);
+                                                      });
                                                     } else {
                                                       setState(() {
                                                         error =
@@ -950,6 +951,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                               )),
                                         ),
                                         ElevatedButton(
+                                            style: ButtonStyle(
+                                                backgroundColor:
+                                                    MaterialStateProperty.all(
+                                                        Colors.red)),
                                             onPressed: () {
                                               setState(() {
                                                 shouldPlant = false;
@@ -958,7 +963,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                             },
                                             child: Text("Remove",
                                                 style: TextStyle(
-                                                  color: Colors.red,
+                                                  color: Colors.white,
                                                   fontWeight: FontWeight.bold,
                                                   fontSize:
                                                       MediaQuery.of(context)

@@ -374,10 +374,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     await _helperFunctions.setPhonePref(userModel.phone);
     await _helperFunctions.setType(typeEditingController);
     if (userModel.type == 'Consumer') {
-      await _helperFunctions.setCoupons(userModel.coupons!);
-      await _helperFunctions.setEsvAir(userModel.esv_air);
-      await _helperFunctions.setEsvCo2(userModel.esv_co2);
-      await _helperFunctions.setEsvTree(userModel.esv_tree);
+      await _helperFunctions.setCoupons([]);
+      await _helperFunctions.setEsvAir(0);
+      await _helperFunctions.setEsvCo2(0);
+      await _helperFunctions.setEsvTree(0);
     }
 
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {

@@ -1,24 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:scratcher/widgets.dart';
+import 'package:zerowaste/frontend/constants.dart';
 
 class ScratchCard extends StatefulWidget {
-  int randomindex;
-  ScratchCard({required this.randomindex, Key? key}) : super(key: key);
+  String coupon;
+  ScratchCard({required this.coupon, Key? key}) : super(key: key);
 
   @override
   State<ScratchCard> createState() => _ScratchCardState();
 }
 
 class _ScratchCardState extends State<ScratchCard> {
-  List coupon = ['OFF05', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
-  List description = [
-    'Get 5% off on next purchase',
-    'Get 10% off on next purchase',
-    'Get 15% off on next purchase',
-    'Get 20% off on next purchase',
-    'Get 2% off on next purchase'
-  ];
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -29,9 +21,7 @@ class _ScratchCardState extends State<ScratchCard> {
         color: Colors.blue,
         onChange: (value) => print("Scratch progress: $value%"),
         onThreshold: () => print("Threshold reached"),
-        onScratchEnd: () {
-          print("waaaaaaaaaaaaaaa");
-        },
+        onScratchEnd: () {},
         child: Container(
           height: MediaQuery.of(context).size.height * 0.42,
           width: MediaQuery.of(context).size.width * 0.5,
@@ -60,7 +50,7 @@ class _ScratchCardState extends State<ScratchCard> {
                 height: 16,
               ),
               Text(
-                coupon[widget.randomindex],
+                widget.coupon,
                 style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 24,
@@ -70,7 +60,7 @@ class _ScratchCardState extends State<ScratchCard> {
                 height: 16,
               ),
               Text(
-                description[widget.randomindex],
+                AppConstants.couponDescription[widget.coupon]!,
                 style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 20,

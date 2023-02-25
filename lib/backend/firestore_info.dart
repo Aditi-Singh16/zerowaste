@@ -48,7 +48,13 @@ class FirebaseData {
         .collectionGroup('Orders')
         .where('manufacturerId', isEqualTo: uid)
         .get();
-    return res.docs.length;
+    List<String> uids = [];
+    for (int i = 0; i < res.docs.length; i++) {
+      if (!uids.contains(res.docs[i]['uid'])) {
+        uids.add(res.docs[i]['uid']);
+      }
+    }
+    return uids.length;
   }
 
   Future<int> getManufacureReturnCount() async {
@@ -122,7 +128,7 @@ class FirebaseData {
       var image,
       var w,
       var description) async {
-    String docId = FirebaseFirestore.instance
+    var docId = await FirebaseFirestore.instance
         .collection('Users')
         .doc(uid)
         .collection('Orders')
@@ -132,7 +138,8 @@ class FirebaseData {
         .collection('Users')
         .doc(uid)
         .collection('Orders')
-        .add({
+        .doc(docId)
+        .set({
       "OrderId": docId,
       "ProductName": name,
       "ProductId": productid,

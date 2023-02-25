@@ -234,7 +234,8 @@ class _YourOrdersState extends State<YourOrders> {
                                                                   'quantity': doc[
                                                                       'Quantity'],
                                                                   'pricePerProduct':
-                                                                      doc['Amount']
+                                                                      (doc['Amount'] /
+                                                                              doc['Quantity'])
                                                                           .toString(),
                                                                   'timestamp':
                                                                       DateTime

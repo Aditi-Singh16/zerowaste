@@ -25,8 +25,7 @@ class ReturnOrder extends StatefulWidget {
 
 class _ReturnOrderState extends State<ReturnOrder> {
   String uid = FirebaseAuth.instance.currentUser!.uid;
-  final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
-      new GlobalKey<ScaffoldMessengerState>();
+
   final _formKey = GlobalKey<FormState>();
   var _quantity = "";
   var _autovalidate = false;
@@ -46,7 +45,7 @@ class _ReturnOrderState extends State<ReturnOrder> {
     if (_formKey.currentState!.validate()) {
       // print('${user.name}:${user.phone}:${user.email}');
       sendData();
-      _scaffoldKey.currentState!.showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: Colors.green,
           content: Text('Return request sent to the successfully!')));
       setState(() {
@@ -57,7 +56,7 @@ class _ReturnOrderState extends State<ReturnOrder> {
         Navigator.pop(context);
       });
     } else {
-      _scaffoldKey.currentState!.showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.redAccent,
           content: Text('Problem returning items :(')));
       setState(() {
@@ -72,7 +71,7 @@ class _ReturnOrderState extends State<ReturnOrder> {
     if (_formKey.currentState!.validate()) {
       String docId = FirebaseFirestore.instance.collection('returns').doc().id;
 
-      FirebaseFirestore.instance.collection("returns").doc(docId).set({
+      await FirebaseFirestore.instance.collection("returns").doc(docId).set({
         'productName': widget.productName,
         'image': widget.image,
         'return_quantity': int.parse(_quantity),
@@ -84,7 +83,7 @@ class _ReturnOrderState extends State<ReturnOrder> {
         'orderId': widget.orderId,
         'userId': uid,
       });
-      FirebaseFirestore.instance
+      await FirebaseFirestore.instance
           .collection("Users")
           .doc(uid)
           .collection("Orders")
@@ -101,7 +100,6 @@ class _ReturnOrderState extends State<ReturnOrder> {
     const _focusColor = Colors.black;
 
     return Scaffold(
-        key: _scaffoldKey,
         appBar: AppBar(
           backgroundColor: const Color(0xff001427),
           leading: Image.asset(
@@ -187,7 +185,7 @@ class _ReturnOrderState extends State<ReturnOrder> {
                                 fontWeight: FontWeight.bold,
                               )),
                           onPressed: () => {
-                                color ? ButtonValidate() : null,
+                                ButtonValidate(),
                               })),
                   SizedBox(
                       width: double.infinity,

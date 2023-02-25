@@ -12,9 +12,6 @@ import 'package:zerowaste/frontend/Helpers/profile_helpers/details_tab.dart';
 import 'package:zerowaste/frontend/Helpers/profile_helpers/esv_tab.dart';
 import 'package:zerowaste/frontend/Helpers/color.dart';
 import 'package:zerowaste/frontend/constants.dart';
-import 'package:zerowaste/frontend/consumer/details.dart';
-
-import 'package:zerowaste/frontend/login/login.dart';
 import 'package:zerowaste/frontend/ngo/my_requirements.dart';
 import 'package:zerowaste/frontend/ngo/all_ngo_requirements.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
@@ -28,51 +25,33 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   HelperFunctions _helperFunctions = HelperFunctions();
-  User? user = FirebaseAuth.instance.currentUser;
-  UserModel loggedInUser = UserModel();
-  bool header = false;
-  var name = HelperFunctions().readNamePref();
-  String type = '';
-  String title = "";
-  int count = 0;
-  double wallet = 0.0;
-  bool isEditable = false;
-  List<dynamic> rewards = [];
-  String phone = "";
-  int randomindex = 0;
-  List coupon = ['OFF5', 'OFF10', 'OFF15', 'OFF20', 'OFF2'];
+  var uid;
 
-  bool reward = true;
-
-  late UserModel currUser;
+  void setUserData() async {
+    var res = await HelperFunctions().readUserIdPref();
+    setState(() {
+      uid = res;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    FirebaseFirestore.instance
-        .collection("Users")
-        .doc(user!.uid)
-        .get()
-        .then((value) {
-      loggedInUser = UserModel.fromMap(value.data());
-      title = '${loggedInUser.addr}';
-      phone = '${loggedInUser.phone}';
-      type = loggedInUser.type!;
-    });
+    setUserData();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
-            .collection('requirements')
-            .where('uid', isEqualTo: loggedInUser.uid)
+            .collection('Users')
+            .where('uid', isEqualTo: uid)
             .get(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasError) {
             return const Text('something went wrong');
           }
-          if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasData) {
             return Scaffold(
                 appBar: AppBar(
                     leading: Image.asset(
@@ -82,7 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     title: Text("Profile")),
                 body: SingleChildScrollView(
                     child: Column(children: [
-                  (type == 'Consumer')
+                  (snapshot.data.docs[0].data()['type'] == 'Consumer')
                       ? Stack(
                           children: <Widget>[
                             Column(children: <Widget>[
@@ -126,7 +105,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text('${loggedInUser.name}',
+                                            Text(
+                                                '${snapshot.data.docs[0].data()['name']}',
                                                 style: const TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,
@@ -161,8 +141,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           ),
                                           Spacer(),
                                           Text(
-                                            'Rs.' +
-                                                loggedInUser.wallet.toString(),
+                                            'Rs. ${snapshot.data.docs[0].data()['wallet']}',
                                             style: const TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 15,
@@ -181,13 +160,19 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(
                     height: 16,
                   ),
-                  (type == 'Consumer')
+                  (snapshot.data.docs[0].data()['type'] == 'Consumer')
                       ? Container(
                           margin: const EdgeInsets.all(40),
                           child: ESVTab(
-                            air: loggedInUser.esv_air!,
-                            co2: loggedInUser.esv_co2!,
-                            tree: loggedInUser.esv_tree!,
+                            air: snapshot.data.docs[0]
+                                .data()['esv_air']
+                                .toDouble(),
+                            co2: snapshot.data.docs[0]
+                                .data()['esv_co2']
+                                .toDouble(),
+                            tree: snapshot.data.docs[0]
+                                .data()['esv_tree']
+                                .toDouble(),
                             textColor: AppColor.text,
                           ),
                         )
@@ -232,28 +217,33 @@ class _ProfilePageState extends State<ProfilePage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               DetailsFieldTab(
-                                  field: "Name: ", name: loggedInUser.name!),
+                                  field: "Name: ",
+                                  name: snapshot.data.docs[0].data()['name']),
                               DetailsFieldTab(
-                                  field: "Email: ", name: loggedInUser.email!),
+                                  field: "Email: ",
+                                  name: snapshot.data.docs[0].data()['email']),
                               DetailsFieldTab(
-                                  field: "Role: ", name: loggedInUser.type!),
+                                  field: "Role: ",
+                                  name: snapshot.data.docs[0].data()['type']),
                               DetailsFieldTab(
-                                  field: "Address: ", name: loggedInUser.addr!),
+                                  field: "Address: ",
+                                  name: snapshot.data.docs[0].data()['addr']),
                               DetailsFieldTab(
-                                  field: "Phone: ", name: loggedInUser.phone!),
+                                  field: "Phone: ",
+                                  name: snapshot.data.docs[0].data()['phone']),
                             ],
                           ),
                         ),
-                        (type == 'NGO')
+                        (snapshot.data.docs[0].data()['type'] == 'NGO')
                             ? MyRequirements(
-                                uid: loggedInUser.uid!,
+                                uid: uid!,
                               )
                             : Container(),
                         SizedBox(height: 20),
-                        (type == 'NGO')
-                            ? AllRequirements(uid: loggedInUser.uid!)
+                        (snapshot.data.docs[0].data()['type'] == 'NGO')
+                            ? AllRequirements(uid: uid!)
                             : Container(),
-                        (type == 'Consumer')
+                        (snapshot.data.docs[0].data()['type'] == 'Consumer')
                             ? InkWell(
                                 child: Container(
                                   height: 150,
@@ -265,8 +255,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                         'Collect Reward',
                                         style: TextStyle(
                                             fontSize: 16,
-                                            color: (loggedInUser
-                                                    .coupons!.isNotEmpty)
+                                            color: (snapshot.data.docs[0]
+                                                    .data()['coupons']
+                                                    .isNotEmpty)
                                                 ? Colors.black
                                                 : Colors.grey,
                                             fontWeight: FontWeight.w500),
@@ -275,85 +266,30 @@ class _ProfilePageState extends State<ProfilePage> {
                                     elevation: 8,
                                     shadowColor: Colors.black12,
                                     margin: EdgeInsets.all(20),
-                                    color: (loggedInUser.coupons!.isNotEmpty)
+                                    color: (snapshot.data.docs[0]
+                                            .data()['coupons']
+                                            .isNotEmpty)
                                         ? Colors.blue
                                         : Color.fromARGB(255, 109, 106, 106),
                                   ),
                                 ),
-                                onTap: (loggedInUser.coupons!.isNotEmpty)
+                                onTap: (snapshot.data.docs[0]
+                                        .data()['coupons']
+                                        .isNotEmpty)
                                     ? () async {
-                                        randomindex = Random().nextInt(
-                                            AppConstants.coupons.length);
+                                        int randomindex = Random().nextInt(
+                                            snapshot.data.docs[0]
+                                                .data()['coupons']
+                                                .length);
                                         await showScratchCard(
-                                            context, randomindex);
+                                            context,
+                                            snapshot.data.docs[0]
+                                                    .data()['coupons']
+                                                [randomindex]);
                                       }
                                     : null,
                               )
                             : Container(),
-                        (rewards.isEmpty && type == 'Consumner')
-                            ? Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Your Rewards',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  Image.asset(
-                                    'assets/images/donate.jpg',
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.2,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.2,
-                                  ),
-                                  Text(
-                                    'Donate to NGO to earn rewards',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w400),
-                                  ),
-                                ],
-                              )
-                            : (type == 'Consumer')
-                                ? Column(
-                                    children: rewards.map((data) {
-                                      return Container(
-                                        height: 150,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.7,
-                                        child: Card(
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
-                                            children: [
-                                              Text(
-                                                '${data}',
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: Colors.black,
-                                                    fontWeight:
-                                                        FontWeight.w500),
-                                              ),
-                                              IconButton(
-                                                icon: const Icon(Icons.copy),
-                                                onPressed: () async {
-                                                  await _copyToClipboard(data);
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                          elevation: 8,
-                                          shadowColor: Colors.black,
-                                          margin: EdgeInsets.all(20),
-                                        ),
-                                      );
-                                    }).toList(),
-                                  )
-                                : Container(),
                       ],
                     ),
                   ),
@@ -379,10 +315,8 @@ class _ProfilePageState extends State<ProfilePage> {
   // the logout function
   logout() async {
     var userId = await HelperFunctions().readUserIdPref();
-    await FirebaseAuth.instance.signOut();
     await DataBaseHelper.instance.deleteUser(userId);
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => LoginScreen()));
+    await FirebaseAuth.instance.signOut();
   }
 
   Future<void> _copyToClipboard(String textt) async {
@@ -392,12 +326,12 @@ class _ProfilePageState extends State<ProfilePage> {
     ));
   }
 
-  showScratchCard(BuildContext context, int randomindex) {
+  showScratchCard(BuildContext context, String coupon) {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
           return ScratchCard(
-            randomindex: randomindex,
+            coupon: coupon,
           );
         });
   }

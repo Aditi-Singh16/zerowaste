@@ -170,7 +170,7 @@ class _DetailsState extends State<Details> {
         widget.name,
         widget.productid,
         widget.category,
-        quantity,
+        int.parse(quantity),
         time,
         totalAmount,
         date,
@@ -179,7 +179,10 @@ class _DetailsState extends State<Details> {
         widget.weight,
         widget.description);
 
-    await FirebaseFirestore.instance.collection("Users").doc(widget.uid).set({
+    await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(widget.uid)
+        .update({
       "esv_air": FieldValue.increment(esv_ls![0] * widget.weight),
       "esv_co2": FieldValue.increment(esv_ls![2] * widget.weight),
       "esv_tree": FieldValue.increment(esv_ls![1] + widget.weight)
@@ -558,7 +561,8 @@ class _DetailsState extends State<Details> {
                                   setState(() {
                                     totalAmount = totalAmount -
                                         (totalAmount *
-                                            (AppConstants.couponValue[indx]) /
+                                            (AppConstants
+                                                .couponValue[eneteredcoupon]!) /
                                             100);
                                     coupon = !coupon;
                                   });

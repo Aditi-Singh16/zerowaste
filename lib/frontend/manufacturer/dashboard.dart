@@ -10,7 +10,6 @@ import 'package:intl/intl.dart';
 import 'package:zerowaste/backend/firestore_info.dart';
 import 'package:zerowaste/frontend/Helpers/loaders/loading.dart';
 import 'package:zerowaste/frontend/Helpers/color.dart';
-import 'package:zerowaste/frontend/manufacturer/Analytics.dart';
 import 'package:zerowaste/prefs/sharedPrefs.dart';
 
 class Dashboard extends StatefulWidget {
@@ -379,7 +378,7 @@ class _DashboardState extends State<Dashboard> {
                               yearvalue = newValue!;
 
                               setState(() {
-                                prevYear = int.parse(newValue!);
+                                prevYear = int.parse(newValue);
                               });
                             },
                           ),
@@ -460,38 +459,26 @@ class _DashboardState extends State<Dashboard> {
                                   shrinkWrap: true,
                                   itemCount: snapshot.data!.docs.length,
                                   itemBuilder: (context, i) {
-                                    return InkWell(
-                                      onTap: () {
-                                        showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) =>
-                                                ManuFacture(
-                                                    context: context,
-                                                    prodctId: snapshot.data!
-                                                        .docs[i]['productId']));
-                                      },
-                                      child: Card(
-                                        child: ListTile(
-                                          leading: CircleAvatar(
-                                              backgroundColor:
-                                                  Colors.transparent,
-                                              child: Image(
-                                                image: NetworkImage(snapshot
-                                                    .data!.docs[i]['image']),
-                                              )),
-                                          title: Text(
-                                              '${snapshot.data!.docs[i]['name']}'),
-                                          subtitle: Text(
-                                              'Quantity: ${snapshot.data!.docs[i]['quantity']}'),
-                                        ),
-                                        elevation: 8,
-                                        margin: EdgeInsets.all(10),
-                                        shape: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            borderSide: BorderSide(
-                                                color: Colors.white)),
+                                    return Card(
+                                      child: ListTile(
+                                        leading: CircleAvatar(
+                                            backgroundColor: Colors.transparent,
+                                            child: Image(
+                                              image: NetworkImage(snapshot
+                                                  .data!.docs[i]['image']),
+                                            )),
+                                        title: Text(
+                                            '${snapshot.data!.docs[i]['name']}'),
+                                        subtitle: Text(
+                                            'Quantity: ${snapshot.data!.docs[i]['quantity']}'),
                                       ),
+                                      elevation: 8,
+                                      margin: EdgeInsets.all(10),
+                                      shape: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          borderSide:
+                                              BorderSide(color: Colors.white)),
                                     );
                                   })),
                         );

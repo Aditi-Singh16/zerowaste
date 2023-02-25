@@ -115,7 +115,7 @@ class _ESVTabState extends State<ESVTab> {
                 Text("Air Pollution",
                     style: TextStyle(color: widget.textColor)),
                 Text(
-                  "${widget.air} aqi of Air",
+                  (widget.air.toString()).substring(0, 3) + "aqi of Air",
                   style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width * 0.030,
                       color: widget.textColor),
@@ -135,7 +135,7 @@ class _ESVTabState extends State<ESVTab> {
                   ),
                 ),
                 Text("Tree", style: TextStyle(color: widget.textColor)),
-                Text(widget.tree.toString() + "Tree saved",
+                Text((widget.tree.toString()).substring(0, 3) + "Tree saved",
                     style: TextStyle(
                         fontSize: MediaQuery.of(context).size.width * 0.030,
                         color: widget.textColor))
